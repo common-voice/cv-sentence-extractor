@@ -1,0 +1,10 @@
+[package]
+name = "common-voice-yotp"
+version = "0.1.0"
+authors = ["Florian Merz <flomerz@gmail.com>"]
+edition = "2018"
+
+[dependencies]
+parse_mediawiki_dump = "0.1.0"
+parse_wiki_text = "0.1.5"
+bzip2 = "0.3.3"
