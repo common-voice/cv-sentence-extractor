@@ -4,6 +4,9 @@ extern crate parse_wiki_text;
 
 use parse_wiki_text::{Configuration, Node};
 
+static PUNCTUATIONS: [char; 3] = ['。', '？', '！'];
+static INVALID_CHARS: [char; 3] = ['（', '）', '、'];
+
 fn main() {
     let mut args = std::env::args();
     if args.len() != 2 {
@@ -35,7 +38,7 @@ fn parse(source: impl std::io::BufRead) {
                 eprintln!("Error: {}", error);
                 std::process::exit(1);
             }
-            Ok(page) => println!("{}", page.text),
+            Ok(page) => parse_text(&page.text, &config),
         }
     }
 }
@@ -44,9 +47,24 @@ fn parse_text(text: &str, config: &Configuration) {
     let result = config.parse(text);
     if result.warnings.is_empty() {
         for node in result.nodes {
-            if let Node::Text{ value, .. } = node {
-                println!("{}", value);
+            if let Node::Text { value, .. } = node {
+                extract_sentences(&value);
             }
         }
+    }
+}
+
+fn extract_sentences(value: &str) {
+    for sentence in value.split(&PUNCTUATIONS[..]) {
+        let chars: Vec<char> = sentence.trim().chars().collect();
+        if chars.len() == 0
+            || chars[0] == '，'
+            || chars
+                .iter()
+                .any(|c| c.is_numeric() || INVALID_CHARS.contains(c))
+        {
+            continue;
+        }
+        println!("{}", sentence);
     }
 }
