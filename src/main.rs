@@ -57,12 +57,7 @@ fn parse_text(text: &str, config: &Configuration) {
 fn extract_sentences(value: &str) {
     for sentence in value.split(&PUNCTUATIONS[..]) {
         let chars: Vec<char> = sentence.trim().chars().collect();
-        if chars.len() == 0
-            || chars[0] == '，'
-            || chars
-                .iter()
-                .any(|c| c.is_numeric() || INVALID_CHARS.contains(c))
-        {
+        if chars.len() == 0 || chars[0] == '，' || chars.iter().any(|c| c.is_numeric()) {
             continue;
         }
         println!("{}", sentence);
