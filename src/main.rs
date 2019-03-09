@@ -4,6 +4,10 @@ extern crate parse_wiki_text;
 
 use parse_wiki_text::{Configuration, Node};
 
+mod extractor;
+
+use extractor::SentenceExtractor;
+
 static PUNCTUATIONS: [char; 3] = ['。', '？', '！'];
 static INVALID_CHARS: [char; 3] = ['（', '）', '、'];
 
@@ -48,18 +52,10 @@ fn parse_text(text: &str, config: &Configuration) {
     if result.warnings.is_empty() {
         for node in result.nodes {
             if let Node::Text { value, .. } = node {
-                extract_sentences(&value);
+                for s in SentenceExtractor::new(&value) {
+                    println!("{}", s)
+                }
             }
         }
-    }
-}
-
-fn extract_sentences(value: &str) {
-    for sentence in value.split(&PUNCTUATIONS[..]) {
-        let chars: Vec<char> = sentence.trim().chars().collect();
-        if chars.len() == 0 || chars[0] == '，' || chars.iter().any(|c| c.is_numeric()) {
-            continue;
-        }
-        println!("{}", sentence);
     }
 }
