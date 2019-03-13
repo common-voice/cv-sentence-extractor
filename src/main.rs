@@ -5,11 +5,9 @@ extern crate parse_wiki_text;
 use parse_wiki_text::{Configuration, Node};
 
 mod extractor;
+mod traditional_characters;
 
 use extractor::SentenceExtractor;
-
-static PUNCTUATIONS: [char; 3] = ['。', '？', '！'];
-static INVALID_CHARS: [char; 3] = ['（', '）', '、'];
 
 fn main() {
     let mut args = std::env::args();

@@ -1,50 +1,52 @@
-use std::iter::Iterator;
-use std::iter::Peekable;
-use std::vec::IntoIter;
+static PUNCTUATIONS: [char; 3] = ['。', '？', '！'];
 
-static FULL_STOP: char = '。';
+use crate::traditional_characters::TRADITIONAL_CHARACTERS;
 
-/// An Iterator extracting _sentences_ from a text node.
-/// We throw away:
-/// - Anything be fore the first [FULL_STOP]
-/// - Anthing where [contains_no_invalid_char] returns `false`
-/// - Anything after the last [FULL_STOP]
-pub struct SentenceExtractor<'a> {
-    sentences: Peekable<IntoIter<&'a str>>,
+pub struct SentenceExtractor {
+    text: String,
 }
 
-impl<'a> SentenceExtractor<'a> {
-    pub fn new(sentences: &'a str) -> Self {
+impl SentenceExtractor {
+    pub fn new(text: &str) -> SentenceExtractor {
         SentenceExtractor {
-            sentences: extract_sentences(sentences),
+            text: text.to_string(),
         }
     }
 }
 
-impl<'a> Iterator for SentenceExtractor<'a> {
-    type Item = &'a str;
-    fn next(&mut self) -> Option<&'a str> {
-        if self.sentences.peek().is_some() {
-            self.sentences.next()
-        } else {
-            None
+fn contains_invalid_char(s: &str) -> bool {
+    s.chars()
+        .any(|c| !c.is_alphabetic() || TRADITIONAL_CHARACTERS.contains(&c))
+}
+
+impl Iterator for SentenceExtractor {
+    type Item = String;
+
+    fn next(&mut self) -> Option<String> {
+        loop {
+            if self.text.len() == 0 {
+                return None;
+            }
+
+            let chars = self.text.chars().collect::<Vec<_>>();
+            let punctuation_index = chars.iter().position(|&c| PUNCTUATIONS.contains(&c));
+            let index = punctuation_index.unwrap_or(chars.len());
+            let mut next_item = chars.iter().take(index).collect::<String>();
+            self.text = chars
+                .iter()
+                .skip(index + (if punctuation_index.is_some() { 1 } else { 0 }))
+                .collect::<String>();
+
+            if next_item.len() == 0 || contains_invalid_char(&next_item) {
+                continue;
+            }
+
+            if let Some(i) = punctuation_index {
+                next_item.push(*chars.get(i).unwrap());
+            }
+            return Some(next_item);
         }
     }
-}
-
-fn contains_no_invalid_char(s: &str) -> bool {
-    s.chars().all(char::is_alphabetic)
-}
-
-fn extract_sentences(value: &str) -> Peekable<IntoIter<&str>> {
-    let v: Vec<&str> = value
-        .trim_end_matches(|c| c != FULL_STOP)
-        .split(FULL_STOP)
-        .skip(1)
-        .filter(|s| !s.is_empty())
-        .filter(|s| contains_no_invalid_char(s))
-        .collect(); // We should remove this collect and return the ugly type.
-    v.into_iter().peekable()
 }
 
 #[cfg(test)]
@@ -52,9 +54,11 @@ mod test {
     use super::*;
 
     #[test]
-    fn text_sentence_extractor() {
-        let value = "唐王國。鹰潭号称铜都。高等";
+    fn test_split_after() {
+        let value = "唐王國。鹰号称铜。高等";
         let mut iter = SentenceExtractor::new(value);
-        assert_eq!(iter.next(), Some("鹰潭号称铜都"));
+        assert_eq!(iter.next().unwrap(), "鹰号称铜。");
+        assert_eq!(iter.next().unwrap(), "高等");
+        assert!(iter.next().is_none());
     }
 }
