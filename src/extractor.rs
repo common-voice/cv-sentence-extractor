@@ -37,7 +37,7 @@ impl Iterator for SentenceExtractor {
                 .skip(index + (if punctuation_index.is_some() { 1 } else { 0 }))
                 .collect::<String>();
 
-            if next_item.len() == 0 || contains_invalid_char(&next_item) {
+            if next_item.chars().count() <= 1 || contains_invalid_char(&next_item) {
                 continue;
             }
 
