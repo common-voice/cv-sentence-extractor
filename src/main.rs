@@ -51,13 +51,33 @@ fn parse_text(text: &str, config: &Configuration) {
         return;
     }
 
-    let mut text = String::new();
+    let mut full_text = String::new();
     for node in result.nodes {
-        if let Node::Text { value, .. } = node {
-            text.push_str(value);
+        match node {
+            Node::Text { value, .. } => {
+                full_text.push_str(value);
+            }
+            Node::Link { text, .. } => {
+                full_text.push_str(
+                    &text
+                        .iter()
+                        .map(|node| {
+                            if let Node::Text { value, .. } = node {
+                                value
+                            } else {
+                                ""
+                            }
+                        })
+                        .collect::<Vec<&str>>()
+                        .join(""),
+                );
+            }
+            _ => ()
         }
     }
-    for s in SentenceExtractor::new(&text) {
-        println!("{}", s)
+    for s in SentenceExtractor::new(&full_text) {
+        println!("===");
+        println!("{}", s);
+        println!("===");
     }
 }
