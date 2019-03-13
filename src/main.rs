@@ -47,13 +47,17 @@ fn parse(source: impl std::io::BufRead) {
 
 fn parse_text(text: &str, config: &Configuration) {
     let result = config.parse(text);
-    if result.warnings.is_empty() {
-        for node in result.nodes {
-            if let Node::Text { value, .. } = node {
-                for s in SentenceExtractor::new(&value) {
-                    println!("{}", s)
-                }
-            }
+    if !result.warnings.is_empty() {
+        return;
+    }
+
+    let mut text = String::new();
+    for node in result.nodes {
+        if let Node::Text { value, .. } = node {
+            text.push_str(value);
         }
+    }
+    for s in SentenceExtractor::new(&text) {
+        println!("{}", s)
     }
 }
