@@ -16,7 +16,7 @@ impl SentenceExtractor {
 
 fn contains_invalid_char(s: &str) -> bool {
     s.chars()
-        .any(|c| !c.is_alphabetic() || TRADITIONAL_CHARACTERS.contains(&c))
+        .any(|c| c.is_ascii() || !c.is_alphabetic() || TRADITIONAL_CHARACTERS.contains(&c))
 }
 
 impl Iterator for SentenceExtractor {
