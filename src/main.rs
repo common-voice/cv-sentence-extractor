@@ -1,61 +1,12 @@
-extern crate bzip2;
-extern crate parse_mediawiki_dump;
-extern crate parse_wiki_text;
+extern crate common_voice_yotp;
 
-use parse_wiki_text::{Configuration, Node};
+use std::env;
 
-mod extractor;
+use common_voice_yotp::app;
 
-use extractor::SentenceExtractor;
-
-static PUNCTUATIONS: [char; 3] = ['。', '？', '！'];
-static INVALID_CHARS: [char; 3] = ['（', '）', '、'];
-
-fn main() {
-    let mut args = std::env::args();
-    if args.len() != 2 {
-        eprintln!("invalid use");
-        std::process::exit(1);
+fn main() -> Result<(), String> {
+    for o in app::run(env::args_os())? {
+        println!("{}", o);
     }
-    let path = args.nth(1).unwrap();
-    let file = match std::fs::File::open(&path) {
-        Err(error) => {
-            eprintln!("Failed to open input file: {}", error);
-            std::process::exit(1);
-        }
-        Ok(file) => std::io::BufReader::new(file),
-    };
-    if path.ends_with(".bz2") {
-        parse(std::io::BufReader::new(bzip2::bufread::BzDecoder::new(
-            file,
-        )));
-    } else {
-        parse(file);
-    }
-}
-
-fn parse(source: impl std::io::BufRead) {
-    let config = Configuration::default();
-    for result in parse_mediawiki_dump::parse(source) {
-        match result {
-            Err(error) => {
-                eprintln!("Error: {}", error);
-                std::process::exit(1);
-            }
-            Ok(page) => parse_text(&page.text, &config),
-        }
-    }
-}
-
-fn parse_text(text: &str, config: &Configuration) {
-    let result = config.parse(text);
-    if result.warnings.is_empty() {
-        for node in result.nodes {
-            if let Node::Text { value, .. } = node {
-                for s in SentenceExtractor::new(&value) {
-                    println!("{}", s)
-                }
-            }
-        }
-    }
+    Ok(())
 }

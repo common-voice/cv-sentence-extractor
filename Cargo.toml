@@ -1,10 +1,18 @@
 [package]
-name = "common-voice-yotp"
+name = "common_voice_yotp"
 version = "0.1.0"
 authors = ["Florian Merz <flomerz@gmail.com>"]
 edition = "2018"
 
+[lib]
+name = "common_voice_yotp"
+path = "src/lib.rs"
+
+[[bin]]
+name = "common_voice_yotp"
+path = "src/main.rs"
+
 [dependencies]
-parse_mediawiki_dump = "0.1.0"
-parse_wiki_text = "0.1.5"
-bzip2 = "0.3.3"
+serde_json = "1.0"
+glob = "0.2"
+clap = "2.31"
