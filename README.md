@@ -7,7 +7,7 @@
 
 ## Usage
 
-1. Use WikiExtractor to extract a dump.
+1. Use WikiExtractor to extract a dump (using the `--json` flag).
 ```bash
 cargo run -- extract -d <WIKI_EXTRACTOR_OUT_DIR>
 ```
