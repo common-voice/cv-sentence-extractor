@@ -1,6 +1,8 @@
-static PUNCTUATIONS: [char; 3] = ['。', '？', '！'];
+use regex::Regex;
 
-use crate::traditional_characters::TRADITIONAL_CHARACTERS;
+use crate::character_map::CHARACTER_MAP;
+
+static PUNCTUATIONS: [char; 3] = ['。', '？', '！'];
 
 pub struct SentenceExtractor {
     text: String,
@@ -8,15 +10,31 @@ pub struct SentenceExtractor {
 
 impl SentenceExtractor {
     pub fn new(text: &str) -> SentenceExtractor {
+        let lines: Vec<&str> = text.lines().collect();
         SentenceExtractor {
-            text: text.to_string(),
+            text: if lines.len() > 1 {
+                // skip disambiguation pages
+                if lines.first().unwrap().contains("消歧義") {
+                    String::default()
+                } else {
+                    // skip title
+                    lines[1..].join("")
+                }
+            } else {
+                text.to_string()
+            },
         }
     }
 }
 
-fn contains_invalid_char(s: &str) -> bool {
-    s.chars()
-        .any(|c| c.is_ascii() || !c.is_alphabetic() || TRADITIONAL_CHARACTERS.contains(&c))
+fn is_invalid(s: &str) -> bool {
+    !s.chars().next().unwrap_or_default().is_alphabetic()
+        || s.chars().any(|c| c.is_ascii())
+        || s.chars().all(|c| !c.is_alphabetic())
+}
+
+lazy_static! {
+    static ref PARANS: Regex = Regex::new("（.*）").unwrap();
 }
 
 impl Iterator for SentenceExtractor {
@@ -29,22 +47,37 @@ impl Iterator for SentenceExtractor {
             }
 
             let chars = self.text.chars().collect::<Vec<_>>();
-            let punctuation_index = chars.iter().position(|&c| PUNCTUATIONS.contains(&c));
-            let index = punctuation_index.unwrap_or(chars.len());
-            let mut next_item = chars.iter().take(index).collect::<String>();
+            let end_index = chars
+                .iter()
+                .position(|&c| PUNCTUATIONS.contains(&c) || c == '\n');
+            let index = end_index.unwrap_or(chars.len());
+            let mut next_item = chars
+                .iter()
+                .take(index)
+                .collect::<String>()
+                .trim()
+                .to_string();
             self.text = chars
                 .iter()
-                .skip(index + (if punctuation_index.is_some() { 1 } else { 0 }))
+                .skip(index + (if end_index.is_some() { 1 } else { 0 }))
                 .collect::<String>();
 
-            if next_item.chars().count() <= 1 || contains_invalid_char(&next_item) {
+            next_item = PARANS.replace(&next_item, "").to_string();
+
+            let count = next_item.chars().count();
+            if count < 3 || count > 38 || is_invalid(&next_item) {
                 continue;
             }
 
-            if let Some(i) = punctuation_index {
+            next_item = next_item
+                .chars()
+                .map(|c| CHARACTER_MAP.get(&c).unwrap_or(&c).clone())
+                .collect();
+
+            if let Some(i) = end_index {
                 next_item.push(*chars.get(i).unwrap());
             }
-            return Some(next_item);
+            return Some(next_item.trim().to_string());
         }
     }
 }
