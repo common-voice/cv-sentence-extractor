@@ -1,13 +1,12 @@
-#![feature(proc_macro_hygiene)]
-
 extern crate clap;
-#[macro_use]
-extern crate lazy_static;
-extern crate serde_json;
 extern crate glob;
+extern crate itertools;
+extern crate punkt;
+extern crate rand;
 extern crate regex;
+extern crate serde_json;
 
 pub mod app;
-mod loader;
 mod extractor;
-mod character_map;
+mod languages;
+mod loader;

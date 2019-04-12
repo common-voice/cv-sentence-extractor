@@ -17,5 +17,7 @@ serde_json = "1.0"
 glob = "0.2"
 clap = "2.31"
 lazy_static = "1"
-phf = { version = "0.7", features = ["macros"] }
+itertools = "0.8"
 regex = "1"
+punkt = "1.0.5"
+rand = "0.6"
