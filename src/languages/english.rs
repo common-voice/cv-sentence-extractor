@@ -23,6 +23,10 @@ pub fn check(raw: &&str) -> bool {
     if symbols {
         return false;
     }
+    let broken_space = ["  ", " ,", " .", " ?", " !", " ;"];
+    if broken_space.iter().any(|broken| raw.contains(broken)) {
+        return false;
+    }
     let words = trimmed.split_whitespace();
     let word_count = words.clone().count();
     let s = join(words, " ");
