@@ -11,3 +11,4 @@ pub mod app;
 mod loader;
 mod extractor;
 mod character_map;
+mod standard_characters;

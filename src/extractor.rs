@@ -1,6 +1,7 @@
 use regex::Regex;
 
 use crate::character_map::CHARACTER_MAP;
+use crate::standard_characters::STANDARD_CHARACTERS;
 
 static PUNCTUATIONS: [char; 3] = ['。', '？', '！'];
 
@@ -73,6 +74,27 @@ impl Iterator for SentenceExtractor {
                 .chars()
                 .map(|c| CHARACTER_MAP.get(&c).unwrap_or(&c).clone())
                 .collect();
+
+            if next_item
+                .chars()
+                .any(|c| (!PUNCTUATIONS.contains(&c) && !STANDARD_CHARACTERS.contains(&c)))
+            {
+                continue;
+            }
+
+            let abs_end = index + (if end_index.is_some() { 1 } else { 0 });
+            self.text = chars
+                .iter()
+                .skip(
+                    // skip over the next sentence, we don't want consecutive sentences
+                    abs_end
+                        + chars
+                        .iter()
+                        .skip(abs_end)
+                        .position(|&c| PUNCTUATIONS.contains(&c) || c == '\n')
+                        .unwrap_or(0),
+                )
+                .collect::<String>();
 
             if let Some(i) = end_index {
                 next_item.push(*chars.get(i).unwrap());
