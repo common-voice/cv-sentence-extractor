@@ -1,6 +1,11 @@
+use std::collections::HashMap;
+use std::process::Command;
+use std::sync::Mutex;
+
 use regex::Regex;
 
 use crate::character_map::CHARACTER_MAP;
+use crate::errors::*;
 use crate::standard_characters::STANDARD_CHARACTERS;
 
 static PUNCTUATIONS: [char; 3] = ['。', '？', '！'];
@@ -36,6 +41,7 @@ fn is_invalid(s: &str) -> bool {
 
 lazy_static! {
     static ref PARANS: Regex = Regex::new("（.*）").unwrap();
+    static ref REPLACEMENTS: Mutex<HashMap<char, Result<Vec<char>>>> = Mutex::new(HashMap::new());
 }
 
 impl Iterator for SentenceExtractor {
@@ -65,8 +71,7 @@ impl Iterator for SentenceExtractor {
 
             next_item = PARANS.replace(&next_item, "").to_string();
 
-            let count = next_item.chars().count();
-            if count < 3 || count > 38 || is_invalid(&next_item) {
+            if is_invalid(&next_item) {
                 continue;
             }
 
@@ -75,10 +80,64 @@ impl Iterator for SentenceExtractor {
                 .map(|c| CHARACTER_MAP.get(&c).unwrap_or(&c).clone())
                 .collect();
 
-            if next_item
+            next_item = next_item
                 .chars()
-                .any(|c| (!PUNCTUATIONS.contains(&c) && !STANDARD_CHARACTERS.contains(&c)))
-            {
+                .fold(Ok(vec![]), |vec, c| {
+                    let mut vec = vec?.clone();
+                    if PUNCTUATIONS.contains(&c) || STANDARD_CHARACTERS.contains(&c) || c == '，' {
+                        vec.push(c);
+                        return Ok(vec);
+                    }
+
+                    let mut replacements = REPLACEMENTS.lock().unwrap();
+                    let replacement = replacements.entry(c).or_insert_with(|| {
+                        let output = Command::new("/bin/bash")
+                            .arg("-c")
+                            .arg(format!(
+                                "~/fastText/fasttext nn ~/cc.zh.300.bin <<< '{}'",
+                                c
+                            ))
+                            .output()
+                            .unwrap();
+                        let stdout = String::from_utf8(output.stdout)
+                            .unwrap();
+
+                        let rest = stdout
+                            .chars()
+                            .skip("Query word? ".chars().count());
+
+                        let perc = rest
+                            .clone()
+                            .skip_while(|c| !c.is_numeric())
+                            .take_while(|c| c.is_numeric() || *c == '.')
+                            .collect::<String>();
+
+                        if perc.parse::<f32>()? > 0.8_f32 {
+                            Ok(
+                                rest
+                                    .take_while(|c| *c != ' ')
+                                    .collect::<Vec<char>>()
+                            )
+                        } else {
+                            bail!("unlikely match");
+                        }
+                    });
+                    match replacement {
+                        Ok(replacement) => {
+                            vec.append(replacement);
+                        }
+                        _ => {
+                            bail!("not replaceable");
+                        }
+                    }
+                    Ok(vec)
+                })
+                .unwrap_or(vec![])
+                .iter()
+                .collect::<String>();
+
+            let count = next_item.chars().count();
+            if count < 3 || count > 38 {
                 continue;
             }
 
@@ -89,10 +148,10 @@ impl Iterator for SentenceExtractor {
                     // skip over the next sentence, we don't want consecutive sentences
                     abs_end
                         + chars
-                        .iter()
-                        .skip(abs_end)
-                        .position(|&c| PUNCTUATIONS.contains(&c) || c == '\n')
-                        .unwrap_or(0),
+                            .iter()
+                            .skip(abs_end)
+                            .position(|&c| PUNCTUATIONS.contains(&c) || c == '\n')
+                            .unwrap_or(0),
                 )
                 .collect::<String>();
 
