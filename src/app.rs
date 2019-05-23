@@ -1,13 +1,8 @@
 use std::ffi::OsString;
 
-use crate::extractor::choose;
-use crate::languages::english::check;
-use crate::loader::load;
 use crate::loader::load_file_names;
 use clap::{App, Arg, ArgMatches, SubCommand};
-use punkt::TrainingData;
-use rand::rngs::SmallRng;
-use rand::FromEntropy;
+use crate::extractor::extract;
 
 const VERSION: &str = env!("CARGO_PKG_VERSION");
 
@@ -23,6 +18,14 @@ where
         .subcommand(
             SubCommand::with_name("extract")
                 .about("tempalte stuff like helm template does")
+                .arg(
+                    Arg::with_name("language")
+                        .short("l")
+                        .long("lang")
+                        .takes_value(true)
+                        .number_of_values(1)
+                        .help("language"),
+                )
                 .arg(
                     Arg::with_name("dir")
                         .short("d")
@@ -46,22 +49,7 @@ where
         _ => return Err(String::from("did we forget the extract subcommand?")),
     };
     let file_names = load_file_names(&matches.value_of("dir").unwrap_or_default())?;
+    let language = &matches.value_of("language").unwrap_or_else(|| "english");
 
-    let mut char_count = 0;
-    let mut sentence_count = 0;
-    for file_name in file_names {
-        eprintln!("file_name = {:?}", file_name.to_string_lossy());
-        let texts = load(&file_name)?;
-        for text in texts {
-            let rng = SmallRng::from_entropy();
-            for sentence in choose(&text, &TrainingData::english(), rng, 3, check) {
-                println!("{}", sentence);
-                char_count += sentence.chars().count();
-                sentence_count += 1;
-            }
-        }
-        eprintln!("avg = {:?}", char_count as f64 / f64::from(sentence_count));
-        eprintln!("count = {:?}", sentence_count);
-    }
-    Ok(())
+    extract(&file_names, language)
 }
