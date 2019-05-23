@@ -10,13 +10,17 @@ pub fn check(raw: &&str) -> bool {
                 .nth(1)
                 .map(|c| !c.is_alphabetic())
                 .unwrap_or_default()
+        || trimmed.chars().filter(|c| c.is_alphabetic()).count() < 3
         || trimmed.ends_with(':')
+        || trimmed.ends_with(|c: char| c.is_alphabetic())
+        || trimmed.starts_with(|c: char| !c.is_alphabetic())
+        || trimmed.starts_with(|c: char| c.is_lowercase())
     {
         return false;
     }
     let symbols = trimmed.chars().any(|c| {
         [
-            '<', '>', '+', '*', '\\', '#', '@', '^', '[', ']', '(', ')', '/', '\n',
+            '"', '<', '>', '+', '*', '\\', '#', '@', '^', '[', ']', '(', ')', '/', '\n', '«', '»',
         ]
         .contains(&c)
     });

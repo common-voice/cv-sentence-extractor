@@ -37,7 +37,9 @@ pub fn extract(file_names: &[PathBuf], language: &str) -> Result<(), String> {
         let texts = load(&file_name)?;
         for text in texts {
             let rng = SmallRng::from_entropy();
-            for sentence in choose(&text, &data, rng, 3, check) {
+            let mut sentences = choose(&text, &data, rng, 3, check);
+            sentences.dedup();
+            for sentence in sentences {
                 println!("{}", sentence);
                 char_count += sentence.chars().count();
                 sentence_count += 1;
