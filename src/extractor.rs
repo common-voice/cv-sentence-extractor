@@ -99,28 +99,33 @@ impl Iterator for SentenceExtractor {
                             ))
                             .output()
                             .unwrap();
-                        let stdout = String::from_utf8(output.stdout)
-                            .unwrap();
+                        let output = String::from_utf8(output.stdout).unwrap();
 
-                        let rest = stdout
-                            .chars()
-                            .skip("Query word? ".chars().count());
+                        for line in output.split('\n') {
+                            // skip the delimiting lines
+                            if line.contains("Query word??") {
+                                continue;
+                            }
 
-                        let perc = rest
-                            .clone()
-                            .skip_while(|c| !c.is_numeric())
-                            .take_while(|c| c.is_numeric() || *c == '.')
-                            .collect::<String>();
+                            let parts = line.split(' ').collect::<Vec<&str>>();
+                            let chars = parts[0];
 
-                        if perc.parse::<f32>()? > 0.8_f32 {
-                            Ok(
-                                rest
-                                    .take_while(|c| *c != ' ')
-                                    .collect::<Vec<char>>()
-                            )
-                        } else {
-                            bail!("unlikely match");
+                            if chars.chars().any(|c| {
+                                !PUNCTUATIONS.contains(&c)
+                                    || !STANDARD_CHARACTERS.contains(&c)
+                                    || c != '，'
+                            }) {
+                                continue;
+                            }
+
+                            let perc = parts[1];
+                            if perc.parse::<f32>()? > 0.8_f32 {
+                                return Ok(chars.chars().collect::<Vec<char>>());
+                            } else {
+                                bail!("unlikely match");
+                            }
                         }
+                        bail!("no match found");
                     });
                     match replacement {
                         Ok(replacement) => {
