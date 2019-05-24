@@ -1,8 +1,8 @@
 use std::ffi::OsString;
 
+use crate::extractor::extract;
 use crate::loader::load_file_names;
 use clap::{App, Arg, ArgMatches, SubCommand};
-use crate::extractor::extract;
 
 const VERSION: &str = env!("CARGO_PKG_VERSION");
 

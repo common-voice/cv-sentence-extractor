@@ -1,14 +1,14 @@
+use crate::languages::english;
+use crate::languages::french;
+use crate::loader::load;
 use punkt::params::Standard;
 use punkt::SentenceTokenizer;
 use punkt::TrainingData;
+use rand::rngs::SmallRng;
 use rand::seq::IteratorRandom;
+use rand::FromEntropy;
 use rand::Rng;
 use std::path::PathBuf;
-use crate::loader::load;
-use rand::rngs::SmallRng;
-use rand::FromEntropy;
-use crate::languages::english;
-use crate::languages::french;
 
 pub fn choose(
     text: &str,
