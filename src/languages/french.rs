@@ -47,7 +47,7 @@ pub fn check(raw: &&str) -> bool {
     if abrv {
         return false;
     }
-    let abrv = Regex::new(r"(^|[[:space:]])[[:upper:]]\.") // THIS
+    let abrv = Regex::new(r"(^|[[:space:]])[[:upper:]]\.")
         .unwrap()
         .is_match(&s);
     if abrv {
@@ -102,6 +102,8 @@ mod test {
     #[test]
     fn test_check_abbreviations() {
         assert_eq!(check(&"A.B"), false);
+        assert_eq!(check(&"A."), false);
+        assert_eq!(check(&"Some sentence that ends with A."), false);
         assert_eq!(check(&r#""S.T.A.L.K.E.R."#), false);
     }
 }
