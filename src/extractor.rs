@@ -1,6 +1,6 @@
 use crate::languages::checker;
 use crate::loader::load;
-use crate::config::load_config;
+use crate::config::{load_config, Config};
 use punkt::params::Standard;
 use punkt::SentenceTokenizer;
 use punkt::TrainingData;
@@ -11,23 +11,22 @@ use rand::Rng;
 use std::path::PathBuf;
 
 pub fn choose(
-    language: &str,
+    rules: Config,
     text: &str,
     data: &TrainingData,
     mut rng: impl Rng,
     amount: usize,
-    predicate: impl FnMut(&&str) -> bool,
+    mut predicate: impl FnMut(Config, &&str) -> bool,
 ) -> Vec<String> {
-    let config = load_config(&language);
-    // FIXME: how do we pass the config to the check function?
     SentenceTokenizer::<Standard>::new(text, data)
-        .filter(predicate)
+        .filter(|item| { predicate(rules, item) })
         .map(str::trim)
         .map(String::from)
         .choose_multiple(&mut rng, amount)
 }
 
 pub fn extract(file_names: &[PathBuf], language: &str) -> Result<(), String> {
+    let config = load_config(&language);
     let data = TrainingData::english(); // FIXME: how can we access this depending on data?
     let mut char_count = 0;
     let mut sentence_count = 0;
@@ -36,7 +35,7 @@ pub fn extract(file_names: &[PathBuf], language: &str) -> Result<(), String> {
         let texts = load(&file_name)?;
         for text in texts {
             let rng = SmallRng::from_entropy();
-            let mut sentences = choose(&language, &text, &data, rng, 3, checker::check);
+            let mut sentences = choose(config, &text, &data, rng, 3, checker::check);
             sentences.dedup();
             for sentence in sentences {
                 println!("{}", sentence);

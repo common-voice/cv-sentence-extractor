@@ -11,7 +11,7 @@
 2. Use WikiExtractor to extract a dump (use the `--json` flag)
 
 ```bash
-cargo run -- extract -d <WIKI_EXTRACTOR_OUT_DIR>
+cargo run -- extract -l english -d <WIKI_EXTRACTOR_OUT_DIR>
 ```
 
 ## Rules

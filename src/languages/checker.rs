@@ -1,7 +1,8 @@
+use crate::config::Config;
 use itertools::join;
 use regex::Regex;
 
-pub fn check(raw: &&str) -> bool {
+pub fn check(rules: Config, raw: &&str) -> bool {
     let trimmed = raw.trim();
     if trimmed.len() < 3
         || trimmed.chars().nth(0) == Some('"')
