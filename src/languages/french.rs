@@ -47,7 +47,7 @@ pub fn check(raw: &&str) -> bool {
     if abrv {
         return false;
     }
-    let abrv = Regex::new(r"(^|[[:space:]])[[:upper:]]\.")
+    let abrv = Regex::new(r"(^|[[:space:]])[[:upper:]]\.") // THIS
         .unwrap()
         .is_match(&s);
     if abrv {
@@ -61,9 +61,48 @@ mod test {
     use super::*;
 
     #[test]
-    fn test_check() {
+    fn test_check_generic() {
+        assert_eq!(check(&""), false);
+        assert_eq!(check(&"\"😊"), false);
+        assert_eq!(check(&"This ends with:"), false);
+        assert_eq!(check(&"This does not end with a period"), false);
+        assert_eq!(check(&"?This does not start with a alphanumeric letter"), false);
+        assert_eq!(check(&"this starts with lowercase"), false);
+    }
+
+    #[test]
+    fn test_check_whitespace() {
+        assert_eq!(check(&" AA "), false);
+        assert_eq!(check(&"This has broken  space"), false);
+        assert_eq!(check(&"This as well !"), false);
+        assert_eq!(check(&"And this ;"), false);
+    }
+
+    #[test]
+    fn test_check_length() {
+        assert_eq!(check(&"This is gonna be way way way way way way way way way way too long"), false);
+        assert_eq!(check(&"Short"), false);
+        assert_eq!(check(&"This is absolutely validé."), true);
+        assert_eq!(check(&"No!!!"), false);
+    }
+
+    #[test]
+    fn test_check_numbers() {
+        assert_eq!(check(&"This contains 1 number"), false);
+    }
+
+    #[test]
+    fn test_check_symbols() {
+        assert_eq!(check(&"foo\n\nfoo"), false);
+        assert_eq!(check(&"foo<>"), false);
+        assert_eq!(check(&"foo«"), false);
+        assert_eq!(check(&"foo*@"), false);
+    }
+
+    #[test]
+    fn test_check_abbreviations() {
         assert_eq!(check(&"A.B"), false);
         assert_eq!(check(&r#""S.T.A.L.K.E.R."#), false);
-        assert_eq!(check(&"foo\n\nfoo"), false);
     }
 }
+
