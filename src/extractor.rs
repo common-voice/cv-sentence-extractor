@@ -1,6 +1,6 @@
-use crate::languages::english;
-use crate::languages::french;
+use crate::languages::checker;
 use crate::loader::load;
+use crate::config::load_config;
 use punkt::params::Standard;
 use punkt::SentenceTokenizer;
 use punkt::TrainingData;
@@ -11,12 +11,15 @@ use rand::Rng;
 use std::path::PathBuf;
 
 pub fn choose(
+    language: &str,
     text: &str,
     data: &TrainingData,
     mut rng: impl Rng,
     amount: usize,
     predicate: impl FnMut(&&str) -> bool,
 ) -> Vec<String> {
+    let config = load_config(&language);
+    // FIXME: how do we pass the config to the check function?
     SentenceTokenizer::<Standard>::new(text, data)
         .filter(predicate)
         .map(str::trim)
@@ -25,11 +28,7 @@ pub fn choose(
 }
 
 pub fn extract(file_names: &[PathBuf], language: &str) -> Result<(), String> {
-    let (check, data) = match language {
-        "english" => (english::check as fn(&&str) -> bool, TrainingData::english()),
-        "french" => (french::check as fn(&&str) -> bool, TrainingData::french()),
-        l => return Err(format!("unsupported language: {}", l)),
-    };
+    let data = TrainingData::english(); // FIXME: how can we access this depending on data?
     let mut char_count = 0;
     let mut sentence_count = 0;
     for file_name in file_names {
@@ -37,7 +36,7 @@ pub fn extract(file_names: &[PathBuf], language: &str) -> Result<(), String> {
         let texts = load(&file_name)?;
         for text in texts {
             let rng = SmallRng::from_entropy();
-            let mut sentences = choose(&text, &data, rng, 3, check);
+            let mut sentences = choose(&language, &text, &data, rng, 3, checker::check);
             sentences.dedup();
             for sentence in sentences {
                 println!("{}", sentence);
