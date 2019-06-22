@@ -33,6 +33,6 @@ The following rules can be configured per language. Add a `<language>.tom` file 
 | abbreviation_patterns |  TO BE DEFINED, NOT SURE HOW TO HANDLE YET | n/a | n/a
 | needs_punctuation_end |  If a sentence needs to end with a punctuation | boolean | false
 | needs_alphanumeric_start |  If a sentence needs to start with an alphanumeric | boolean | true
-| needs_uppercase_start |  If a sentence needs to start with an uppercase | boolean | true
+| needs_uppercase_start |  If a sentence needs to start with an uppercase | boolean | false
 
 

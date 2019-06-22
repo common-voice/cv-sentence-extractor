@@ -11,12 +11,12 @@ use rand::Rng;
 use std::path::PathBuf;
 
 pub fn choose(
-    rules: Config,
+    rules: &Config,
     text: &str,
     data: &TrainingData,
     mut rng: impl Rng,
     amount: usize,
-    mut predicate: impl FnMut(Config, &&str) -> bool,
+    mut predicate: impl FnMut(&Config, &&str) -> bool,
 ) -> Vec<String> {
     SentenceTokenizer::<Standard>::new(text, data)
         .filter(|item| { predicate(rules, item) })
@@ -35,7 +35,7 @@ pub fn extract(file_names: &[PathBuf], language: &str) -> Result<(), String> {
         let texts = load(&file_name)?;
         for text in texts {
             let rng = SmallRng::from_entropy();
-            let mut sentences = choose(config, &text, &data, rng, 3, checker::check);
+            let mut sentences = choose(&config, &text, &data, rng, 3, checker::check);
             sentences.dedup();
             for sentence in sentences {
                 println!("{}", sentence);
