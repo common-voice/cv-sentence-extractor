@@ -27,7 +27,7 @@ pub fn choose(
 
 pub fn extract(file_names: &[PathBuf], language: &str) -> Result<(), String> {
     let config = load_config(&language);
-    let data = TrainingData::english(); // FIXME: how can we access this depending on data?
+    let data = get_training_data(language);
     let mut char_count = 0;
     let mut sentence_count = 0;
     for file_name in file_names {
@@ -47,4 +47,28 @@ pub fn extract(file_names: &[PathBuf], language: &str) -> Result<(), String> {
         eprintln!("count = {:?}", sentence_count);
     }
     Ok(())
+}
+
+fn get_training_data(language: &str) -> TrainingData {
+    let training_data = match language {
+        "english" => TrainingData::english(),
+        "czech" => TrainingData::czech(),
+        "danish" => TrainingData::danish(),
+        "dutch" => TrainingData::dutch(),
+        "estonian" => TrainingData::estonian(),
+        "finnish" => TrainingData::finnish(),
+        "french" => TrainingData::french(),
+        "german" => TrainingData::german(),
+        "greek" => TrainingData::greek(),
+        "italian" => TrainingData::italian(),
+        "norwegian" => TrainingData::norwegian(),
+        "polish" => TrainingData::polish(),
+        "portuguese" => TrainingData::portuguese(),
+        "slovene" => TrainingData::slovene(),
+        "spanish" => TrainingData::spanish(),
+        "swedish" => TrainingData::swedish(),
+        "turkish" => TrainingData::turkish(),
+        _ => TrainingData::english(),
+    };
+    training_data
 }
