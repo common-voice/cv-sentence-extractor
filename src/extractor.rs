@@ -10,6 +10,8 @@ use rand::FromEntropy;
 use rand::Rng;
 use std::path::PathBuf;
 
+const MAX_SENTENCES_PER_ARTICLE : usize = 3;
+
 pub fn choose(
     rules: &Config,
     text: &str,
@@ -35,7 +37,7 @@ pub fn extract(file_names: &[PathBuf], language: &str) -> Result<(), String> {
         let texts = load(&file_name)?;
         for text in texts {
             let rng = SmallRng::from_entropy();
-            let mut sentences = choose(&config, &text, &data, rng, 3, checker::check);
+            let mut sentences = choose(&config, &text, &data, rng, MAX_SENTENCES_PER_ARTICLE, checker::check);
             sentences.dedup();
             for sentence in sentences {
                 println!("{}", sentence);
