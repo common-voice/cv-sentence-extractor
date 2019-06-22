@@ -18,10 +18,10 @@ pub fn load_config(language: &str) -> Config {
 
 #[derive(Debug,Deserialize)]
 pub struct Config {
-    pub min_trimmed_length: u16,
-    pub min_word_count: u16,
-    pub max_word_count: u16,
-    pub min_alphanumeric_characters: u16,
+    pub min_trimmed_length: usize,
+    pub min_word_count: usize,
+    pub max_word_count: usize,
+    pub min_alphanumeric_characters: usize,
     pub may_end_with_colon: bool,
     pub quote_start_with_alphanumeric: bool,
     pub needs_punctuation_end: bool,
