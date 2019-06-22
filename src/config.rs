@@ -11,7 +11,7 @@ pub fn load_config(language: &str) -> Config {
     let mut config_str = String::new();
     file.read_to_string(&mut config_str)
         .map_err(|e| format!("{}", e)).unwrap();
-    let config: Config = toml::from_str(&config_str).unwrap_or_default();
+    let config: Config = toml::from_str(&config_str).unwrap();
     eprintln!("Using Config {:?}", config);
     config
 }
@@ -29,7 +29,7 @@ pub struct Config {
     pub needs_alphanumeric_start: bool,
     pub disallowed_symbols: Array,
     pub broken_whitespace: Array,
-    // FIXME: add abbreviation_patterns...
+    pub abbreviation_patterns: Array,
 }
 
 impl Default for Config {
@@ -46,6 +46,7 @@ impl Default for Config {
             needs_alphanumeric_start: true,
             disallowed_symbols: vec![],
             broken_whitespace: vec![],
+            abbreviation_patterns: vec![],
         }
     }
 }
