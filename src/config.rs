@@ -10,13 +10,13 @@ pub fn load_config(language: &str) -> Config {
     let mut config_str = String::new();
     file.read_to_string(&mut config_str)
         .map_err(|e| format!("{}", e)).unwrap();
-    // FIXME: fill up with default values in case some properties are not set
     let config: Config = toml::from_str(&config_str).unwrap_or_default();
     eprintln!("Using Config {:?}", config);
     config
 }
 
 #[derive(Debug,Deserialize)]
+#[serde(default)]
 pub struct Config {
     pub min_trimmed_length: u16,
     pub min_word_count: u16,
