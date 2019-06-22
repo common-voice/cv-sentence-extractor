@@ -1,4 +1,4 @@
-use crate::languages::checker;
+use crate::checker;
 use crate::loader::load;
 use crate::config::{load_config, Config};
 use punkt::params::Standard;
