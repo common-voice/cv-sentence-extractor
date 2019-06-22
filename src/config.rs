@@ -1,6 +1,7 @@
 use serde::Deserialize;
 use std::fs::File;
 use std::io::Read;
+use toml::value::Array;
 
 pub fn load_config(language: &str) -> Config {
     let file_name = format!("./src/rules/{}.toml", language);
@@ -16,7 +17,6 @@ pub fn load_config(language: &str) -> Config {
 }
 
 #[derive(Debug,Deserialize)]
-#[serde(default)]
 pub struct Config {
     pub min_trimmed_length: u16,
     pub min_word_count: u16,
@@ -27,8 +27,8 @@ pub struct Config {
     pub needs_punctuation_end: bool,
     pub needs_uppercase_start: bool,
     pub needs_alphanumeric_start: bool,
-    pub disallowed_symbols: Vec<char>,
-    pub broken_whitespace: Vec<String>,
+    pub disallowed_symbols: Array,
+    pub broken_whitespace: Array,
     // FIXME: add abbreviation_patterns...
 }
 

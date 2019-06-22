@@ -9,4 +9,4 @@ needs_alphanumeric_start = true
 needs_uppercase_start = false
 disallowed_symbols = ['<', '>', '+', '*', '\\', '#', '@', '^', '[', ']', '(', ')', '/', '\n']
 broken_whitespace = ["  ", " ,", " .", " ?", " !", " ;"]
-abbreviation_patterns = ??????
+abbreviation_patterns = []
