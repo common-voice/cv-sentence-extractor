@@ -1,48 +1,48 @@
 use crate::config::Config;
+use toml::Value;
 use itertools::join;
 use regex::Regex;
 
 pub fn check(rules: &Config, raw: &&str) -> bool {
-    // FIXME: actually use rules here...
     let trimmed = raw.trim();
-    if trimmed.len() < 3
-        || trimmed.chars().nth(0) == Some('"')
+    if trimmed.len() < rules.min_trimmed_length
+        || rules.quote_start_with_alphanumeric
+            && trimmed.chars().nth(0) == Some('"')
             && trimmed
                 .chars()
                 .nth(1)
                 .map(|c| !c.is_alphabetic())
                 .unwrap_or_default()
-        || trimmed.ends_with(':')
+        || trimmed.chars().filter(|c| c.is_alphabetic()).count() < rules.min_alphanumeric_characters
+        || rules.needs_punctuation_end && trimmed.ends_with(|c: char| c.is_alphabetic())
+        || rules.needs_alphanumeric_start && trimmed.starts_with(|c: char| !c.is_alphabetic())
+        || rules.needs_uppercase_start && trimmed.starts_with(|c: char| c.is_lowercase())
     {
         return false;
     }
     let symbols = trimmed.chars().any(|c| {
-        [
-            '<', '>', '+', '*', '\\', '#', '@', '^', '[', ']', '(', ')', '/', '\n',
-        ]
-        .contains(&c)
+        rules.disallowed_symbols.contains(&Value::try_from(c).unwrap())
     });
     if symbols {
         return false;
     }
-    let broken_space = ["  ", " ,", " .", " ?", " !", " ;"];
-    if broken_space.iter().any(|broken| raw.contains(broken)) {
+    if rules.broken_whitespace.iter().any(|broken| raw.contains(Value::as_str(broken).unwrap())) {
         return false;
     }
     let words = trimmed.split_whitespace();
     let word_count = words.clone().count();
     let s = join(words, " ");
-    if word_count == 0 || word_count > 14 {
-        return false;
-    }
-    let numbers = s.contains(char::is_numeric);
-    if numbers {
+    if word_count < rules.min_word_count || word_count > rules.max_word_count {
         return false;
     }
     let abrv = Regex::new(r"[[:upper:]]+\.*[[:upper:]]")
         .unwrap()
         .is_match(&s);
     if abrv {
+        return false;
+    }
+    let numbers = s.contains(char::is_numeric);
+    if numbers {
         return false;
     }
     true
@@ -105,14 +105,14 @@ mod test {
             ..Default::default()
         };
 
-        assert_eq!(check(&rules, &"ens with colon:"), false);
+        assert_eq!(check(&rules, &"ends with colon:"), false);
 
         rules = Config {
             may_end_with_colon: true,
             ..Default::default()
         };
 
-        assert_eq!(check(&rules, &"ens with colon:"), true);
+        assert_eq!(check(&rules, &"ends with colon:"), true);
     }
 
     #[test]
