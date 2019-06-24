@@ -14,6 +14,11 @@ pub struct SentenceExtractor {
     text: String,
 }
 
+pub struct NextSentence {
+    pub sentence: String,
+    pub word_vectored: bool
+}
+
 impl SentenceExtractor {
     pub fn new(text: &str) -> SentenceExtractor {
         let lines: Vec<&str> = text.lines().collect();
@@ -45,9 +50,9 @@ lazy_static! {
 }
 
 impl Iterator for SentenceExtractor {
-    type Item = String;
+    type Item = NextSentence;
 
-    fn next(&mut self) -> Option<String> {
+    fn next(&mut self) -> Option<NextSentence> {
         loop {
             if self.text.len() == 0 {
                 return None;
@@ -80,6 +85,7 @@ impl Iterator for SentenceExtractor {
                 .map(|c| CHARACTER_MAP.get(&c).unwrap_or(&c).clone())
                 .collect();
 
+            let mut word_vectored = false;
             next_item = next_item
                 .chars()
                 .fold(Ok(vec![]), |vec, c| {
@@ -89,6 +95,7 @@ impl Iterator for SentenceExtractor {
                         return Ok(vec);
                     }
 
+                    word_vectored = true;
                     let mut replacements = REPLACEMENTS.lock().unwrap();
                     let replacement = replacements.entry(c).or_insert_with(|| {
                         let output = Command::new("/bin/bash")
@@ -163,7 +170,7 @@ impl Iterator for SentenceExtractor {
             if let Some(i) = end_index {
                 next_item.push(*chars.get(i).unwrap());
             }
-            return Some(next_item.trim().to_string());
+            return Some(NextSentence{sentence: next_item.trim().to_string(), word_vectored });
         }
     }
 }
