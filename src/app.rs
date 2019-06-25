@@ -60,12 +60,9 @@ fn extract(matches: &ArgMatches) -> Result<()> {
         for text in texts {
             let mut article_sentences = vec![];
             for next in SentenceExtractor::new(&text) {
-                article_sentences.push(next.sentence);
-                if next.word_vectored {
-                    word_vector_count +=1;
-                }
+                article_sentences.push(next);
             }
-            article_sentences.sort_by(|a, b| a.len().partial_cmp(&b.len()).unwrap().reverse());
+            article_sentences.sort_by(|a, b| a.sentence.len().partial_cmp(&b.sentence.len()).unwrap().reverse());
             let used_sentences = &mut article_sentences.clone()[..min(
                 max(
                     (article_sentences.len() as f32 * 0.1_f32).floor() as usize,
@@ -75,11 +72,14 @@ fn extract(matches: &ArgMatches) -> Result<()> {
             )]
                 .to_owned();
 
-            for sentence in used_sentences.clone() {
-                println!("{}", sentence);
+            for next in used_sentences.clone() {
+                println!("{}", next.sentence);
+                if next.word_vectored {
+                    word_vector_count += 1;
+                }
+                sentences.push(next.sentence);
             }
 
-            sentences.append(used_sentences);
         }
 
         eprintln!("count = {:?}", sentences.len());

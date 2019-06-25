@@ -14,6 +14,7 @@ pub struct SentenceExtractor {
     text: String,
 }
 
+#[derive(Clone)]
 pub struct NextSentence {
     pub sentence: String,
     pub word_vectored: bool
