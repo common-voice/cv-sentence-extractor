@@ -95,6 +95,7 @@ impl Iterator for SentenceExtractor {
                         vec.push(c);
                         return Ok(vec);
                     }
+                    bail!("skipped word vectoring");
 
                     word_vectored = true;
                     let mut replacements = REPLACEMENTS.lock().unwrap();
