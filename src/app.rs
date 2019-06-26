@@ -62,7 +62,13 @@ fn extract(matches: &ArgMatches) -> Result<()> {
             for next in SentenceExtractor::new(&text) {
                 article_sentences.push(next);
             }
-            article_sentences.sort_by(|a, b| a.sentence.len().partial_cmp(&b.sentence.len()).unwrap().reverse());
+            article_sentences.sort_by(|a, b| {
+                a.sentence
+                    .len()
+                    .partial_cmp(&b.sentence.len())
+                    .unwrap()
+                    .reverse()
+            });
             let used_sentences = &mut article_sentences.clone()[..min(
                 max(
                     (article_sentences.len() as f32 * 0.1_f32).floor() as usize,
@@ -79,14 +85,14 @@ fn extract(matches: &ArgMatches) -> Result<()> {
                 }
                 sentences.push(next.sentence);
             }
-
         }
 
         eprintln!("count = {:?}", sentences.len());
         eprintln!("word_vector_count = {:?}", word_vector_count);
         let characters = sentences
             .iter()
-            .fold(0, |sum, sentence| sum + sentence.chars().count()) as f64;
+            .fold(0, |sum, sentence| sum + sentence.chars().count())
+            as f64;
         let avg = characters / sentences.len() as f64;
         eprintln!("avg characters = {:?}", avg.floor());
         eprintln!(

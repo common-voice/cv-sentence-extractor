@@ -8,8 +8,8 @@ extern crate serde_derive;
 extern crate failure;
 
 pub mod app;
-mod loader;
+mod character_map;
 pub mod errors;
 mod extractor;
-mod character_map;
+mod loader;
 mod standard_characters;

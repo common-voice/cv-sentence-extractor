@@ -8,7 +8,12 @@ use crate::character_map::CHARACTER_MAP;
 use crate::errors::*;
 use crate::standard_characters::STANDARD_CHARACTERS;
 
-static PUNCTUATIONS: [char; 3] = ['。', '？', '！'];
+static TERMINAL_PUNCTUATIONS: [char; 3] = ['。', '？', '！'];
+static PUNCTUATIONS: [char; 31] = [
+    '「', '」', '﹁', '﹂', '"', '"', '、', '‧', '《', '》', '〈', '〉', '﹏', '﹏',
+    '﹏', '…', '…', '—', '—', '—', '～', '“', '”', '；', '·', '：', '‘',
+    '『', '』', '•', '─',
+];
 
 pub struct SentenceExtractor {
     text: String,
@@ -17,7 +22,7 @@ pub struct SentenceExtractor {
 #[derive(Clone)]
 pub struct NextSentence {
     pub sentence: String,
-    pub word_vectored: bool
+    pub word_vectored: bool,
 }
 
 impl SentenceExtractor {
@@ -62,7 +67,7 @@ impl Iterator for SentenceExtractor {
             let chars = self.text.chars().collect::<Vec<_>>();
             let end_index = chars
                 .iter()
-                .position(|&c| PUNCTUATIONS.contains(&c) || c == '\n');
+                .position(|&c| TERMINAL_PUNCTUATIONS.contains(&c) || c == '\n');
             let index = end_index.unwrap_or(chars.len());
             let mut next_item = chars
                 .iter()
@@ -91,11 +96,14 @@ impl Iterator for SentenceExtractor {
                 .chars()
                 .fold(Ok(vec![]), |vec, c| {
                     let mut vec = vec?.clone();
-                    if PUNCTUATIONS.contains(&c) || STANDARD_CHARACTERS.contains(&c) || c == '，' {
+                    if TERMINAL_PUNCTUATIONS.contains(&c)
+                        || PUNCTUATIONS.contains(&c)
+                        || STANDARD_CHARACTERS.contains(&c)
+                        || c == '，'
+                    {
                         vec.push(c);
                         return Ok(vec);
                     }
-                    bail!("skipped word vectoring");
 
                     word_vectored = true;
                     let mut replacements = REPLACEMENTS.lock().unwrap();
@@ -110,6 +118,8 @@ impl Iterator for SentenceExtractor {
                             .unwrap();
                         let output = String::from_utf8(output.stdout).unwrap();
 
+                        eprintln!("char = {:?}", c);
+                        eprintln!("output = {:?}", output);
                         for line in output.split('\n') {
                             // skip the delimiting lines
                             if line.contains("Query word??") {
@@ -119,19 +129,13 @@ impl Iterator for SentenceExtractor {
                             let parts = line.split(' ').collect::<Vec<&str>>();
                             let chars = parts[0];
 
-                            if chars.chars().any(|c| {
-                                !PUNCTUATIONS.contains(&c)
-                                    || !STANDARD_CHARACTERS.contains(&c)
-                                    || c != '，'
-                            }) {
+                            if chars.chars().any(|c| !STANDARD_CHARACTERS.contains(&c)) {
                                 continue;
                             }
 
                             let perc = parts[1];
-                            if perc.parse::<f32>()? > 0.8_f32 {
+                            if perc.parse::<f32>()? > 0.6_f32 {
                                 return Ok(chars.chars().collect::<Vec<char>>());
-                            } else {
-                                bail!("unlikely match");
                             }
                         }
                         bail!("no match found");
@@ -145,6 +149,10 @@ impl Iterator for SentenceExtractor {
                         }
                     }
                     Ok(vec)
+                })
+                .map_err(|e| {
+                    eprintln!("parsing e = {:?}", e);
+                    e
                 })
                 .unwrap_or(vec![])
                 .iter()
@@ -164,7 +172,7 @@ impl Iterator for SentenceExtractor {
                         + chars
                             .iter()
                             .skip(abs_end)
-                            .position(|&c| PUNCTUATIONS.contains(&c) || c == '\n')
+                            .position(|&c| TERMINAL_PUNCTUATIONS.contains(&c) || c == '\n')
                             .unwrap_or(0),
                 )
                 .collect::<String>();
@@ -172,7 +180,10 @@ impl Iterator for SentenceExtractor {
             if let Some(i) = end_index {
                 next_item.push(*chars.get(i).unwrap());
             }
-            return Some(NextSentence{sentence: next_item.trim().to_string(), word_vectored });
+            return Some(NextSentence {
+                sentence: next_item.trim().to_string(),
+                word_vectored,
+            });
         }
     }
 }

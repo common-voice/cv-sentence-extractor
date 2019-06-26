@@ -1,7 +1,7 @@
 extern crate common_voice_yotp;
 
-use std::env;
 use common_voice_yotp::errors::*;
+use std::env;
 
 use common_voice_yotp::app;
 
