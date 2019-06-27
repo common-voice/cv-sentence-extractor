@@ -6,7 +6,6 @@ use toml::value::Array;
 pub fn load_config(language: &str) -> Config {
     let file_name = format!("./src/rules/{}.toml", language);
     eprintln!("Loading config at {:?}", file_name);
-    // TODO: return default config if file not found..
     let mut file = File::open(file_name).map_err(|e| format!("{}", e)).unwrap();
     let mut config_str = String::new();
     file.read_to_string(&mut config_str)

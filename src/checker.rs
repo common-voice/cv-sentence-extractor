@@ -14,9 +14,11 @@ pub fn check(rules: &Config, raw: &&str) -> bool {
                 .map(|c| !c.is_alphabetic())
                 .unwrap_or_default()
         || trimmed.chars().filter(|c| c.is_alphabetic()).count() < rules.min_alphanumeric_characters
+        || !rules.may_end_with_colon && trimmed.ends_with(':')
         || rules.needs_punctuation_end && trimmed.ends_with(|c: char| c.is_alphabetic())
         || rules.needs_alphanumeric_start && trimmed.starts_with(|c: char| !c.is_alphabetic())
         || rules.needs_uppercase_start && trimmed.starts_with(|c: char| c.is_lowercase())
+        || trimmed.contains("\n")
     {
         return false;
     }
@@ -119,17 +121,19 @@ mod test {
     fn test_quote_start_with_alphanumeric() {
         let mut rules : Config = Config {
             quote_start_with_alphanumeric: false,
+            needs_alphanumeric_start: false,
             ..Default::default()
         };
 
-        assert_eq!(check(&rules, &"\"😊"), true);
+        assert_eq!(check(&rules, &"\"😊 foo"), true);
 
         rules = Config {
             quote_start_with_alphanumeric: true,
+            needs_alphanumeric_start: false,
             ..Default::default()
         };
 
-        assert_eq!(check(&rules, &"\"😊"), false);
+        assert_eq!(check(&rules, &"\"😊 foo"), false);
     }
 
     #[test]
@@ -227,7 +231,6 @@ mod test {
         let rules : Config = load_config("english");
 
         assert_eq!(check(&rules, &""), false);
-        assert_eq!(check(&rules, &"\"Some test"), true);
         assert_eq!(check(&rules, &"\"😊"), false);
         assert_eq!(check(&rules, &"This ends with:"), false);
         assert_eq!(check(&rules, &" AA "), false);
@@ -237,7 +240,9 @@ mod test {
         assert_eq!(check(&rules, &"This is gonna be way way way way way way way way way way too long"), false);
         assert_eq!(check(&rules, &"This is absolutely valid."), true);
         assert_eq!(check(&rules, &"This contains 1 number"), false);
+        assert_eq!(check(&rules, &"this is lowercase"), true);
         assert_eq!(check(&rules, &"foo\n\nfoo"), false);
+        assert_eq!(check(&rules, &"foo\\foo"), false);
         assert_eq!(check(&rules, &"foo<>"), false);
         assert_eq!(check(&rules, &"foo*@"), false);
         assert_eq!(check(&rules, &"A.B"), false);

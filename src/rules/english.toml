@@ -7,6 +7,6 @@ quote_start_with_alphanumeric = true
 needs_punctuation_end = false
 needs_alphanumeric_start = true
 needs_uppercase_start = false
-disallowed_symbols = ['<', '>', '+', '*', '\\', '#', '@', '^', '[', ']', '(', ')', '/', '\n']
+disallowed_symbols = ['<', '>', '+', '*', '\', '#', '@', '^', '[', ']', '(', ')', '/']
 broken_whitespace = ["  ", " ,", " .", " ?", " !", " ;"]
 abbreviation_patterns = ["[A-Z]+\\.*[A-Z]"]
