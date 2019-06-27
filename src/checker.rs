@@ -1,6 +1,5 @@
 use crate::config::Config;
 use toml::Value;
-use itertools::join;
 use regex::Regex;
 
 pub fn check(rules: &Config, raw: &&str) -> bool {
@@ -19,34 +18,37 @@ pub fn check(rules: &Config, raw: &&str) -> bool {
         || rules.needs_alphanumeric_start && trimmed.starts_with(|c: char| !c.is_alphabetic())
         || rules.needs_uppercase_start && trimmed.starts_with(|c: char| c.is_lowercase())
         || trimmed.contains("\n")
+        || trimmed.contains(char::is_numeric)
     {
         return false;
     }
+
     let symbols = trimmed.chars().any(|c| {
         rules.disallowed_symbols.contains(&Value::try_from(c).unwrap())
     });
     if symbols {
         return false;
     }
+
     if rules.broken_whitespace.iter().any(|broken| raw.contains(Value::as_str(broken).unwrap())) {
         return false;
     }
+
     let words = trimmed.split_whitespace();
     let word_count = words.clone().count();
-    let s = join(words, " ");
     if word_count < rules.min_word_count || word_count > rules.max_word_count {
         return false;
     }
-    let abrv = Regex::new(r"[[:upper:]]+\.*[[:upper:]]")
-        .unwrap()
-        .is_match(&s);
-    if abrv {
+
+    let abbr = rules.abbreviation_patterns.iter().any(|pattern| {
+        let regex = Regex::new(Value::as_str(pattern).unwrap()).unwrap();
+        eprintln!("Regex {:?}", regex);
+        regex.is_match(&trimmed)
+    });
+    if abbr {
         return false;
     }
-    let numbers = s.contains(char::is_numeric);
-    if numbers {
-        return false;
-    }
+
     true
 }
 
@@ -246,7 +248,7 @@ mod test {
         assert_eq!(check(&rules, &"foo<>"), false);
         assert_eq!(check(&rules, &"foo*@"), false);
         assert_eq!(check(&rules, &"A.B"), false);
-        assert_eq!(check(&rules, &r#""S.T.A.L.K.E.R."#), false);
+        assert_eq!(check(&rules, &"S.T.A.L.K.E.R."), false);
     }
 
     #[test]
@@ -273,8 +275,7 @@ mod test {
         assert_eq!(check(&rules, &"foo«"), false);
         assert_eq!(check(&rules, &"foo*@"), false);
         assert_eq!(check(&rules, &"A.B"), false);
-        assert_eq!(check(&rules, &"A."), false);
+        assert_eq!(check(&rules, &"S.T.A.L.K.E.R."), false);
         assert_eq!(check(&rules, &"Some sentence that ends with A."), false);
-        assert_eq!(check(&rules, &r#""S.T.A.L.K.E.R."#), false);
     }
 }
