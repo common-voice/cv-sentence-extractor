@@ -52,7 +52,6 @@ where
 fn extract(matches: &ArgMatches) -> Result<()> {
     let file_names = load_file_names(matches.value_of("dir").unwrap())?;
 
-    let mut word_vector_count = 0_i16;
     let mut sentences = vec![];
     for file_name in file_names {
         eprintln!("file_name = {:?}", file_name.to_string_lossy());
@@ -62,13 +61,7 @@ fn extract(matches: &ArgMatches) -> Result<()> {
             for next in SentenceExtractor::new(&text) {
                 article_sentences.push(next);
             }
-            article_sentences.sort_by(|a, b| {
-                a.sentence
-                    .len()
-                    .partial_cmp(&b.sentence.len())
-                    .unwrap()
-                    .reverse()
-            });
+            article_sentences.sort_by(|a, b| a.len().partial_cmp(&b.len()).unwrap().reverse());
             let used_sentences = &mut article_sentences.clone()[..min(
                 max(
                     (article_sentences.len() as f32 * 0.1_f32).floor() as usize,
@@ -78,17 +71,13 @@ fn extract(matches: &ArgMatches) -> Result<()> {
             )]
                 .to_owned();
 
-            for next in used_sentences.clone() {
-                println!("{}", next.sentence);
-                if next.word_vectored {
-                    word_vector_count += 1;
-                }
-                sentences.push(next.sentence);
+            for sentence in used_sentences.clone() {
+                println!("{}", sentence);
+                sentences.push(sentence);
             }
         }
 
         eprintln!("count = {:?}", sentences.len());
-        eprintln!("word_vector_count = {:?}", word_vector_count);
         let characters = sentences
             .iter()
             .fold(0, |sum, sentence| sum + sentence.chars().count())

@@ -1,28 +1,19 @@
-use std::collections::HashMap;
-use std::process::Command;
-use std::sync::Mutex;
-
 use regex::Regex;
 
 use crate::character_map::CHARACTER_MAP;
-use crate::errors::*;
 use crate::standard_characters::STANDARD_CHARACTERS;
 
 static TERMINAL_PUNCTUATIONS: [char; 3] = ['。', '？', '！'];
-static PUNCTUATIONS: [char; 31] = [
+static PUNCTUATIONS: [char; 62] = [
     '「', '」', '﹁', '﹂', '"', '"', '、', '‧', '《', '》', '〈', '〉', '﹏', '﹏',
     '﹏', '…', '…', '—', '—', '—', '～', '“', '”', '；', '·', '：', '‘',
-    '『', '』', '•', '─',
+    '『', '』', '•', '─', '兀', '∶', '｜', '｜', '∧', '∨', '，', '、', '．',
+    '；', '：', '？', '！', '（', '）', '｛', '｝', '［', '］', '＃', '＆', '＊',
+    '＋', '－', '＜', '＞', '＝', '＄', '％', '＠', '，',
 ];
 
 pub struct SentenceExtractor {
     text: String,
-}
-
-#[derive(Clone)]
-pub struct NextSentence {
-    pub sentence: String,
-    pub word_vectored: bool,
 }
 
 impl SentenceExtractor {
@@ -52,13 +43,12 @@ fn is_invalid(s: &str) -> bool {
 
 lazy_static! {
     static ref PARANS: Regex = Regex::new("（.*）").unwrap();
-    static ref REPLACEMENTS: Mutex<HashMap<char, Result<Vec<char>>>> = Mutex::new(HashMap::new());
 }
 
 impl Iterator for SentenceExtractor {
-    type Item = NextSentence;
+    type Item = String;
 
-    fn next(&mut self) -> Option<NextSentence> {
+    fn next(&mut self) -> Option<String> {
         loop {
             if self.text.len() == 0 {
                 return None;
@@ -82,7 +72,16 @@ impl Iterator for SentenceExtractor {
 
             next_item = PARANS.replace(&next_item, "").to_string();
 
-            if is_invalid(&next_item) {
+            let count = next_item.chars().count();
+            if is_invalid(&next_item)
+                || count < 3
+                || count > 38
+                || next_item.chars().any(|c| {
+                    !TERMINAL_PUNCTUATIONS.contains(&c)
+                        && !PUNCTUATIONS.contains(&c)
+                        && !STANDARD_CHARACTERS.contains(&c)
+                })
+            {
                 continue;
             }
 
@@ -90,78 +89,6 @@ impl Iterator for SentenceExtractor {
                 .chars()
                 .map(|c| CHARACTER_MAP.get(&c).unwrap_or(&c).clone())
                 .collect();
-
-            let mut word_vectored = false;
-            next_item = next_item
-                .chars()
-                .fold(Ok(vec![]), |vec, c| {
-                    let mut vec = vec?.clone();
-                    if TERMINAL_PUNCTUATIONS.contains(&c)
-                        || PUNCTUATIONS.contains(&c)
-                        || STANDARD_CHARACTERS.contains(&c)
-                        || c == '，'
-                    {
-                        vec.push(c);
-                        return Ok(vec);
-                    }
-
-                    word_vectored = true;
-                    let mut replacements = REPLACEMENTS.lock().unwrap();
-                    let replacement = replacements.entry(c).or_insert_with(|| {
-                        let output = Command::new("/bin/bash")
-                            .arg("-c")
-                            .arg(format!(
-                                "~/fastText/fasttext nn ~/cc.zh.300.bin <<< '{}'",
-                                c
-                            ))
-                            .output()
-                            .unwrap();
-                        let output = String::from_utf8(output.stdout).unwrap();
-
-                        eprintln!("char = {:?}", c);
-                        eprintln!("output = {:?}", output);
-                        for line in output.split('\n') {
-                            // skip the delimiting lines
-                            if line.contains("Query word??") {
-                                continue;
-                            }
-
-                            let parts = line.split(' ').collect::<Vec<&str>>();
-                            let chars = parts[0];
-
-                            if chars.chars().any(|c| !STANDARD_CHARACTERS.contains(&c)) {
-                                continue;
-                            }
-
-                            let perc = parts[1];
-                            if perc.parse::<f32>()? > 0.6_f32 {
-                                return Ok(chars.chars().collect::<Vec<char>>());
-                            }
-                        }
-                        bail!("no match found");
-                    });
-                    match replacement {
-                        Ok(replacement) => {
-                            vec.append(replacement);
-                        }
-                        _ => {
-                            bail!("not replaceable");
-                        }
-                    }
-                    Ok(vec)
-                })
-                .map_err(|e| {
-                    eprintln!("parsing e = {:?}", e);
-                    e
-                })
-                .unwrap_or(vec![])
-                .iter()
-                .collect::<String>();
-
-            let count = next_item.chars().count();
-            if count < 3 || count > 38 {
-                continue;
-            }
 
             let abs_end = index + (if end_index.is_some() { 1 } else { 0 });
             self.text = chars
@@ -180,10 +107,7 @@ impl Iterator for SentenceExtractor {
             if let Some(i) = end_index {
                 next_item.push(*chars.get(i).unwrap());
             }
-            return Some(NextSentence {
-                sentence: next_item.trim().to_string(),
-                word_vectored,
-            });
+            return Some(next_item.trim().to_string());
         }
     }
 }
