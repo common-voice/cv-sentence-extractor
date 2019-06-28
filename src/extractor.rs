@@ -71,6 +71,10 @@ impl Iterator for SentenceExtractor {
                 .collect::<String>();
 
             next_item = PARANS.replace(&next_item, "").to_string();
+            next_item = next_item
+                .chars()
+                .map(|c| CHARACTER_MAP.get(&c).unwrap_or(&c).clone())
+                .collect();
 
             let count = next_item.chars().count();
             if is_invalid(&next_item)
@@ -84,11 +88,6 @@ impl Iterator for SentenceExtractor {
             {
                 continue;
             }
-
-            next_item = next_item
-                .chars()
-                .map(|c| CHARACTER_MAP.get(&c).unwrap_or(&c).clone())
-                .collect();
 
             let abs_end = index + (if end_index.is_some() { 1 } else { 0 });
             self.text = chars
