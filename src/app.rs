@@ -12,12 +12,12 @@ where
     T: Into<OsString> + Clone,
 {
     App::new("common-voice-yotp")
-        .about("extract wiki dumps in simplified Chinese")
+        .about("Common Voice Sentence Extraction Helper")
         .version(VERSION)
         .author("Florian Merz <flomerz@gmail.com>")
         .subcommand(
             SubCommand::with_name("extract")
-                .about("tempalte stuff like helm template does")
+                .about("Extract sentences from Wikipedia dump extracts using WikiExtractor")
                 .arg(
                     Arg::with_name("language")
                         .short("l")
@@ -32,7 +32,7 @@ where
                         .long("dir")
                         .takes_value(true)
                         .number_of_values(1)
-                        .help("input dir to glob"),
+                        .help("path to WikiExtractor folder"),
                 ),
         )
         .get_matches_from(itr)
