@@ -2,19 +2,39 @@
 
 ## Dependencies
 
-- Rust
-- [WikiExtractor](https://github.com/attardi/wikiextractor)
+- [Rust Nightly](https://rustup.rs/) (follow the instructions and customize the install to select nightly channel)
+
+We need to download the wikiextractor and this script
+```
+git clone https://github.com/attardi/wikiextractor.git
+git clone https://github.com/Common-Voice/common-voice-wiki-scraper.git
+```
 
 ## Usage
 
-1. Download the wikipedia dataset backup dump from https://download.wikimedia.org/
-2. Use WikiExtractor to extract a dump (use the `--json` flag)
+1. Download the latest wikipedia dataset [backup dump from Wikimedia](https://dumps.wikimedia.org/backup-index-bydb.html), select the one with `pages-articles-multistream` in its name.
+
+Example (you can change "en" to your locale code)
 
 ```bash
-cargo run -- extract -l english -d <WIKI_EXTRACTOR_OUT_DIR>
+wget https://dumps.wikimedia.org/enwiki/latest/enwiki-latest-pages-articles-multistream.xml.bz2
+tar -xzf enwiki-latest-pages-articles-multistream.xml.bz2
 ```
 
-## Rules
+2. Use WikiExtractor to extract a dump
+
+```bash
+cd wikiextractor
+python WikiExtractor.py --json ../enwiki-latest-pages-articles-multistream.xml
+```
+
+3. Scrap the sentences into a new file.
+```bash
+cd ../common-voice-wiki-scraper
+cargo run -- extract -l english -d <WIKI_EXTRACTOR_OUT_DIR> >> wiki.en.txt
+```
+
+## Using language rules
 
 We can only extract at most 3 sentences per article.
 
