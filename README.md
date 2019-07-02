@@ -18,7 +18,7 @@ Example (you can change "en" to your locale code)
 
 ```bash
 wget https://dumps.wikimedia.org/enwiki/latest/enwiki-latest-pages-articles-multistream.xml.bz2
-tar -xzf enwiki-latest-pages-articles-multistream.xml.bz2
+bzip2 -d enwiki-latest-pages-articles-multistream.xml.bz2
 ```
 
 2. Use WikiExtractor to extract a dump
