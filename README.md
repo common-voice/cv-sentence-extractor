@@ -18,7 +18,7 @@ cargo run -- extract -l english -d <WIKI_EXTRACTOR_OUT_DIR>
 
 We can only extract at most 3 sentences per article.
 
-The following rules can be configured per language. Add a `<language>.tom` file in the `rules` directory to enable a new locale.
+The following rules can be configured per language. Add a `<language>.toml` file in the `rules` directory to enable a new locale.
 
 | Name   |      Description      |  Values | Default |
 |--------|-----------------------|---------|---------|
