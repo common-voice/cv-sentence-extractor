@@ -28,10 +28,10 @@ cd wikiextractor
 python WikiExtractor.py --json ../enwiki-latest-pages-articles-multistream.xml
 ```
 
-3. Scrap the sentences into a new file.
+3. Scrap the sentences into a new file from the WikiExtractor output dir.
 ```bash
 cd ../common-voice-wiki-scraper
-cargo run -- extract -l english -d <WIKI_EXTRACTOR_OUT_DIR> >> wiki.en.txt
+cargo run -- extract -l english -d ../wikiextractor/text/ >> wiki.en.txt
 ```
 
 ## Using language rules
