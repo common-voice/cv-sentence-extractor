@@ -42,7 +42,6 @@ pub fn check(rules: &Config, raw: &&str) -> bool {
 
     let abbr = rules.abbreviation_patterns.iter().any(|pattern| {
         let regex = Regex::new(Value::as_str(pattern).unwrap()).unwrap();
-        eprintln!("Regex {:?}", regex);
         regex.is_match(&trimmed)
     });
     if abbr {
