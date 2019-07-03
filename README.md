@@ -43,16 +43,16 @@ The following rules can be configured per language. Add a `<language>.toml` file
 | Name   |      Description      |  Values | Default |
 |--------|-----------------------|---------|---------|
 | min_trimmed_length |  Minimum length of string after trimming | integer | 3
-| min_alphanumeric_characters |  Minimum of alphanumeric character occurances | integer | 0
+| min_characters |  Minimum of character occurances | integer | 0
 | may_end_with_colon |  If a sentence can end with a : or not | boolean | false
-| quote_start_with_alphanumeric |  If a quote needs to start with an alphanumeric | boolean | true
+| quote_start_with_letter |  If a quote needs to start with a letter | boolean | true
 | disallowed_symbols |  Array of disallowed symbols or letters | String Array | all symbols allowed
 | broken_whitespace |  Array of broken whitespaces. This could for example disallow two spaces following eachother | String Array | all types of whitespaces allowed
 | min_word_count |  Minimum number of words in a sentence | integer | 1
 | max_word_count |  Maximum number of words in a sentence | integer | 14
 | abbreviation_patterns |  Rust regex to match against | Rust Regex Array | all abbreviations allowed
 | needs_punctuation_end |  If a sentence needs to end with a punctuation | boolean | false
-| needs_alphanumeric_start |  If a sentence needs to start with an alphanumeric | boolean | true
+| needs_letter_start |  If a sentence needs to start with a letter | boolean | true
 | needs_uppercase_start |  If a sentence needs to start with an uppercase | boolean | false
 
 
