@@ -5,17 +5,17 @@ use regex::Regex;
 pub fn check(rules: &Config, raw: &&str) -> bool {
     let trimmed = raw.trim();
     if trimmed.len() < rules.min_trimmed_length
-        || rules.quote_start_with_alphanumeric
+        || rules.quote_start_with_letter
             && trimmed.chars().nth(0) == Some('"')
             && trimmed
                 .chars()
                 .nth(1)
                 .map(|c| !c.is_alphabetic())
                 .unwrap_or_default()
-        || trimmed.chars().filter(|c| c.is_alphabetic()).count() < rules.min_alphanumeric_characters
+        || trimmed.chars().filter(|c| c.is_alphabetic()).count() < rules.min_characters
         || !rules.may_end_with_colon && trimmed.ends_with(':')
         || rules.needs_punctuation_end && trimmed.ends_with(|c: char| c.is_alphabetic())
-        || rules.needs_alphanumeric_start && trimmed.starts_with(|c: char| !c.is_alphabetic())
+        || rules.needs_letter_start && trimmed.starts_with(|c: char| !c.is_alphabetic())
         || rules.needs_uppercase_start && trimmed.starts_with(|c: char| c.is_lowercase())
         || trimmed.contains("\n")
         || trimmed.contains(char::is_numeric)
@@ -91,9 +91,9 @@ mod test {
     }
 
     #[test]
-    fn test_min_alphanumeric_characters() {
+    fn test_min_characters() {
         let rules : Config = Config {
-            min_alphanumeric_characters: 3,
+            min_characters: 3,
             ..Default::default()
         };
 
@@ -119,18 +119,18 @@ mod test {
     }
 
     #[test]
-    fn test_quote_start_with_alphanumeric() {
+    fn test_quote_start_with_letter() {
         let mut rules : Config = Config {
-            quote_start_with_alphanumeric: false,
-            needs_alphanumeric_start: false,
+            quote_start_with_letter: false,
+            needs_letter_start: false,
             ..Default::default()
         };
 
         assert_eq!(check(&rules, &"\"😊 foo"), true);
 
         rules = Config {
-            quote_start_with_alphanumeric: true,
-            needs_alphanumeric_start: false,
+            quote_start_with_letter: true,
+            needs_letter_start: false,
             ..Default::default()
         };
 
@@ -157,9 +157,9 @@ mod test {
     }
 
     #[test]
-    fn test_needs_alphanumeric_start() {
+    fn test_needs_letter_start() {
         let mut rules : Config = Config {
-            needs_alphanumeric_start: false,
+            needs_letter_start: false,
             ..Default::default()
         };
 
@@ -167,7 +167,7 @@ mod test {
         assert_eq!(check(&rules, &"This has a normal start"), true);
 
         rules = Config {
-            needs_alphanumeric_start: true,
+            needs_letter_start: true,
             ..Default::default()
         };
 
@@ -258,7 +258,7 @@ mod test {
         assert_eq!(check(&rules, &"\"😊"), false);
         assert_eq!(check(&rules, &"This ends with:"), false);
         assert_eq!(check(&rules, &"This does not end with a period"), false);
-        assert_eq!(check(&rules, &"?This does not start with a alphanumeric letter"), false);
+        assert_eq!(check(&rules, &"?This does not start with a letter"), false);
         assert_eq!(check(&rules, &"this starts with lowercase"), false);
         assert_eq!(check(&rules, &" AA "), false);
         assert_eq!(check(&rules, &"This has broken  space"), false);
