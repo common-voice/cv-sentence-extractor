@@ -9,4 +9,4 @@ needs_letter_start = true
 needs_uppercase_start = false
 disallowed_symbols = ['<', '>', '+', '*', '\', '#', '@', '^', '[', ']', '(', ')', '/']
 broken_whitespace = ["  ", " ,", " .", " ?", " !", " ;"]
-abbreviation_patterns = ["[A-Z]+\\.*[A-Z]"]
+abbreviation_patterns = ["[A-Z]+\\.*[A-Z]", "[A-Z]\\.$"]
