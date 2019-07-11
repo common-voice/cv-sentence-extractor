@@ -277,4 +277,25 @@ mod test {
         assert_eq!(check(&rules, &"S.T.A.L.K.E.R."), false);
         assert_eq!(check(&rules, &"Some sentence that ends with A."), false);
     }
+
+    #[test]
+    fn test_german() {
+        let rules : Config = load_config("german");
+
+        assert_eq!(check(&rules, &"Dies ist ein korrekter Satz."), true);
+        assert_eq!(check(&rules, &"Satzzeichen in der Mitte. Wird nicht akzeptiert."), false);
+        assert_eq!(check(&rules, &"Satzzeichen in der Mitte? Wird nicht akzeptiert."), false);
+        assert_eq!(check(&rules, &"Satzzeichen in der Mitte! Wird nicht akzeptiert."), false);
+        assert_eq!(check(&rules, &"Französische Satzzeichen werden ignorierté."), false);
+        assert_eq!(check(&rules, &"Andere Satzzeichen wie Åblabla werden auch ignoriert."), false);
+        assert_eq!(check(&rules, &"Γεια σας"), false);
+        assert_eq!(check(&rules, &"Sätze dürfen keine Wörter mit nur einem B Buchstaben haben."), false);
+        assert_eq!(check(&rules, &"A auch nicht am Anfang."), false);
+        assert_eq!(check(&rules, &"Oder am Ende e."), false);
+        assert_eq!(check(&rules, &"Oder am Ende e."), false);
+        assert_eq!(check(&rules, &"AmSi ist eine schwarze Masse, isomorph mit LaSi"), false);
+        assert_eq!(check(&rules, &"Die Aussperrung ist nach Art."), false);
+        assert_eq!(check(&rules, &"Remy & Co."), false);
+        assert_eq!(check(&rules, &"Es ist die sog."), false);
+    }
 }
