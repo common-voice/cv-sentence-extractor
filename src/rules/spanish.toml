@@ -7,6 +7,12 @@ quote_start_with_letter = true
 needs_punctuation_end = true
 needs_letter_start = true
 needs_uppercase_start = true
-disallowed_symbols = ['"', '<', '>', '+', '*', '\\', '#', '@', '^', '[', ']', '(', ')', '/', '«', '»',]
+disallowed_symbols = [
+  '<', '>', '+', '*', '\', '#', '@', '^', '[', ']', '(', ')', '/',
+  'é', 'è', 'à', 'ç', 'Å',
+  'α', 'β', 'Γ', 'γ', 'Δ', 'δ', 'ε', 'ζ', 'η', 'Θ', 'θ', 'ι', 'κ',
+  'Λ', 'λ', 'μ', 'ν', 'Ξ', 'ξ', 'Π', 'π', 'ρ', 'Σ', 'σ', 'ς', 'τ',
+  'υ', 'Φ', 'φ', 'χ', 'Ψ', 'ψ', 'Ω', 'ω',
+]
 broken_whitespace = ["  ", " ,", " .", " ?", " !", " ;", ", ',", " :","¿ ","¡ "]
 abbreviation_patterns = ["[A-Z]+\\.*[A-Z]", "[A-Z]\\.$"]
