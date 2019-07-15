@@ -7,19 +7,27 @@ quote_start_with_letter = true
 needs_punctuation_end = false
 needs_letter_start = true
 needs_uppercase_start = true
-disallowed_symbols = ['<', '>', '+', '*', '\', '#', '@', '^', '[', ']', '(', ')', '/', 'μ']
+disallowed_symbols = [
+  '<', '>', '+', '*', '\', '#', '@', '^', '[', ']', '(', ')', '/',
+  'é', 'è', 'à', 'ç', 'Å',
+  'α', 'β', 'Γ', 'γ', 'Δ', 'δ', 'ε', 'ζ', 'η', 'Θ', 'θ', 'ι', 'κ',
+  'Λ', 'λ', 'μ', 'ν', 'Ξ', 'ξ', 'Π', 'π', 'ρ', 'Σ', 'σ', 'ς', 'τ',
+  'υ', 'Φ', 'φ', 'χ', 'Ψ', 'ψ', 'Ω', 'ω',
+]
 broken_whitespace = ["  ", " ,", " .", " ?", " !", " ;"]
 
-# Abbreviation examples for each regex:
+# Abbreviation examples for each regex, also cheating a bit and adding more regex which has nothing to do with abbreviations:
 #   - A.B oder z.B.
-#   - Satzbeginn mit "B. ..."
-#   - Satzende mit nur einem Buchstaben am Ende "... z."
 #   - Jahrhundert an Satzbeginn (umgeht Fehler mit WikiExtractor wie z.B. "Im 3. Jahrhundert begann ..." was zu 2 unvollständigen Sätzen führt)
-#   - bzw. / ca. / gem. / v. Chr. / n. Chr.
+#   - bzw. / ca. / gem. / v. Chr. / n. Chr. / sog. / Co. (Remy & Co.) / Art. (Art. drei des Bundesgesetzes)
+#   - Satzzeichen nur am Ende
+#   - Keine Wörter mit nur einem Buchstaben (" a.", " a", " a ", "a ")
+#   - Gross-/Kleinschreibung gemixt in Wort (LaSi - vorallem chemische Elemente?)
 abbreviation_patterns = [
   "[A-Z]+\\.*[A-Z]",
-  "^[A-Za-z]{1}\\.",
-  "\\s[A-Za-z]{1}\\.$",
   "^Jahrhundert",
-  "bzw\\.|ca\\.|gem\\.|[v|n]\\.\\sChr\\.",
+  "bzw\\.|ca\\.|gem\\.|[v|n]\\.\\sChr\\.|sog\\.|Co\\.|Art\\.",
+  "[\\.|\\?|!].+$",
+  "(\\s[A-Za-z]{1}[\\.|\\?|!]*$)|(^[A-Za-z]{1}\\s)|\\s[A-Za-z]{1}\\s",
+  "[a-z][A-Z][a-z]",
 ]
