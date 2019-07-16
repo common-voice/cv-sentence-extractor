@@ -36,7 +36,10 @@ pub fn check(rules: &Config, raw: &&str) -> bool {
 
     let words = trimmed.split_whitespace();
     let word_count = words.clone().count();
-    if word_count < rules.min_word_count || word_count > rules.max_word_count {
+    if word_count < rules.min_word_count
+        || word_count > rules.max_word_count
+        || words.into_iter().any(|word| rules.disallowed_words.contains(&Value::from(word)))
+    {
         return false;
     }
 
@@ -204,6 +207,18 @@ mod test {
         assert_eq!(check(&rules, &"This has no percentage but other & characters"), true);
         assert_eq!(check(&rules, &"This has a %"), false);
     }
+
+    #[test]
+    fn test_disallowed_words() {
+        let rules : Config = Config {
+            disallowed_words: vec![Value::try_from("blerg").unwrap()],
+            ..Default::default()
+        };
+
+        assert_eq!(check(&rules, &"This has blerg"), false);
+        assert_eq!(check(&rules, &"This hasn't bl e r g"), true);
+    }
+
 
     #[test]
     fn test_broken_whitespace() {

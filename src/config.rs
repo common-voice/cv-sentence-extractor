@@ -27,6 +27,7 @@ pub struct Config {
     pub needs_uppercase_start: bool,
     pub needs_letter_start: bool,
     pub disallowed_symbols: Array,
+    pub disallowed_words: Array,
     pub broken_whitespace: Array,
     pub abbreviation_patterns: Array,
 }
@@ -44,6 +45,7 @@ impl Default for Config {
             needs_uppercase_start: false,
             needs_letter_start: true,
             disallowed_symbols: vec![],
+            disallowed_words: vec![],
             broken_whitespace: vec![],
             abbreviation_patterns: vec![],
         }
