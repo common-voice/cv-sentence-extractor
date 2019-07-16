@@ -17,12 +17,12 @@ disallowed_symbols = [
 broken_whitespace = ["  ", " ,", " .", " ?", " !", " ;"]
 
 # Abbreviation examples for each regex, also cheating a bit and adding more regex which has nothing to do with abbreviations:
-#   - A.B oder z.B.
-#   - Jahrhundert an Satzbeginn (umgeht Fehler mit WikiExtractor wie z.B. "Im 3. Jahrhundert begann ..." was zu 2 unvollständigen Sätzen führt)
+#   - A.B or z.B.
+#   - Jahrhundert at the beginning of the sentence (circumvents wrongly splitted sentences from WikiExtractor such as "Im 3. Jahrhundert begann ..." leading to two incomplete sentences)
 #   - bzw. / ca. / gem. / v. Chr. / n. Chr. / sog. / Co. (Remy & Co.) / Art. (Art. drei des Bundesgesetzes)
-#   - Satzzeichen nur am Ende
-#   - Keine Wörter mit nur einem Buchstaben (" a.", " a", " a ", "a ")
-#   - Gross-/Kleinschreibung gemixt in Wort (LaSi - vorallem chemische Elemente?)
+#   - Sentence delimiter can only be at the end of a sentence
+#   - No words with only one letter (" a.", " a", " a ", "a ")
+#   - Mixed upper/lowercase in words (LaSi - mostly chemical elements?)
 abbreviation_patterns = [
   "[A-Z]+\\.*[A-Z]",
   "^Jahrhundert",
