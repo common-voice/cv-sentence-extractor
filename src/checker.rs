@@ -38,7 +38,9 @@ pub fn check(rules: &Config, raw: &&str) -> bool {
     let word_count = words.clone().count();
     if word_count < rules.min_word_count
         || word_count > rules.max_word_count
-        || words.into_iter().any(|word| rules.disallowed_words.contains(&word.to_lowercase()))
+        || words.into_iter().any(|word| rules.disallowed_words.contains(
+             &word.trim_matches(|c: char| !c.is_alphabetic()).to_lowercase()
+           ))
     {
         return false;
     }
@@ -218,6 +220,7 @@ mod test {
         assert_eq!(check(&rules, &"This has blerg"), false);
         assert_eq!(check(&rules, &"This has a capital bLeRg"), false);
         assert_eq!(check(&rules, &"This has many blergs blerg blerg blerg"), false);
+        assert_eq!(check(&rules, &"Here is a blerg, with comma"), false);
         assert_eq!(check(&rules, &"This hasn't bl e r g"), true);
     }
 
