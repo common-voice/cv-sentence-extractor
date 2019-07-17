@@ -21,7 +21,10 @@ pub fn load_config(language: &str) -> Config {
         let mut words_str = String::new();
         file.read_to_string(&mut words_str)
             .map_err(|e| format!("{}", e)).unwrap();
-        config.disallowed_words = words_str.split('\n').map(|s| s.to_lowercase()).collect();
+        config.disallowed_words = words_str
+            .split('\n')
+            .map(|s| s.trim_matches(|c: char| !c.is_alphabetic()).to_lowercase())
+            .collect();
     }
 
     config
