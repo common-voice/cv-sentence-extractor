@@ -38,7 +38,7 @@ pub fn check(rules: &Config, raw: &&str) -> bool {
     let word_count = words.clone().count();
     if word_count < rules.min_word_count
         || word_count > rules.max_word_count
-        || words.into_iter().any(|word| rules.disallowed_words.contains(&Value::from(word)))
+        || words.into_iter().any(|word| rules.disallowed_words.contains(&word.to_lowercase()))
     {
         return false;
     }
@@ -211,11 +211,13 @@ mod test {
     #[test]
     fn test_disallowed_words() {
         let rules : Config = Config {
-            disallowed_words: vec![Value::try_from("blerg").unwrap()],
+            disallowed_words: ["blerg"].iter().map(|s| s.to_string()).collect(),
             ..Default::default()
         };
 
         assert_eq!(check(&rules, &"This has blerg"), false);
+        assert_eq!(check(&rules, &"This has a capital bLeRg"), false);
+        assert_eq!(check(&rules, &"This has many blergs blerg blerg blerg"), false);
         assert_eq!(check(&rules, &"This hasn't bl e r g"), true);
     }
 
@@ -312,5 +314,6 @@ mod test {
         assert_eq!(check(&rules, &"Die Aussperrung ist nach Art."), false);
         assert_eq!(check(&rules, &"Remy & Co."), false);
         assert_eq!(check(&rules, &"Es ist die sog."), false);
+        assert_eq!(check(&rules, &"ambiguous ist kein deutsches Wort."), false);
     }
 }
