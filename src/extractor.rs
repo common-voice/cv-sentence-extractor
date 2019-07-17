@@ -19,15 +19,23 @@ pub fn choose(
     mut rng: impl Rng,
     amount: usize,
     mut predicate: impl FnMut(&Config, &&str) -> bool,
+    no_check: bool
 ) -> Vec<String> {
-    SentenceTokenizer::<Standard>::new(text, data)
-        .filter(|item| { predicate(rules, item) })
-        .map(str::trim)
-        .map(String::from)
-        .choose_multiple(&mut rng, amount)
+    if no_check {
+        SentenceTokenizer::<Standard>::new(text, data)
+            .map(str::trim)
+            .map(String::from)
+            .collect()
+    } else {
+        SentenceTokenizer::<Standard>::new(text, data)
+            .filter(|item| { predicate(rules, item) })
+            .map(str::trim)
+            .map(String::from)
+            .choose_multiple(&mut rng, amount)
+    }
 }
 
-pub fn extract(file_names: &[PathBuf], language: &str) -> Result<(), String> {
+pub fn extract(file_names: &[PathBuf], language: &str, no_check: bool) -> Result<(), String> {
     let config = load_config(&language);
     let data = get_training_data(language);
     let mut char_count = 0;
@@ -37,7 +45,15 @@ pub fn extract(file_names: &[PathBuf], language: &str) -> Result<(), String> {
         let texts = load(&file_name)?;
         for text in texts {
             let rng = SmallRng::from_entropy();
-            let mut sentences = choose(&config, &text, &data, rng, MAX_SENTENCES_PER_ARTICLE, checker::check);
+            let mut sentences = choose(
+                &config,
+                &text,
+                &data,
+                rng,
+                MAX_SENTENCES_PER_ARTICLE,
+                checker::check,
+                no_check
+            );
             sentences.dedup();
             for sentence in sentences {
                 println!("{}", sentence);

@@ -33,6 +33,13 @@ where
                         .takes_value(true)
                         .number_of_values(1)
                         .help("path to WikiExtractor folder"),
+                )
+                .arg(
+                    Arg::with_name("no_check")
+                        .short("n")
+                        .long("no_check")
+                        .takes_value(false)
+                        .help("output all the sentences")
                 ),
         )
         .get_matches_from(itr)
@@ -51,5 +58,5 @@ where
     let file_names = load_file_names(&matches.value_of("dir").unwrap_or_default())?;
     let language = &matches.value_of("language").unwrap_or_else(|| "english");
 
-    extract(&file_names, language)
+    extract(&file_names, language, matches.is_present("no_check"))
 }
