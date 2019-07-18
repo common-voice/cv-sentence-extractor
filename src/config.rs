@@ -23,16 +23,19 @@ pub fn load_config(language: &str) -> Config {
         let mut words_str = String::new();
         file.read_to_string(&mut words_str)
             .map_err(|e| format!("{}", e)).unwrap();
-        config.disallowed_words = words_str
+        config.disallowed_words.extend::<HashSet<String>>(
+            words_str
             .split('\n')
             .map(|s| s.trim().to_lowercase())
-            .collect();
+            .collect()
+        );
     }
 
     config
 }
 
 #[derive(Debug,Deserialize)]
+#[serde(default)]
 pub struct Config {
     pub min_trimmed_length: usize,
     pub min_word_count: usize,
