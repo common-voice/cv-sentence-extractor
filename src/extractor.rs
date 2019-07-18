@@ -71,6 +71,6 @@ fn get_training_data(language: &str) -> TrainingData {
         "swedish" => TrainingData::swedish(),
         "turkish" => TrainingData::turkish(),
         _ => TrainingData::english(),
-    }
+    };
     training_data
 }
