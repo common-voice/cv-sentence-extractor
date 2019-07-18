@@ -222,6 +222,12 @@ mod test {
         assert_eq!(check(&rules, &"This has many blergs blerg blerg blerg"), false);
         assert_eq!(check(&rules, &"Here is a blerg, with comma"), false);
         assert_eq!(check(&rules, &"This hasn't bl e r g"), true);
+
+        let rules : Config = Config {
+            disallowed_words: ["a's"].iter().map(|s| s.to_string()).collect(),
+            ..Default::default()
+        };
+        assert_eq!(check(&rules, &"This has a's"), false);
     }
 
 

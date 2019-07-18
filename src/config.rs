@@ -25,7 +25,7 @@ pub fn load_config(language: &str) -> Config {
             .map_err(|e| format!("{}", e)).unwrap();
         config.disallowed_words = words_str
             .split('\n')
-            .map(|s| s.trim_matches(|c: char| !c.is_alphabetic()).to_lowercase())
+            .map(|s| s.trim().to_lowercase())
             .collect();
     }
 
