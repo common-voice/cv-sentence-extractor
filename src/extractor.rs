@@ -52,7 +52,7 @@ pub fn extract(file_names: &[PathBuf], language: &str) -> Result<(), String> {
 }
 
 fn get_training_data(language: &str) -> TrainingData {
-    match language {
+    let training_data = match language {
         "english" => TrainingData::english(),
         "czech" => TrainingData::czech(),
         "danish" => TrainingData::danish(),
@@ -72,4 +72,5 @@ fn get_training_data(language: &str) -> TrainingData {
         "turkish" => TrainingData::turkish(),
         _ => TrainingData::english(),
     }
+    training_data
 }

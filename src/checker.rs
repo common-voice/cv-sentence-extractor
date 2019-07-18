@@ -17,7 +17,7 @@ pub fn check(rules: &Config, raw: &&str) -> bool {
         || rules.needs_punctuation_end && trimmed.ends_with(|c: char| c.is_alphabetic())
         || rules.needs_letter_start && trimmed.starts_with(|c: char| !c.is_alphabetic())
         || rules.needs_uppercase_start && trimmed.starts_with(|c: char| c.is_lowercase())
-        || trimmed.contains('\n')
+        || trimmed.contains("\n")
         || trimmed.contains(char::is_numeric)
     {
         return false;
