@@ -15,4 +15,5 @@ disallowed_symbols = [
   'υ', 'Φ', 'φ', 'χ', 'Ψ', 'ψ', 'Ω', 'ω', '©'
 ]
 broken_whitespace = ["  ", " ,", " .", " ?", " !", " ;"]
+disallowed_words = []
 abbreviation_patterns = ["[A-Z]+\\.*[A-Z]", "[A-Z]\\.$", "[A-Za-z]+\\.+[A-Za-z]+\\.*", "\"\""]
