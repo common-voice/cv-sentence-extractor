@@ -15,22 +15,27 @@ pub fn load_config(language: &str) -> Config {
     let mut config: Config = toml::from_str(&config_str).unwrap();
     eprintln!("Using Config {:?}", config);
 
-    let disallowed_file_name = format!("./src/rules/disallowed_words/{}.toml", language);
-    if Path::new(&disallowed_file_name).exists() {
+    let disallowed_file_name = format!("./src/rules/disallowed_words/{}.txt", language);
+    let list_exists = Path::new(&disallowed_file_name).exists();
+    eprintln!("Using disallowed_word_file = {:?}", list_exists);
+    if list_exists {
         let mut file = File::open(disallowed_file_name).map_err(|e| format!("{}", e)).unwrap();
         let mut words_str = String::new();
         file.read_to_string(&mut words_str)
             .map_err(|e| format!("{}", e)).unwrap();
-        config.disallowed_words = words_str
+        config.disallowed_words.extend::<HashSet<String>>(
+            words_str
             .split('\n')
-            .map(|s| s.trim_matches(|c: char| !c.is_alphabetic()).to_lowercase())
-            .collect();
+            .map(|s| s.trim().to_lowercase())
+            .collect()
+        );
     }
 
     config
 }
 
 #[derive(Debug,Deserialize)]
+#[serde(default)]
 pub struct Config {
     pub min_trimmed_length: usize,
     pub min_word_count: usize,
