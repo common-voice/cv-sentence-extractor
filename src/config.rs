@@ -15,8 +15,10 @@ pub fn load_config(language: &str) -> Config {
     let mut config: Config = toml::from_str(&config_str).unwrap();
     eprintln!("Using Config {:?}", config);
 
-    let disallowed_file_name = format!("./src/rules/disallowed_words/{}.toml", language);
-    if Path::new(&disallowed_file_name).exists() {
+    let disallowed_file_name = format!("./src/rules/disallowed_words/{}.txt", language);
+    let list_exists = Path::new(&disallowed_file_name).exists();
+    eprintln!("Using disallowed_word_file = {:?}", list_exists);
+    if list_exists {
         let mut file = File::open(disallowed_file_name).map_err(|e| format!("{}", e)).unwrap();
         let mut words_str = String::new();
         file.read_to_string(&mut words_str)
