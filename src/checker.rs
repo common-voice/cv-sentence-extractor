@@ -36,7 +36,12 @@ pub fn check(rules: &Config, raw: &&str) -> bool {
 
     let words = trimmed.split_whitespace();
     let word_count = words.clone().count();
-    if word_count < rules.min_word_count || word_count > rules.max_word_count {
+    if word_count < rules.min_word_count
+        || word_count > rules.max_word_count
+        || words.into_iter().any(|word| rules.disallowed_words.contains(
+             &word.trim_matches(|c: char| !c.is_alphabetic()).to_lowercase()
+           ))
+    {
         return false;
     }
 
@@ -206,6 +211,27 @@ mod test {
     }
 
     #[test]
+    fn test_disallowed_words() {
+        let rules : Config = Config {
+            disallowed_words: ["blerg"].iter().map(|s| s.to_string()).collect(),
+            ..Default::default()
+        };
+
+        assert_eq!(check(&rules, &"This has blerg"), false);
+        assert_eq!(check(&rules, &"This has a capital bLeRg"), false);
+        assert_eq!(check(&rules, &"This has many blergs blerg blerg blerg"), false);
+        assert_eq!(check(&rules, &"Here is a blerg, with comma"), false);
+        assert_eq!(check(&rules, &"This hasn't bl e r g"), true);
+
+        let rules : Config = Config {
+            disallowed_words: ["a's"].iter().map(|s| s.to_string()).collect(),
+            ..Default::default()
+        };
+        assert_eq!(check(&rules, &"This has a's"), false);
+    }
+
+
+    #[test]
     fn test_broken_whitespace() {
         let rules : Config = Config {
             broken_whitespace: vec![Value::try_from("  ").unwrap()],
@@ -297,5 +323,6 @@ mod test {
         assert_eq!(check(&rules, &"Die Aussperrung ist nach Art."), false);
         assert_eq!(check(&rules, &"Remy & Co."), false);
         assert_eq!(check(&rules, &"Es ist die sog."), false);
+        assert_eq!(check(&rules, &"Kein deutsche Wort: ambiguous."), false);
     }
 }

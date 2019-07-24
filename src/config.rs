@@ -2,6 +2,8 @@ use serde::Deserialize;
 use std::fs::File;
 use std::io::Read;
 use toml::value::Array;
+use std::collections::HashSet;
+use std::path::Path;
 
 pub fn load_config(language: &str) -> Config {
     let file_name = format!("./src/rules/{}.toml", language);
@@ -10,12 +12,30 @@ pub fn load_config(language: &str) -> Config {
     let mut config_str = String::new();
     file.read_to_string(&mut config_str)
         .map_err(|e| format!("{}", e)).unwrap();
-    let config: Config = toml::from_str(&config_str).unwrap();
+    let mut config: Config = toml::from_str(&config_str).unwrap();
     eprintln!("Using Config {:?}", config);
+
+    let disallowed_file_name = format!("./src/rules/disallowed_words/{}.txt", language);
+    let list_exists = Path::new(&disallowed_file_name).exists();
+    eprintln!("Using disallowed_word_file = {:?}", list_exists);
+    if list_exists {
+        let mut file = File::open(disallowed_file_name).map_err(|e| format!("{}", e)).unwrap();
+        let mut words_str = String::new();
+        file.read_to_string(&mut words_str)
+            .map_err(|e| format!("{}", e)).unwrap();
+        config.disallowed_words.extend::<HashSet<String>>(
+            words_str
+            .split('\n')
+            .map(|s| s.trim().to_lowercase())
+            .collect()
+        );
+    }
+
     config
 }
 
 #[derive(Debug,Deserialize)]
+#[serde(default)]
 pub struct Config {
     pub min_trimmed_length: usize,
     pub min_word_count: usize,
@@ -27,6 +47,7 @@ pub struct Config {
     pub needs_uppercase_start: bool,
     pub needs_letter_start: bool,
     pub disallowed_symbols: Array,
+    pub disallowed_words: HashSet<String>,
     pub broken_whitespace: Array,
     pub abbreviation_patterns: Array,
 }
@@ -44,6 +65,7 @@ impl Default for Config {
             needs_uppercase_start: false,
             needs_letter_start: true,
             disallowed_symbols: vec![],
+            disallowed_words: HashSet::new(),
             broken_whitespace: vec![],
             abbreviation_patterns: vec![],
         }
