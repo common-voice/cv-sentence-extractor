@@ -74,7 +74,7 @@ After running step 1 and 2 from the Usage section above, run:
 
 ```bash
 cd ../common-voice-wiki-scraper
-cargo run -- extract ../wikiextractor/text/ --no-check >> wiki.en.all.txt
+cargo run -- extract -d ../wikiextractor/text/ --no_check >> wiki.en.all.txt
 ```
 
 Then you can use the cvtools scripts to generate a list of the word frequency
