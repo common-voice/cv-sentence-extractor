@@ -24,7 +24,7 @@ abbreviation_patterns = [
   "[A-Z][A-Z]+",
   "\bI\b",
   "[ad]C",
-  "\bex\."
+  "\bex\.",
   "\..",
   ";$",
   #some of the most duplicated sentences
