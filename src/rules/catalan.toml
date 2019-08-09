@@ -16,21 +16,23 @@ disallowed_symbols = [
   'ム',
   '$', '€', 
   'б', 'м', 'ы', 'л',
-  '"', '«', '»', '“', '”', '„', '“', ':', '•'
+  '"', '«', '»', '“', '”', '„', '“', '•'
 ]
 broken_whitespace = ["  ", " ,", " .", " ?", " !", " ;"]
 abbreviation_patterns = [
   "[A-Z]+\\.* ?[A-Z]",
   "[A-Z][A-Z]+",
-  "\bI\b",
+  "[\\s'‘][A-Z]\\b",
   "aC", "dC",
   " ex\\.",
+  " .\\.",
   "\\..",
-  ";$",
+  "[;,]$",
   "El següent diagrama mostra les poblacions més properes\\.",
   "És inofensiu per als humans\\.",
   "Ha estat doblada al català\\.",
   "Es troba amenaçada d'extinció per la pèrdua del seu hàbitat natural\\.",
+  "Està amenaçada d'extinció per la pèrdua del seu hàbitat natural\\.",
   "És un peix d'aigua dolça i de clima tropical\\.",
   "Viu en zones de clima tropical\\.",
   "Cristal·litza en el sistema monoclínic\\.",
