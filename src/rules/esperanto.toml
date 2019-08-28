@@ -1,0 +1,27 @@
+min_trimmed_length = 3
+min_word_count = 4
+max_word_count = 14
+min_characters = 2
+may_end_with_colon = false
+quote_start_with_letter = true
+needs_punctuation_end = true
+needs_letter_start = true
+needs_uppercase_start = true
+disallowed_symbols = [
+  'q', 'w', 'x', 'y','<', '>', '+', '*', '\', '#', '@', '^', '[', ']', '(', ')', '/',
+  'é', 'è', 'à', 'ç', 'â','æ','Ç','ł',
+  'α', 'β', 'Γ', 'γ', 'Δ', 'δ', 'ε', 'ζ', 'η', 'Θ', 'θ', 'ι', 'κ',
+  'Λ', 'λ', 'μ', 'ν', 'Ξ', 'ξ', 'Π', 'π', 'ρ', 'Σ', 'σ', 'ς', 'τ',
+  'υ', 'Φ', 'φ', 'χ', 'Ψ', 'ψ', 'Ω', 'ω','ä', 'ö', 'ü', 'ß','ð','ð',
+]
+broken_whitespace = ["  ", " ,", " .", " ?", " !", " ;"]
+
+# Abbreviation examples for each regex, also cheating a bit and adding more regex which has nothing to do with abbreviations:
+#   - No words with only one letter (" a.", " a", " a ", "a ")
+#   - Mixed upper/lowercase in words (LaSi - mostly chemical elements?)
+abbreviation_patterns = [
+  "[A-Z]+\\.*[A-Z]",
+  "ktp\\.|ca\\.|gem\\.|[a|p]\\.\\sK\\.|Prof\\.|Ak\\.|anst\\.|bv\\.|k\\.|k\\.a\\.|k\\.c\\.|p\\.|v\\.|ĉ\\.|i\\.a\\.",
+  "(\\s[A-Za-z]{1}[\\.|\\?|!]*$)|(^[A-Za-z]{1}\\s)|\\s[A-Za-z]{1}\\s",
+  "[a-z][A-Z][a-z]",
+]
