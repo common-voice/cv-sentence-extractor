@@ -99,3 +99,13 @@ python3 ./word_usage.py -i ../common-voice-wiki-scraper/wiki.en.all.txt --max-fr
 ```
 
 This list will be automatically used if present when you run the scrapping on step 2 from the Usage section.
+
+## Getting your rules/blacklist incorporated
+
+In order to get your language rules and blacklist incorporated in this repo, you will need to create a pull request explaining the following:
+
+- How many sentences did you get at the end?
+- How did you create the blacklist file?
+- Get at least 3 different native speakers (ideally linguistics) to review a random sample of 100-500 sentences and estimate the average error ratio and comment (or link their comment) in the PR.
+
+Once we have your rules into the repo, we will be able to run the extraction from our side and incorporate the sentences into Common Voice repo. But please, take note that we have limited resources and we can't guarantee a specific date for us to run this process (we are looking into automating it) 
