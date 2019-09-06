@@ -28,11 +28,15 @@ cd wikiextractor
 python WikiExtractor.py --json ../enwiki-latest-pages-articles-multistream.xml
 ```
 
+*Important note: Please check the section about [creating a rules file](#using-language-rules) and [a blacklist](#create-a-blacklist-based-on-less-common-words) at this point, you might want to consider creating them and that process should happen before steps 3.*
+
 3. Scrap the sentences into a new file from the WikiExtractor output dir (this might take more than 6h to finish)
 ```bash
 cd ../common-voice-wiki-scraper
 cargo run -- extract -l english -d ../wikiextractor/text/ >> wiki.en.txt
 ```
+
+*Tip: You don't need this last process to finish to start observing the output, wiki.en.txt should get a few hundred and thousands sentences in just a few minutes, and you can use that as a way to estimate the quality of the output early on and stop the process if you are not happy.*
 
 ## Using language rules
 
