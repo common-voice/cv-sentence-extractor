@@ -59,6 +59,8 @@ The following rules can be configured per language. Add a `<language>.toml` file
 | needs_punctuation_end |  If a sentence needs to end with a punctuation | boolean | false
 | needs_letter_start |  If a sentence needs to start with a letter | boolean | true
 | needs_uppercase_start |  If a sentence needs to start with an uppercase | boolean | false
+| quote_symbols |  Symbols that could be used for quotes | Char Array | []
+| require_even_quotes |  If enabled any occurances of the symbols in `quote_symbols` needs to be even | boolean | false
 
 ## Using disallowed words (blacklisting)
 
