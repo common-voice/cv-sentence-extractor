@@ -1,12 +1,12 @@
-min_trimmed_length = 6
-min_word_count = 5
-max_word_count = 10
-min_characters = 3
-may_end_with_colon = false
+min_trimmed_length = 5
+min_word_count = 3
+max_word_count = 14
+min_characters = 2
+may_end_with_colon = true
 quote_start_with_letter = true
-needs_punctuation_end = true
+needs_punctuation_end = false
 needs_letter_start = false
-needs_uppercase_start = true
+needs_uppercase_start = false
 disallowed_symbols = [
   '<', '>', '+', '*', '\', '#', '@', '^', '[', ']', '(', ')', '/', '=',
   'Ł', 'ś', 'ń', 'ź', 'ñ', 'š', 
@@ -32,5 +32,9 @@ abbreviation_patterns = [
   "K\\. o\\.|K\\. a\\.|K\\.o\\.|K\\.a\\.|k\\.o\\.|k\\.a\\.",
   "[;,]$",
   "[IVX].",
-  "[Qq]ue", "\-de\-", "[Hh]aute\-", "Saint-", "idae|mp|ph|ch|nn|elec|ally" 
+  "[Qq]ue", 
+  "\\-de\\-",
+  "[Hh]aute\\-",
+  "Saint\\-",
+  "idae|mp|ph|ch|nn|elec|ally" 
   ]
