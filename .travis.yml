@@ -1,6 +1,6 @@
 language: rust
 dist: bionic
-rust: stable
+rust: nightly
 cache: cargo
 
 install: cargo build --release
