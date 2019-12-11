@@ -323,6 +323,8 @@ mod test {
         assert_eq!(check(&rules, &"Die Aussperrung ist nach Art."), false);
         assert_eq!(check(&rules, &"Remy & Co."), false);
         assert_eq!(check(&rules, &"Es ist die sog."), false);
-        assert_eq!(check(&rules, &"Kein deutsche Wort: ambiguous."), false);
+        assert_eq!(check(&rules, &"Kein deutsches Wort: ambiguous."), false);
+        assert_eq!(check(&rules, &"Bundesliga am Anfang eines Satzes."), false);
+        assert_eq!(check(&rules, &"Liga am Anfang eines Satzes."), false);
     }
 }
