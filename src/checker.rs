@@ -326,5 +326,7 @@ mod test {
         assert_eq!(check(&rules, &"Kein deutsches Wort: ambiguous."), false);
         assert_eq!(check(&rules, &"Bundesliga am Anfang eines Satzes."), false);
         assert_eq!(check(&rules, &"Liga am Anfang eines Satzes."), false);
+        assert_eq!(check(&rules, &"Abkürzung am Ende hl."), false);
+        assert_eq!(check(&rules, &"Abkürzung am Ende geb."), false);
     }
 }
