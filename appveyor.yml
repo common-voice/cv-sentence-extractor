@@ -19,9 +19,8 @@ install:
 build_script:
     - cargo build --release --target=%target%      # Builds file defined in Cargo.toml (default main.rs)
 
-#test_script:
-#    - cargo test --target=%target% --verbose       # Runs tests in "src" and "tests" folders
-#    - cargo bench --target=%target% --verbose      # Runs benchmarks in "src/lib.rs"
+test_script:
+    - cargo test --target=%target% --verbose       # Runs tests in "src" and "tests" folders
 
 artifacts:
     - path: target\$(target)\release\*voice*.*     # Publishes all files from `cargo build/test/bench --release`
