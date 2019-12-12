@@ -50,8 +50,8 @@ pub struct Config {
     pub disallowed_words: HashSet<String>,
     pub broken_whitespace: Array,
     pub abbreviation_patterns: Array,
-    pub quote_symbols: Array,
-    pub require_even_quotes: bool,
+    pub even_symbols: Array,
+    pub require_even_symbols: bool,
 }
 
 impl Default for Config {
@@ -70,8 +70,8 @@ impl Default for Config {
             disallowed_words: HashSet::new(),
             broken_whitespace: vec![],
             abbreviation_patterns: vec![],
-            quote_symbols: vec![],
-            require_even_quotes: false,
+            even_symbols: vec![],
+            require_even_symbols: false,
         }
     }
 }
