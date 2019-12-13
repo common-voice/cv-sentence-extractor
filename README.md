@@ -59,6 +59,8 @@ The following rules can be configured per language. Add a `<language>.toml` file
 | needs_punctuation_end |  If a sentence needs to end with a punctuation | boolean | false
 | needs_letter_start |  If a sentence needs to start with a letter | boolean | true
 | needs_uppercase_start |  If a sentence needs to start with an uppercase | boolean | false
+| even_symbols |  Symbols that always need an event count | Char Array | []
+| require_even_symbols |  If enabled any occurrences of the symbols in `even_symbols` need to be even | boolean | false
 
 ## Using disallowed words (blacklisting)
 
@@ -112,4 +114,4 @@ In order to get your language rules and blacklist incorporated in this repo, you
 - How did you create the blacklist file?
 - Get at least 3 different native speakers (ideally linguistics) to review a random sample of 100-500 sentences and estimate the average error ratio and comment (or link their comment) in the PR.
 
-Once we have your rules into the repo, we will be able to run the extraction from our side and incorporate the sentences into Common Voice repo. But please, take note that we have limited resources and we can't guarantee a specific date for us to run this process (we are looking into automating it) 
+Once we have your rules into the repo, we will be able to run the extraction from our side and incorporate the sentences into Common Voice repo. But please, take note that we have limited resources and we can't guarantee a specific date for us to run this process (we are looking into automating it)

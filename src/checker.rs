@@ -53,6 +53,16 @@ pub fn check(rules: &Config, raw: &&str) -> bool {
         return false;
     }
 
+    if rules.require_even_symbols {
+        let has_uneven_symbols = rules.even_symbols.iter().any(|even_symbol| {
+            let count = trimmed.matches(Value::as_str(even_symbol).unwrap()).count();
+            return count % 2 != 0;
+        });
+        if has_uneven_symbols {
+            return false;
+        }
+    }
+
     true
 }
 
@@ -251,6 +261,71 @@ mod test {
 
         assert_eq!(check(&rules, &"This no two following uppercase letters"), true);
         assert_eq!(check(&rules, &"This has two FOllowing uppercase letters"), false);
+    }
+
+    #[test]
+    fn test_uneven_quotes_allowed_default() {
+        let rules : Config = Config {
+            ..Default::default()
+        };
+
+        assert_eq!(check(&rules, &"This has \"uneven quotes and it is fine!"), true);
+    }
+
+    #[test]
+    fn test_uneven_quotes_allowed() {
+        let rules : Config = Config {
+            even_symbols: vec![Value::try_from("\"").unwrap(), Value::try_from("(").unwrap()],
+            ..Default::default()
+        };
+
+        assert_eq!(check(&rules, &"This has \"uneven quotes and it is fine!"), true);
+        assert_eq!(check(&rules, &"This has (uneven parenthesis and it is fine!"), true);
+    }
+
+    #[test]
+    fn test_uneven_quotes_not_allowed() {
+        let rules : Config = Config {
+            require_even_symbols: true,
+            even_symbols: vec![Value::try_from("\"").unwrap(), Value::try_from("(").unwrap()],
+            ..Default::default()
+        };
+
+        assert_eq!(check(&rules, &"This has \"uneven quotes and it is not fine!"), false);
+        assert_eq!(check(&rules, &"This has (uneven parenthesis and it is not fine!"), false);
+    }
+
+    #[test]
+    fn test_uneven_quotes_not_allowed_even() {
+        let rules : Config = Config {
+            require_even_symbols: true,
+            even_symbols: vec![Value::try_from("\"").unwrap()],
+            ..Default::default()
+        };
+
+        assert_eq!(check(&rules, &"This has \"even\" quotes and it is fine!"), true);
+    }
+
+    #[test]
+    fn test_uneven_quotes_not_allowed_multiple() {
+        let rules : Config = Config {
+            require_even_symbols: true,
+            even_symbols: vec![Value::try_from("\"").unwrap(), Value::try_from("'").unwrap()],
+            ..Default::default()
+        };
+
+        assert_eq!(check(&rules, &"This has \"uneven quotes' and it is fine!"), false);
+    }
+
+    #[test]
+    fn test_uneven_quotes_not_allowed_multiple_one_ok() {
+        let rules : Config = Config {
+            require_even_symbols: true,
+            even_symbols: vec![Value::try_from("\"").unwrap(), Value::try_from("'").unwrap()],
+            ..Default::default()
+        };
+
+        assert_eq!(check(&rules, &"This has \"uneven\" quotes' and it is fine!"), false);
     }
 
     #[test]
