@@ -104,7 +104,7 @@ Once you know the frequency limit, you can generate your blacklist by running:
 python3 ./word_usage.py -i ../common-voice-wiki-scraper/wiki.en.all.txt --max-frequency 80 --show-words-only >> ../common-voice-wiki-scraper/src/rules/disallowed_words/english.txt
 ```
 
-You can use also `--strip-by-apostrophe` that is handy with languages that use `'` in their sentence and reconize more words (european languages use a lot this language feature).
+You can use also `--strip-by-apostrophe` that is handy with languages that use `'` in their sentence and recognize more words (european languages use a lot this language feature).
 
 This list will be automatically used if present when you run the scrapping on step 2 from the Usage section.
 
