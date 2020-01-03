@@ -50,7 +50,8 @@ The following rules can be configured per language. Add a `<language>.toml` file
 | min_characters |  Minimum of character occurances | integer | 0
 | may_end_with_colon |  If a sentence can end with a : or not | boolean | false
 | quote_start_with_letter |  If a quote needs to start with a letter | boolean | true
-| disallowed_symbols |  Array of disallowed symbols or letters | String Array | all symbols allowed
+| allowed_symbols_regex |  Regex of allowed symbols or letters. Each character gets matched against this pattern. | String Array | not used
+| disallowed_symbols |  Array of disallowed symbols or letters. Only used when allowed_symbols_regex is not set or is an empty String. | String Array | all symbols allowed
 | disallowed_words |  Array of disallowed words | String Array | all words allowed
 | broken_whitespace |  Array of broken whitespaces. This could for example disallow two spaces following eachother | String Array | all types of whitespaces allowed
 | min_word_count |  Minimum number of words in a sentence | integer | 1

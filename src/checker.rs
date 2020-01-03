@@ -23,10 +23,19 @@ pub fn check(rules: &Config, raw: &&str) -> bool {
         return false;
     }
 
-    let symbols = trimmed.chars().any(|c| {
-        rules.disallowed_symbols.contains(&Value::try_from(c).unwrap())
-    });
-    if symbols {
+    let mut invalid_symbols = false;
+    if rules.allowed_symbols_regex.len() > 0 {
+        let regex = Regex::new(&rules.allowed_symbols_regex).unwrap();
+        invalid_symbols = trimmed.chars().any(|c| {
+            !regex.is_match(&c.to_string())
+        });
+    } else {
+        invalid_symbols = trimmed.chars().any(|c| {
+            rules.disallowed_symbols.contains(&Value::try_from(c).unwrap())
+        });
+    }
+
+    if invalid_symbols {
         return false;
     }
 
@@ -221,6 +230,28 @@ mod test {
     }
 
     #[test]
+    fn test_allowed_symbols_regex() {
+        let rules : Config = Config {
+            allowed_symbols_regex: String::from("[\u{0020}-\u{005A}]"),
+            ..Default::default()
+        };
+
+        assert_eq!(check(&rules, &"ONLY UPPERCASE AND SPACE IS ALLOWED"), true);
+        assert_eq!(check(&rules, &"This is not uppercase"), false);
+    }
+
+    #[test]
+    fn test_allowed_symbols_regex_over_disallowed() {
+        let rules : Config = Config {
+            allowed_symbols_regex: String::from("[\u{0020}-\u{005A}]"),
+            disallowed_symbols: vec![Value::try_from('O').unwrap()],
+            ..Default::default()
+        };
+
+        assert_eq!(check(&rules, &"ONLY UPPERCASE AND SPACE IS ALLOWED AND DISALLOWED O IS OKAY"), true);
+    }
+
+    #[test]
     fn test_disallowed_words() {
         let rules : Config = Config {
             disallowed_words: ["blerg"].iter().map(|s| s.to_string()).collect(),
@@ -239,7 +270,6 @@ mod test {
         };
         assert_eq!(check(&rules, &"This has a's"), false);
     }
-
 
     #[test]
     fn test_broken_whitespace() {
