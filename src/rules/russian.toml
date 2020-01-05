@@ -52,52 +52,67 @@ disallowed_symbols = [
   # Пушкин, Набоков… мало кого еще можно поставить в этот ряд?
   # Let's remove them all, we have so many good sentences without problems
   '«', '»', '"', '„', '“', '”', '‘', '…',
-  
   '{', '}', '（', '）',
-  
+
   # Sentences with accented chars, it is not possible to voice and
   # should be removed, example:
   # е́р
   'ѣ', 'Ѣ', 'І', 'ң', 'ă', 'ĕ', ' ́', '́',
   
-  # Sentences with invisible chars
-  '­', '​', '﻿', '་',
+  # Sentences with invisible chars (use vim to work with them)
+  '­', '​', '﻿', '་'
 ]
 
 broken_whitespace = ["  ", " ,", " .", " ?", " !", " ;", " \""]
 
-# Abbreviations:
-# 1. М.Н.С.
-# 2. А. Пушкин
-# 3. Дж.
-# 4. СССР
-# 5. г. Пушкина.
-# 6. — —
-# 7. сайка фито— и зоопланктоном
-# 8. Повод —первое упоминание
-# 9. с разрывом связей С—С и образованием
-# 10. ор. ок.
-# 11. по учению св.отцов
-# 12. др.-евр. чл.-корр.
-# 13. ул.Тюменская
-# 14. Ставропольский кр.,
-
-# It is not possible to disallow ALL bad symbols, let's use regex for this
-# 15. Remove any other bad symbols
 abbreviation_patterns = [
+  # Abbreviations:
+  
+  # 1. М.Н.С.
   "[А-Я]+\\.*[А-Я]",
+  
+  # 2. А. Пушкин
   "[А-Я]\\.",
+
+  # 3. Дж.
   "[А-Я][а-я]\\.",
+  
+  # 4. СССР
   "[А-Я]{2,}",
+
+  # 5. г. Пушкина.
   "\\s[а-я]\\.",
+
+  # 6. — —
   "— —",
+
+  # 7. сайка фито— и зоопланктоном
   "[а-я]—\\s[а-я]",
+
+  # 8. Повод —первое упоминание
   "[а-я]\\s—[а-я]",
+
+  # 9. с разрывом связей С—С и образованием
   "[А-Я]—[А-Я]",
+
+  # 10. Words that are similar to ordinary, but cannot be at the end of a sentence,
+  #     which means they are abbreviations
   "\\s(ор|ок|ом|ум|те|ил)\\.",
+
+  # 11. по учению св.отцов
   "[а-я]\\.[а-я]",
+
+  # 12. др.-евр. чл.-корр.
   "[а-я]{1,3}\\.-[а-я]{1,4}\\.",
+
+  # 13. ул.Тюменская
   "[А-Яа-я]\\.[А-Яа-я]",
+
+  # 14. Ставропольский кр.,
   "\\.,",
+
+  # It is not possible to disallow ALL bad symbols, let's use regex for this
+  # 15. Remove any other bad symbols
   "[^\\dА-Яа-яёЁ\\s:,.-‑?;!—­‐–'·=’―−”‘]"
 ]
+
