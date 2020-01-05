@@ -52,7 +52,6 @@ pub struct Config {
     pub broken_whitespace: Array,
     pub abbreviation_patterns: Array,
     pub even_symbols: Array,
-    pub require_even_symbols: bool,
 }
 
 impl Default for Config {
@@ -73,7 +72,6 @@ impl Default for Config {
             broken_whitespace: vec![],
             abbreviation_patterns: vec![],
             even_symbols: vec![],
-            require_even_symbols: false,
         }
     }
 }

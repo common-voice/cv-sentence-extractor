@@ -61,7 +61,6 @@ The following rules can be configured per language. Add a `<language>.toml` file
 | needs_letter_start |  If a sentence needs to start with a letter | boolean | true
 | needs_uppercase_start |  If a sentence needs to start with an uppercase | boolean | false
 | even_symbols |  Symbols that always need an event count | Char Array | []
-| require_even_symbols |  If enabled any occurrences of the symbols in `even_symbols` need to be even | boolean | false
 
 ## Using disallowed words (blacklisting)
 

@@ -62,7 +62,7 @@ pub fn check(rules: &Config, raw: &&str) -> bool {
         return false;
     }
 
-    if rules.require_even_symbols {
+    if rules.even_symbols.len() > 0 {
         let has_uneven_symbols = rules.even_symbols.iter().any(|even_symbol| {
             let count = trimmed.matches(Value::as_str(even_symbol).unwrap()).count();
             return count % 2 != 0;
@@ -305,7 +305,7 @@ mod test {
     #[test]
     fn test_uneven_quotes_allowed() {
         let rules : Config = Config {
-            even_symbols: vec![Value::try_from("\"").unwrap(), Value::try_from("(").unwrap()],
+            even_symbols: vec![],
             ..Default::default()
         };
 
@@ -316,7 +316,6 @@ mod test {
     #[test]
     fn test_uneven_quotes_not_allowed() {
         let rules : Config = Config {
-            require_even_symbols: true,
             even_symbols: vec![Value::try_from("\"").unwrap(), Value::try_from("(").unwrap()],
             ..Default::default()
         };
@@ -328,7 +327,6 @@ mod test {
     #[test]
     fn test_uneven_quotes_not_allowed_even() {
         let rules : Config = Config {
-            require_even_symbols: true,
             even_symbols: vec![Value::try_from("\"").unwrap()],
             ..Default::default()
         };
@@ -339,7 +337,6 @@ mod test {
     #[test]
     fn test_uneven_quotes_not_allowed_multiple() {
         let rules : Config = Config {
-            require_even_symbols: true,
             even_symbols: vec![Value::try_from("\"").unwrap(), Value::try_from("'").unwrap()],
             ..Default::default()
         };
@@ -350,7 +347,6 @@ mod test {
     #[test]
     fn test_uneven_quotes_not_allowed_multiple_one_ok() {
         let rules : Config = Config {
-            require_even_symbols: true,
             even_symbols: vec![Value::try_from("\"").unwrap(), Value::try_from("'").unwrap()],
             ..Default::default()
         };
