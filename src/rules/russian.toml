@@ -20,46 +20,10 @@ needs_letter_start = true
 # с Иваном Галамяном.
 needs_uppercase_start = true
 
-# The following are symbols that are either absent in the Russian language
-# or participating in language constructs that will be difficult or impossible to voice,
-# as well as constructions causing problems in sentences
-# (for example, opening quotes without closing)
-disallowed_symbols = [
-  '<', '>', '+', '*', '\', '#', '@', '^', '[', ']', '(', ')', '/',
-  'é', 'è', 'à', 'ç', 'Å', '薛', '⋅', '·', 'ѿ', '=', '|', '≡', '→',
-  '×', 'Ա', 'բ', 'դ', 'ի', 'ս', 'յ', 'շ', 'ո', '•', 'थ्', '©', '¸',
-  '天', '不', '言', '，', '以', '行', '與', '事', '示', '之', '而',
-  '已', '矣', '《', '大', '学', '集', '注', '》', '多', '识', '录',
-  '「', '鴃', '」', '鳩', '鳧', '鶯', 'ا', 'ل', 'ر', 'د', 'ن',
-  'เ', 'วฺ', 'ส', 'ลฺ', 'ยุ', 'ทิ', 'โ', 'ร', 'ชฺ', 'ท', 'ยุ', 'ตฺ', 'สฺ',
-  'ย', 'พ', 'ทฺ', 'นิ', 'इ', '_', 'Ѳ', '‹', '›', '`',
-  'і', 'ў', '~', '®', '%', '⟨', '⟩', '¬', '&', '≤',
-  'α', 'β', 'Γ', 'γ', 'Δ', 'δ', 'ε', 'ζ', 'η', 'Θ', 'θ', 'ι', 'Ә',
-  'Λ', 'λ', 'μ', 'ν', 'Ξ', 'ξ', 'ρ', 'Σ', 'σ', 'ς', 'τ',
-  'υ', 'Φ', 'φ', 'χ', 'Ψ', 'ψ', 'Ω', 'ω', 'a', 'A', 'b', 'B', 'c',
-  'C', 'd', 'D', 'e', 'E', 'f', 'F', 'g', 'G', 'h', 'H', 'i', 'I',
-  'j', 'J', 'k', 'K', 'l', 'L', 'm', 'M', 'n', 'N', 'o', 'O', 'p',
-  'P', 'q', 'Q', 'r', 'R', 's', 'S', 't', 'T', 'u', 'U', 'v', 'V',
-  'w', 'W', 'x', 'X', 'y', 'Y', 'z', 'Z',
-  'җ', 'ә', 'ү', 'ː', 'қ', 'ћ', 'Ä', 'Ҋ', 'ј', 'Ι', 'Χ',
-  
-  # There is a lot of broken sentences like:
-  # У меня щемило сердце: «Что мы сделаем?
-  # Такой он был веселый, бодрый, нас воодушевлял: „Вы знаете, не бойтесь!
-  # История и культура»".
-  # Пушкин, прочитав поэму, сказал «— Далеко мальчик пойдет».
-  # После увольнения он пытается создать новую жизнь...Жизнь, в свою очередь, строит ему множество «баррикад"
-  # Пушкин, Набоков… мало кого еще можно поставить в этот ряд?
-  # Let's remove them all, we have so many good sentences without problems
-  '«', '»', '"', '„', '“', '”', '‘', '…',
-  '{', '}', '（', '）',
+allowed_symbols_regex = "[А-Яа-яёЁ\\s:,.\\-‑?;!—­‐–'·=’―−”‘]"
 
-  # Sentences with accented chars, it is not possible to voice and
-  # should be removed, example:
-  # е́р
-  'ѣ', 'Ѣ', 'І', 'ң', 'ă', 'ĕ', ' ́', '́',
-  
-  # Sentences with invisible chars (use vim to work with them)
+disallowed_symbols = [
+  # Here invisible chars: use vim to work with them
   '­', '​', '﻿', '་'
 ]
 
@@ -109,10 +73,6 @@ abbreviation_patterns = [
   "[А-Яа-я]\\.[А-Яа-я]",
 
   # 14. Ставропольский кр.,
-  "\\.,",
-
-  # It is not possible to disallow ALL bad symbols, let's use regex for this
-  # 15. Remove any other bad symbols
-  "[^\\dА-Яа-яёЁ\\s:,.-‑?;!—­‐–'·=’―−”‘]"
+  "\\.,"
 ]
 
