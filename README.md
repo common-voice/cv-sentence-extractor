@@ -46,21 +46,21 @@ The following rules can be configured per language. Add a `<language>.toml` file
 
 | Name   |      Description      |  Values | Default |
 |--------|-----------------------|---------|---------|
-| min_trimmed_length |  Minimum length of string after trimming | integer | 3
-| min_characters |  Minimum of character occurances | integer | 0
-| may_end_with_colon |  If a sentence can end with a : or not | boolean | false
-| quote_start_with_letter |  If a quote needs to start with a letter | boolean | true
+| abbreviation_patterns |  Rust regex to match against | Rust Regex Array | all abbreviations allowed
 | allowed_symbols_regex |  Regex of allowed symbols or letters. Each character gets matched against this pattern. | String Array | not used
+| broken_whitespace |  Array of broken whitespaces. This could for example disallow two spaces following eachother | String Array | all types of whitespaces allowed
 | disallowed_symbols |  Array of disallowed symbols or letters. Only used when allowed_symbols_regex is not set or is an empty String. | String Array | all symbols allowed
 | disallowed_words |  Array of disallowed words | String Array | all words allowed
-| broken_whitespace |  Array of broken whitespaces. This could for example disallow two spaces following eachother | String Array | all types of whitespaces allowed
-| min_word_count |  Minimum number of words in a sentence | integer | 1
-| max_word_count |  Maximum number of words in a sentence | integer | 14
-| abbreviation_patterns |  Rust regex to match against | Rust Regex Array | all abbreviations allowed
-| needs_punctuation_end |  If a sentence needs to end with a punctuation | boolean | false
-| needs_letter_start |  If a sentence needs to start with a letter | boolean | true
-| needs_uppercase_start |  If a sentence needs to start with an uppercase | boolean | false
 | even_symbols |  Symbols that always need an event count | Char Array | []
+| max_word_count |  Maximum number of words in a sentence | integer | 14
+| may_end_with_colon |  If a sentence can end with a : or not | boolean | false
+| min_characters |  Minimum of character occurances | integer | 0
+| min_trimmed_length |  Minimum length of string after trimming | integer | 3
+| min_word_count |  Minimum number of words in a sentence | integer | 1
+| needs_letter_start |  If a sentence needs to start with a letter | boolean | true
+| needs_punctuation_end |  If a sentence needs to end with a punctuation | boolean | false
+| needs_uppercase_start |  If a sentence needs to start with an uppercase | boolean | false
+| quote_start_with_letter |  If a quote needs to start with a letter | boolean | true
 
 ## Using disallowed words (blacklisting)
 
