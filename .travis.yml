@@ -1,0 +1,8 @@
+language: rust
+dist: bionic
+rust: nightly
+cache: cargo
+
+install: cargo build --release
+
+script: cargo test --verbose
