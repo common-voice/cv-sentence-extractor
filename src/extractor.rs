@@ -1,3 +1,4 @@
+use crate::replacer;
 use crate::checker;
 use crate::loader::load;
 use crate::config::{load_config, Config};
@@ -18,19 +19,21 @@ pub fn choose(
     data: &TrainingData,
     mut rng: impl Rng,
     amount: usize,
-    mut predicate: impl FnMut(&Config, &&str) -> bool,
+    mut predicate: impl FnMut(&Config, &str) -> bool,
+    mut replacer: impl FnMut(&Config, &str) -> String,
     no_check: bool
 ) -> Vec<String> {
+    let sentences_replaced_abbreviations = SentenceTokenizer::<Standard>::new(text, data)
+        .map(|item| { replacer(rules, item) });
+
     if no_check {
-        SentenceTokenizer::<Standard>::new(text, data)
-            .map(str::trim)
-            .map(String::from)
+        sentences_replaced_abbreviations
+            .map(|item| { item.trim().to_string() })
             .collect()
     } else {
-        SentenceTokenizer::<Standard>::new(text, data)
+        sentences_replaced_abbreviations
             .filter(|item| { predicate(rules, item) })
-            .map(str::trim)
-            .map(String::from)
+            .map(|item| { item.trim().to_string() })
             .choose_multiple(&mut rng, amount)
     }
 }
@@ -52,6 +55,7 @@ pub fn extract(file_names: &[PathBuf], language: &str, no_check: bool) -> Result
                 rng,
                 MAX_SENTENCES_PER_ARTICLE,
                 checker::check,
+                replacer::replace_strings,
                 no_check
             );
             sentences.dedup();
@@ -68,7 +72,7 @@ pub fn extract(file_names: &[PathBuf], language: &str, no_check: bool) -> Result
 }
 
 fn get_training_data(language: &str) -> TrainingData {
-    let training_data = match language {
+    match language {
         "english" => TrainingData::english(),
         "czech" => TrainingData::czech(),
         "danish" => TrainingData::danish(),
@@ -87,6 +91,5 @@ fn get_training_data(language: &str) -> TrainingData {
         "swedish" => TrainingData::swedish(),
         "turkish" => TrainingData::turkish(),
         _ => TrainingData::english(),
-    };
-    training_data
+    }
 }

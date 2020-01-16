@@ -49,19 +49,40 @@ The following rules can be configured per language. Add a `<language>.toml` file
 |--------|-----------------------|---------|---------|
 | abbreviation_patterns |  Rust regex to match against | Rust Regex Array | all abbreviations allowed
 | allowed_symbols_regex |  Regex of allowed symbols or letters. Each character gets matched against this pattern. | String Array | not used
-| broken_whitespace |  Array of broken whitespaces. This could for example disallow two spaces following eachother | String Array | all types of whitespaces allowed
+| broken_whitespace |  Array of broken whitespaces. This could for example disallow two spaces following each other | String Array | all types of whitespaces allowed
 | disallowed_symbols |  Array of disallowed symbols or letters. Only used when allowed_symbols_regex is not set or is an empty String. | String Array | all symbols allowed
 | disallowed_words |  Array of disallowed words | String Array | all words allowed
 | even_symbols |  Symbols that always need an event count | Char Array | []
 | max_word_count |  Maximum number of words in a sentence | integer | 14
 | may_end_with_colon |  If a sentence can end with a : or not | boolean | false
-| min_characters |  Minimum of character occurances | integer | 0
+| min_characters |  Minimum of character occurrences | integer | 0
 | min_trimmed_length |  Minimum length of string after trimming | integer | 3
 | min_word_count |  Minimum number of words in a sentence | integer | 1
 | needs_letter_start |  If a sentence needs to start with a letter | boolean | true
 | needs_punctuation_end |  If a sentence needs to end with a punctuation | boolean | false
 | needs_uppercase_start |  If a sentence needs to start with an uppercase | boolean | false
 | quote_start_with_letter |  If a quote needs to start with a letter | boolean | true
+| replacements |  Replaces abbreviations or other words according to configuration | Array of replacement configurations: each configuration is an Array of two values: `["search", "replacement"]`. See example below. | nothing gets replaced
+
+### Example for `replacements`
+
+```
+replacements = [
+  ["test", "hi"],
+  ["etc.", "et cetera"],
+  ["foo", ""],
+]
+```
+
+This replaces all occurrence of `test` with `hi`, all occurrence of `etc.` with `et cetera`, and removes all `foo`.
+
+```
+Input: I am a test etc.
+Output: I am a hi et cetera
+
+Input: I am foo test a test
+Output: I am hi a hi
+```
 
 ## Using disallowed words (blacklisting)
 

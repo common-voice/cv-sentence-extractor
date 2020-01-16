@@ -10,5 +10,6 @@ extern crate toml;
 pub mod app;
 mod extractor;
 mod checker;
+mod replacer;
 mod loader;
 mod config;
