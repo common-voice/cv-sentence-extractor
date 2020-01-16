@@ -5,4 +5,9 @@ cache: cargo
 
 install: cargo build --release
 
-script: cargo test --verbose
+before_script:
+  - rustup component add clippy
+
+script:
+  - cargo test --verbose
+  - cargo clippy --all-targets --all-features
