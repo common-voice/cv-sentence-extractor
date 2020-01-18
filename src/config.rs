@@ -51,6 +51,7 @@ pub struct Config {
     pub disallowed_words: HashSet<String>,
     pub broken_whitespace: Array,
     pub abbreviation_patterns: Array,
+    pub replacements: Array,
     pub even_symbols: Array,
 }
 
@@ -71,6 +72,7 @@ impl Default for Config {
             disallowed_words: HashSet::new(),
             broken_whitespace: vec![],
             abbreviation_patterns: vec![],
+            replacements: vec![],
             even_symbols: vec![],
         }
     }
