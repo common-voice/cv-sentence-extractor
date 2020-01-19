@@ -13,7 +13,7 @@ use std::path::PathBuf;
 
 const MAX_SENTENCES_PER_ARTICLE : usize = 3;
 
-pub fn choose(
+fn choose(
     rules: &Config,
     text: &str,
     data: &TrainingData,
@@ -27,15 +27,15 @@ pub fn choose(
         .map(|item| { replacer(rules, item) });
 
     if no_check {
-        sentences_replaced_abbreviations
+        return sentences_replaced_abbreviations
             .map(|item| { item.trim().to_string() })
-            .collect()
-    } else {
-        sentences_replaced_abbreviations
-            .filter(|item| { predicate(rules, item) })
-            .map(|item| { item.trim().to_string() })
-            .choose_multiple(&mut rng, amount)
+            .collect();
     }
+
+    sentences_replaced_abbreviations
+        .filter(|item| { predicate(rules, item) })
+        .map(|item| { item.trim().to_string() })
+        .choose_multiple(&mut rng, amount)
 }
 
 pub fn extract(file_names: &[PathBuf], language: &str, no_check: bool) -> Result<(), String> {
