@@ -2,7 +2,7 @@ use crate::config::Config;
 use toml::Value;
 
 pub fn replace_strings(rules: &Config, raw: &str) -> String {
-    let mut result = raw.to_string();
+    let mut result = raw.trim().to_string();
 
     for replacement_config in rules.replacements.iter() {
         if Value::as_array(replacement_config).unwrap().len() == 2 {
