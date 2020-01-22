@@ -103,7 +103,7 @@ fn get_not_yet_used_index(mut rng: ThreadRng, max: usize, used_indexes: &Vec<usi
     let mut index = rng.gen_range(0, max);
     let mut already_used = true;
 
-    while already_used {
+    while already_used && used_indexes.len() <= max {
         index = rng.gen_range(0, max);
         already_used = used_indexes.contains(&index);
     }
@@ -131,5 +131,122 @@ fn get_training_data(language: &str) -> TrainingData {
         "swedish" => TrainingData::swedish(),
         "turkish" => TrainingData::turkish(),
         _ => TrainingData::english(),
+    }
+}
+
+#[cfg(test)]
+mod test {
+    use super::*;
+
+    fn check_true(_config: &Config, _sentence: &str) -> bool {
+        true
+    }
+
+    fn check_false(_config: &Config, _sentence: &str) -> bool {
+        false
+    }
+
+    #[test]
+    fn test_get_not_yet_used_index() {
+        let rng = rand::thread_rng();
+        let max = 3;
+        let used_indexes = vec![0, 1, 3];
+
+        assert_eq!(get_not_yet_used_index(rng, max, &used_indexes), 2);
+    }
+
+    #[test]
+    fn test_get_not_yet_used_index_all_used() {
+        let rng = rand::thread_rng();
+        let max = 1;
+        let used_indexes = vec![0, 1];
+
+        assert_eq!(get_not_yet_used_index(rng, max, &used_indexes), 0);
+    }
+
+    #[test]
+    fn test_pick_sentences_pool_smaller_than_amount() {
+        let rules : Config = Config {
+            ..Default::default()
+        };
+        let sentences = vec![];
+        let amount = 1;
+
+        assert_eq!(pick_sentences(&rules, sentences, amount, check_true).len(), 0);
+    }
+
+    #[test]
+    fn test_pick_sentences_pool_one() {
+        let rules : Config = Config {
+            ..Default::default()
+        };
+        let sentences = vec![String::from("Test")];
+        let amount = 1;
+
+        assert_eq!(pick_sentences(&rules, sentences, amount, check_true)[0], "Test");
+    }
+
+    #[test]
+    fn test_pick_sentences_none_valid() {
+        let rules : Config = Config {
+            ..Default::default()
+        };
+        let sentences = vec![
+            String::from("Test"),
+            String::from("Test2"),
+            String::from("Test3"),
+            String::from("Test4"),
+        ];
+        let amount = 3;
+
+        assert_eq!(pick_sentences(&rules, sentences, amount, check_false).len(), 0);
+    }
+
+    #[test]
+    fn test_pick_sentences_only_pick_amount() {
+        let rules : Config = Config {
+            ..Default::default()
+        };
+        let sentences = vec![
+            String::from("Test"),
+            String::from("Test2"),
+            String::from("Test3"),
+            String::from("Test4"),
+        ];
+        let amount = 3;
+
+        assert_eq!(pick_sentences(&rules, sentences, amount, check_true).len(), 3);
+    }
+
+    #[test]
+    fn test_pick_sentences_no_dupes() {
+        let rules : Config = Config {
+            ..Default::default()
+        };
+        let sentences = vec![
+            String::from("Test"),
+            String::from("Test"),
+            String::from("Test"),
+            String::from("Test"),
+        ];
+        let amount = 3;
+
+        assert_eq!(pick_sentences(&rules, sentences, amount, check_true).len(), 1);
+    }
+
+    #[test]
+    fn test_pick_sentences_no_dupes_mixed() {
+        let rules : Config = Config {
+            ..Default::default()
+        };
+        let sentences = vec![
+            String::from("Test2"),
+            String::from("Test"),
+            String::from("Test2"),
+            String::from("Test"),
+        ];
+        let amount = 3;
+
+        assert_eq!(pick_sentences(&rules, sentences, amount, check_true).len(), 2);
     }
 }
