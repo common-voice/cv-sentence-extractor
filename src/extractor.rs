@@ -14,6 +14,7 @@ const MAX_SENTENCES_PER_ARTICLE : usize = 3;
 pub fn extract(file_names: &[PathBuf], language: &str, no_check: bool) -> Result<(), String> {
     let config = load_config(&language);
     let training_data = get_training_data(language);
+    let mut existing_sentences = vec![];
     let mut char_count = 0;
     let mut sentence_count = 0;
     for file_name in file_names {
@@ -23,6 +24,7 @@ pub fn extract(file_names: &[PathBuf], language: &str, no_check: bool) -> Result
             let sentences = choose(
                 &config,
                 &text,
+                &existing_sentences,
                 &training_data,
                 MAX_SENTENCES_PER_ARTICLE,
                 checker::check,
@@ -34,6 +36,7 @@ pub fn extract(file_names: &[PathBuf], language: &str, no_check: bool) -> Result
                 println!("{}", sentence);
                 char_count += sentence.chars().count();
                 sentence_count += 1;
+                existing_sentences.push(sentence);
             }
         }
         eprintln!("avg chars per sentence = {:?}", char_count as f64 / f64::from(sentence_count));
@@ -45,6 +48,7 @@ pub fn extract(file_names: &[PathBuf], language: &str, no_check: bool) -> Result
 fn choose(
     rules: &Config,
     text: &str,
+    existing_sentences: &Vec<String>,
     training_data: &TrainingData,
     amount: usize,
     predicate: impl FnMut(&Config, &str) -> bool,
@@ -58,13 +62,14 @@ fn choose(
     if no_check {
         sentences_replaced_abbreviations
     } else {
-        pick_sentences(rules, sentences_replaced_abbreviations, amount, predicate)
+        pick_sentences(rules, sentences_replaced_abbreviations, existing_sentences, amount, predicate)
     }
 }
 
 fn pick_sentences(
     rules: &Config,
     sentences_pool: Vec<String>,
+    existing_sentences: &Vec<String>,
     amount: usize,
     mut predicate: impl FnMut(&Config, &str) -> bool
 ) -> Vec<String> {
@@ -81,30 +86,32 @@ fn pick_sentences(
     let mut iteration = 0;
     let mut chosen_sentences = vec![];
     let mut used_indexes = vec![];
-    while chosen_sentences.len() < amount && iteration != total_in_pool - 1 {
+    let mut still_has_sentences_to_search = true;
+    while chosen_sentences.len() < amount && still_has_sentences_to_search {
         let rng = rand::thread_rng();
         let random_index: usize = get_not_yet_used_index(rng, total_in_pool - 1, &used_indexes);
         used_indexes.push(random_index);
 
         let sentence = &sentences_pool[random_index];
-        if predicate(rules, &sentence) {
+        let not_already_chosen = !existing_sentences.contains(&sentence);
+        if predicate(rules, &sentence) && not_already_chosen {
             chosen_sentences.push(sentence.trim().to_string());
             chosen_sentences.sort();
             chosen_sentences.dedup();
         }
 
         iteration = iteration + 1;
+        still_has_sentences_to_search = iteration < total_in_pool;
     }
 
     chosen_sentences
 }
 
-fn get_not_yet_used_index(mut rng: ThreadRng, max: usize, used_indexes: &Vec<usize>) -> usize {
-    let mut index = rng.gen_range(0, max);
-    let mut already_used = true;
-
-    while already_used && used_indexes.len() <= max {
-        index = rng.gen_range(0, max);
+fn get_not_yet_used_index(mut rng: ThreadRng, max_index: usize, used_indexes: &Vec<usize>) -> usize {
+    let mut index = rng.gen_range(0, max_index + 1);
+    let mut already_used = used_indexes.contains(&index);
+    while already_used {
+        index = rng.gen_range(0, max_index + 1);
         already_used = used_indexes.contains(&index);
     }
 
@@ -149,19 +156,10 @@ mod test {
     #[test]
     fn test_get_not_yet_used_index() {
         let rng = rand::thread_rng();
-        let max = 3;
-        let used_indexes = vec![0, 1, 3];
+        let max_index = 2;
+        let used_indexes = vec![0, 2];
 
-        assert_eq!(get_not_yet_used_index(rng, max, &used_indexes), 2);
-    }
-
-    #[test]
-    fn test_get_not_yet_used_index_all_used() {
-        let rng = rand::thread_rng();
-        let max = 1;
-        let used_indexes = vec![0, 1];
-
-        assert_eq!(get_not_yet_used_index(rng, max, &used_indexes), 0);
+        assert_eq!(get_not_yet_used_index(rng, max_index, &used_indexes), 1);
     }
 
     #[test]
@@ -169,10 +167,11 @@ mod test {
         let rules : Config = Config {
             ..Default::default()
         };
+        let existing_sentences = vec![];
         let sentences = vec![];
         let amount = 1;
 
-        assert_eq!(pick_sentences(&rules, sentences, amount, check_true).len(), 0);
+        assert_eq!(pick_sentences(&rules, sentences, &existing_sentences, amount, check_true).len(), 0);
     }
 
     #[test]
@@ -180,10 +179,11 @@ mod test {
         let rules : Config = Config {
             ..Default::default()
         };
+        let existing_sentences = vec![];
         let sentences = vec![String::from("Test")];
         let amount = 1;
 
-        assert_eq!(pick_sentences(&rules, sentences, amount, check_true)[0], "Test");
+        assert_eq!(pick_sentences(&rules, sentences, &existing_sentences, amount, check_true)[0], "Test");
     }
 
     #[test]
@@ -191,6 +191,7 @@ mod test {
         let rules : Config = Config {
             ..Default::default()
         };
+        let existing_sentences = vec![];
         let sentences = vec![
             String::from("Test"),
             String::from("Test2"),
@@ -199,7 +200,7 @@ mod test {
         ];
         let amount = 3;
 
-        assert_eq!(pick_sentences(&rules, sentences, amount, check_false).len(), 0);
+        assert_eq!(pick_sentences(&rules, sentences, &existing_sentences, amount, check_false).len(), 0);
     }
 
     #[test]
@@ -207,6 +208,7 @@ mod test {
         let rules : Config = Config {
             ..Default::default()
         };
+        let existing_sentences = vec![];
         let sentences = vec![
             String::from("Test"),
             String::from("Test2"),
@@ -215,7 +217,7 @@ mod test {
         ];
         let amount = 3;
 
-        assert_eq!(pick_sentences(&rules, sentences, amount, check_true).len(), 3);
+        assert_eq!(pick_sentences(&rules, sentences, &existing_sentences, amount, check_true).len(), 3);
     }
 
     #[test]
@@ -223,6 +225,7 @@ mod test {
         let rules : Config = Config {
             ..Default::default()
         };
+        let existing_sentences = vec![];
         let sentences = vec![
             String::from("Test"),
             String::from("Test"),
@@ -231,7 +234,7 @@ mod test {
         ];
         let amount = 3;
 
-        assert_eq!(pick_sentences(&rules, sentences, amount, check_true).len(), 1);
+        assert_eq!(pick_sentences(&rules, sentences, &existing_sentences, amount, check_true).len(), 1);
     }
 
     #[test]
@@ -239,6 +242,7 @@ mod test {
         let rules : Config = Config {
             ..Default::default()
         };
+        let existing_sentences = vec![];
         let sentences = vec![
             String::from("Test2"),
             String::from("Test"),
@@ -247,6 +251,59 @@ mod test {
         ];
         let amount = 3;
 
-        assert_eq!(pick_sentences(&rules, sentences, amount, check_true).len(), 2);
+        assert_eq!(pick_sentences(&rules, sentences, &existing_sentences, amount, check_true).len(), 2);
+    }
+
+    #[test]
+    fn test_pick_sentences_no_existing_sentences() {
+        let rules : Config = Config {
+            ..Default::default()
+        };
+        let existing_sentences = vec![
+            String::from("I am already existing"),
+            String::from("I am already existing too"),
+        ];
+        let sentences = vec![
+            String::from("I am already existing"),
+            String::from("I am already existing too"),
+        ];
+        let amount = 2;
+
+        assert_eq!(pick_sentences(&rules, sentences, &existing_sentences, amount, check_true).len(), 0);
+    }
+
+    #[test]
+    fn test_pick_sentences_no_existing_sentences_mixed() {
+        let rules : Config = Config {
+            ..Default::default()
+        };
+        let existing_sentences = vec![
+            String::from("I am already existing"),
+            String::from("Me too!"),
+        ];
+        let sentences = vec![
+            String::from("Test"),
+            String::from("I am already existing"),
+            String::from("Test2"),
+            String::from("Me too!"),
+        ];
+        let amount = 3;
+
+        assert_eq!(pick_sentences(&rules, sentences, &existing_sentences, amount, check_true).len(), 2);
+    }
+
+    #[test]
+    fn test_pick_sentences_two_out_of_two() {
+        let rules : Config = Config {
+            ..Default::default()
+        };
+        let existing_sentences = vec![];
+        let sentences = vec![
+            String::from("Test"),
+            String::from("Test2"),
+        ];
+        let amount = 2;
+
+        assert_eq!(pick_sentences(&rules, sentences, &existing_sentences, amount, check_true).len(), 2);
     }
 }
