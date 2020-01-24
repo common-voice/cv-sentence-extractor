@@ -6,7 +6,7 @@ pub fn check(rules: &Rules, raw: &str) -> bool {
     let trimmed = raw.trim();
     if trimmed.len() < rules.min_trimmed_length
         || rules.quote_start_with_letter
-            && trimmed.chars().nth(0) == Some('"')
+            && trimmed.starts_with('"')
             && trimmed
                 .chars()
                 .nth(1)
@@ -42,11 +42,11 @@ pub fn check(rules: &Rules, raw: &str) -> bool {
         return false;
     }
 
-    let words = trimmed.split_whitespace();
+    let mut words = trimmed.split_whitespace();
     let word_count = words.clone().count();
     if word_count < rules.min_word_count
         || word_count > rules.max_word_count
-        || words.into_iter().any(|word| rules.disallowed_words.contains(
+        || words.any(|word| rules.disallowed_words.contains(
              &word.trim_matches(|c: char| !c.is_alphabetic()).to_lowercase()
            ))
     {
@@ -64,7 +64,7 @@ pub fn check(rules: &Rules, raw: &str) -> bool {
     if !rules.even_symbols.is_empty() {
         let has_uneven_symbols = rules.even_symbols.iter().any(|even_symbol| {
             let count = trimmed.matches(Value::as_str(even_symbol).unwrap()).count();
-            return count % 2 != 0;
+            count % 2 != 0
         });
         if has_uneven_symbols {
             return false;
@@ -253,7 +253,7 @@ mod test {
     #[test]
     fn test_disallowed_words() {
         let rules : Rules = Rules {
-            disallowed_words: ["blerg"].iter().map(|s| s.to_string()).collect(),
+            disallowed_words: ["blerg"].iter().map(|s| (*s).to_string()).collect(),
             ..Default::default()
         };
 
@@ -264,7 +264,7 @@ mod test {
         assert_eq!(check(&rules, &String::from("This hasn't bl e r g")), true);
 
         let rules : Rules = Rules {
-            disallowed_words: ["a's"].iter().map(|s| s.to_string()).collect(),
+            disallowed_words: ["a's"].iter().map(|s| (*s).to_string()).collect(),
             ..Default::default()
         };
         assert_eq!(check(&rules, &String::from("This has a's")), false);
