@@ -3,9 +3,11 @@
 
 ## Dependencies
 
-- [Rust Nightly](https://rustup.rs/) (follow the instructions and customize the install to select nightly channel)
+- [Rust Nightly](https://rustup.rs/) (follow the instructions and customize the install to select the `nightly` channel)
 
-We need to download the wikiextractor and this script
+Note: as long as we're using the current `punkt` dependency, we need to use the Nightly version of Rust.
+
+We need to download the WikiExtractor and this repo
 ```
 git clone https://github.com/attardi/wikiextractor.git
 git clone https://github.com/Common-Voice/common-voice-wiki-scraper.git
@@ -13,7 +15,7 @@ git clone https://github.com/Common-Voice/common-voice-wiki-scraper.git
 
 ## Usage
 
-1. Download the latest wikipedia dataset [backup dump from Wikimedia](https://dumps.wikimedia.org/backup-index-bydb.html), select the one with `pages-articles-multistream` in its name.
+1. Download the latest Wikipedia dataset [backup dump from Wikimedia](https://dumps.wikimedia.org/backup-index-bydb.html), select the one with `pages-articles-multistream` in its name.
 
 Example (you can change "en" to your locale code)
 
@@ -22,7 +24,7 @@ wget https://dumps.wikimedia.org/enwiki/latest/enwiki-latest-pages-articles-mult
 bzip2 -d enwiki-latest-pages-articles-multistream.xml.bz2
 ```
 
-2. Use WikiExtractor to extract a dump (this might take a couple of hours)
+2. Use WikiExtractor to extract a dump (this might take a few hours)
 
 ```bash
 cd wikiextractor
@@ -88,24 +90,24 @@ Output: I am hi a hi
 
 In order to increase the quality of the final output, you might want to consider filtering out some words that are complex, too long or non-native.
 
-You can do this by adding these words to the language rules file for your language under the disallowed_words setting.
+You can do this by adding these words to the language rules file for your language under the `disallowed_words` setting.
 
-If your list of too long, you can also place a `<language>.txt` file in the `rules/disallowed_words` directory to enable a new locale. Each word should be in a new line.
+If your list is too long, you can also place a `<language>.txt` file in the `rules/disallowed_words` directory to enable a new locale. Each word should be on a new line.
 
 ### Create a blacklist based on less common words
 
-You can create a solid blacklist by generating a list of the less common words from your wikipedia.
+You can create a solid blacklist by generating a list of the less common words from your Wikipedia.
 
-To do so, first you should create a full export with all wikipedia sentences. (Note that all processes below will take a while to execute)
+To do so, first you should create a full export with all Wikipedia sentences. Note that all processes below will take a while to execute.
 
-After running step 1 and 2 from the Usage section above, run:
+After running step 1 and 2 from the `Usage` section above, run:
 
 ```bash
 cd ../common-voice-wiki-scraper
 cargo run -- extract -d ../wikiextractor/text/ --no_check >> wiki.en.all.txt
 ```
 
-Then you can use the cvtools scripts to generate a list of the word frequency
+Then you can use the cvtools scripts to generate a list of the word frequency:
 
 ```bash
 cd  ..
@@ -114,7 +116,7 @@ cd cvtools
 python3 ./word_usage.py -i ../common-voice-wiki-scraper/wiki.en.all.txt >> word_usage.en.txt
 ```
 
-You will have to read the ``word_usage.en.txt`` file to decide where you should put the limit. Usually words with less than 80-60 repetitions are in general bad.
+You will have to read the `word_usage.en.txt` file to decide where you should put the limit. Usually words with less than 80-60 repetitions are bad.
 
 ```bash
 grep -i "80" ./word_usage.en.txt
@@ -126,16 +128,16 @@ Once you know the frequency limit, you can generate your blacklist by running:
 python3 ./word_usage.py -i ../common-voice-wiki-scraper/wiki.en.all.txt --max-frequency 80 --show-words-only >> ../common-voice-wiki-scraper/src/rules/disallowed_words/english.txt
 ```
 
-You can use also `--strip-by-apostrophe` that is handy with languages that use `'` in their sentence and recognize more words.
+You can use also `--strip-by-apostrophe` which is handy for languages using `'` in their sentences to recognize more words.
 
-This list will be automatically used if present when you run the scrapping on step 2 from the Usage section.
+When you run the scrapping in step 2 from the `Usage` section this list will automatically be used if present.
 
 ## Getting your rules/blacklist incorporated
 
-In order to get your language rules and blacklist incorporated in this repo, you will need to create a pull request explaining the following:
+In order to get your language rules and blacklist incorporated in this repo, you will need to create a Pull Request explaining the following:
 
 - How many sentences did you get at the end?
 - How did you create the blacklist file?
 - Get at least 3 different native speakers (ideally linguistics) to review a random sample of 100-500 sentences and estimate the average error ratio and comment (or link their comment) in the PR.
 
-Once we have your rules into the repo, we will be able to run the extraction from our side and incorporate the sentences into Common Voice repo. But please, take note that we have limited resources and we can't guarantee a specific date for us to run this process (we are looking into automating it)
+Once we have your rules into the repo, we will be able to run the extraction from our side and incorporate the sentences into the Common Voice repo. But please take note that we have limited resources and we can't guarantee a specific date for us to run this process (we are looking into automating it).
