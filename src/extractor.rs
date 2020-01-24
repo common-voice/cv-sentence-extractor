@@ -101,14 +101,14 @@ fn pick_sentences(
             chosen_sentences.dedup();
         }
 
-        iteration = iteration + 1;
+        iteration += 1;
         still_has_sentences_to_search = iteration < total_in_pool;
     }
 
     chosen_sentences
 }
 
-fn get_not_yet_used_index(mut rng: ThreadRng, max_index: usize, used_indexes: &Vec<usize>) -> usize {
+fn get_not_yet_used_index(mut rng: ThreadRng, max_index: usize, used_indexes: &[usize]) -> usize {
     let mut index = rng.gen_range(0, max_index + 1);
     let mut already_used = used_indexes.contains(&index);
     while already_used {
