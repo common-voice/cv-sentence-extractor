@@ -1,7 +1,7 @@
 use crate::replacer;
 use crate::checker;
 use crate::loader::load;
-use crate::config::{load_config, Config};
+use crate::rules::{load_rules, Rules};
 use punkt::params::Standard;
 use punkt::SentenceTokenizer;
 use punkt::TrainingData;
@@ -13,7 +13,7 @@ use std::path::PathBuf;
 const MAX_SENTENCES_PER_ARTICLE : usize = 3;
 
 pub fn extract(file_names: &[PathBuf], language: &str, no_check: bool) -> Result<(), String> {
-    let config = load_config(&language);
+    let rules = load_rules(&language);
     let training_data = get_training_data(language);
     let mut existing_sentences = HashSet::new();
     let mut char_count = 0;
@@ -23,7 +23,7 @@ pub fn extract(file_names: &[PathBuf], language: &str, no_check: bool) -> Result
         let texts = load(&file_name)?;
         for text in texts {
             let sentences = choose(
-                &config,
+                &rules,
                 &text,
                 &existing_sentences,
                 &training_data,
@@ -47,13 +47,13 @@ pub fn extract(file_names: &[PathBuf], language: &str, no_check: bool) -> Result
 }
 
 fn choose(
-    rules: &Config,
+    rules: &Rules,
     text: &str,
     existing_sentences: &HashSet<String>,
     training_data: &TrainingData,
     amount: usize,
-    predicate: impl FnMut(&Config, &str) -> bool,
-    mut replacer: impl FnMut(&Config, &str) -> String,
+    predicate: impl FnMut(&Rules, &str) -> bool,
+    mut replacer: impl FnMut(&Rules, &str) -> String,
     no_check: bool
 ) -> Vec<String> {
     let sentences_replaced_abbreviations: Vec<String> = SentenceTokenizer::<Standard>::new(text, training_data)
@@ -68,11 +68,11 @@ fn choose(
 }
 
 fn pick_sentences(
-    rules: &Config,
+    rules: &Rules,
     sentences_pool: Vec<String>,
     existing_sentences: &HashSet<String>,
     amount: usize,
-    mut predicate: impl FnMut(&Config, &str) -> bool
+    mut predicate: impl FnMut(&Rules, &str) -> bool
 ) -> Vec<String> {
     let total_in_pool = sentences_pool.len();
 
@@ -146,11 +146,11 @@ fn get_training_data(language: &str) -> TrainingData {
 mod test {
     use super::*;
 
-    fn check_true(_config: &Config, _sentence: &str) -> bool {
+    fn check_true(_rules: &Rules, _sentence: &str) -> bool {
         true
     }
 
-    fn check_false(_config: &Config, _sentence: &str) -> bool {
+    fn check_false(_rules: &Rules, _sentence: &str) -> bool {
         false
     }
 
@@ -165,7 +165,7 @@ mod test {
 
     #[test]
     fn test_pick_sentences_pool_smaller_than_amount() {
-        let rules : Config = Config {
+        let rules : Rules = Rules {
             ..Default::default()
         };
         let existing_sentences = HashSet::new();
@@ -177,7 +177,7 @@ mod test {
 
     #[test]
     fn test_pick_sentences_pool_one() {
-        let rules : Config = Config {
+        let rules : Rules = Rules {
             ..Default::default()
         };
         let existing_sentences = HashSet::new();
@@ -189,7 +189,7 @@ mod test {
 
     #[test]
     fn test_pick_sentences_none_valid() {
-        let rules : Config = Config {
+        let rules : Rules = Rules {
             ..Default::default()
         };
         let existing_sentences = HashSet::new();
@@ -206,7 +206,7 @@ mod test {
 
     #[test]
     fn test_pick_sentences_only_pick_amount() {
-        let rules : Config = Config {
+        let rules : Rules = Rules {
             ..Default::default()
         };
         let existing_sentences = HashSet::new();
@@ -223,7 +223,7 @@ mod test {
 
     #[test]
     fn test_pick_sentences_no_dupes() {
-        let rules : Config = Config {
+        let rules : Rules = Rules {
             ..Default::default()
         };
         let existing_sentences = HashSet::new();
@@ -240,7 +240,7 @@ mod test {
 
     #[test]
     fn test_pick_sentences_no_dupes_mixed() {
-        let rules : Config = Config {
+        let rules : Rules = Rules {
             ..Default::default()
         };
         let existing_sentences = HashSet::new();
@@ -257,7 +257,7 @@ mod test {
 
     #[test]
     fn test_pick_sentences_no_existing_sentences() {
-        let rules : Config = Config {
+        let rules : Rules = Rules {
             ..Default::default()
         };
         let mut existing_sentences = HashSet::new();
@@ -274,7 +274,7 @@ mod test {
 
     #[test]
     fn test_pick_sentences_no_existing_sentences_mixed() {
-        let rules : Config = Config {
+        let rules : Rules = Rules {
             ..Default::default()
         };
         let mut existing_sentences = HashSet::new();
@@ -293,7 +293,7 @@ mod test {
 
     #[test]
     fn test_pick_sentences_two_out_of_two() {
-        let rules : Config = Config {
+        let rules : Rules = Rules {
             ..Default::default()
         };
         let existing_sentences = HashSet::new();

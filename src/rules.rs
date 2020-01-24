@@ -5,15 +5,15 @@ use toml::value::Array;
 use std::collections::HashSet;
 use std::path::Path;
 
-pub fn load_config(language: &str) -> Config {
+pub fn load_rules(language: &str) -> Rules {
     let file_name = format!("./src/rules/{}.toml", language);
-    eprintln!("Loading config at {:?}", file_name);
+    eprintln!("Loading rules at {:?}", file_name);
     let mut file = File::open(file_name).map_err(|e| format!("{}", e)).unwrap();
-    let mut config_str = String::new();
-    file.read_to_string(&mut config_str)
+    let mut rules_str = String::new();
+    file.read_to_string(&mut rules_str)
         .map_err(|e| format!("{}", e)).unwrap();
-    let mut config: Config = toml::from_str(&config_str).unwrap();
-    eprintln!("Using Config {:?}", config);
+    let mut rules: Rules = toml::from_str(&rules_str).unwrap();
+    eprintln!("Using Rules {:?}", rules);
 
     let disallowed_file_name = format!("./src/rules/disallowed_words/{}.txt", language);
     let list_exists = Path::new(&disallowed_file_name).exists();
@@ -23,7 +23,7 @@ pub fn load_config(language: &str) -> Config {
         let mut words_str = String::new();
         file.read_to_string(&mut words_str)
             .map_err(|e| format!("{}", e)).unwrap();
-        config.disallowed_words.extend::<HashSet<String>>(
+        rules.disallowed_words.extend::<HashSet<String>>(
             words_str
             .split('\n')
             .map(|s| s.trim().to_lowercase())
@@ -31,12 +31,12 @@ pub fn load_config(language: &str) -> Config {
         );
     }
 
-    config
+    rules
 }
 
 #[derive(Debug,Deserialize)]
 #[serde(default)]
-pub struct Config {
+pub struct Rules {
     pub min_trimmed_length: usize,
     pub min_word_count: usize,
     pub max_word_count: usize,
@@ -55,9 +55,9 @@ pub struct Config {
     pub even_symbols: Array,
 }
 
-impl Default for Config {
-    fn default() -> Config {
-        Config {
+impl Default for Rules {
+    fn default() -> Rules {
+        Rules {
             min_trimmed_length: 3,
             min_word_count: 1,
             max_word_count: 14,

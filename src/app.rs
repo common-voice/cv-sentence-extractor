@@ -39,7 +39,7 @@ where
                         .short("n")
                         .long("no_check")
                         .takes_value(false)
-                        .help("output all the sentences")
+                        .help("output all the sentences without verification")
                 ),
         )
         .get_matches_from(itr)
