@@ -1,13 +1,13 @@
-use crate::config::Config;
+use crate::rules::Rules;
 use toml::Value;
 
-pub fn replace_strings(rules: &Config, raw: &str) -> String {
+pub fn replace_strings(rules: &Rules, raw: &str) -> String {
     let mut result = raw.trim().to_string();
 
-    for replacement_config in rules.replacements.iter() {
-        if Value::as_array(replacement_config).unwrap().len() == 2 {
-            let abbreviation = replacement_config[0].as_str().unwrap();
-            let replacement = replacement_config[1].as_str().unwrap();
+    for replacement_rules in rules.replacements.iter() {
+        if Value::as_array(replacement_rules).unwrap().len() == 2 {
+            let abbreviation = replacement_rules[0].as_str().unwrap();
+            let replacement = replacement_rules[1].as_str().unwrap();
             result = result.replace(abbreviation, replacement);
         }
     }
@@ -23,7 +23,7 @@ mod test {
 
     #[test]
     fn test_nothing() {
-        let rules : Config = Config {
+        let rules : Rules = Rules {
             ..Default::default()
         };
 
@@ -32,7 +32,7 @@ mod test {
 
     #[test]
     fn test_nothing_if_replacement_missing() {
-        let rules : Config = Config {
+        let rules : Rules = Rules {
             replacements: vec![
                 Value::try_from([Value::try_from("&").unwrap()]).unwrap()
             ],
@@ -43,8 +43,8 @@ mod test {
     }
 
     #[test]
-    fn test_nothing_if_empty_config() {
-        let rules : Config = Config {
+    fn test_nothing_if_empty_rules() {
+        let rules : Rules = Rules {
             replacements: vec![
                 Value::try_from::<Array>(vec![]).unwrap()
             ],
@@ -56,7 +56,7 @@ mod test {
 
     #[test]
     fn test_one_abbreviation() {
-        let rules : Config = Config {
+        let rules : Rules = Rules {
             replacements: vec![
                 Value::try_from([Value::try_from("&").unwrap(), Value::try_from("and").unwrap()]).unwrap()
             ],
@@ -68,7 +68,7 @@ mod test {
 
     #[test]
     fn test_one_abbreviation_whitespace() {
-        let rules : Config = Config {
+        let rules : Rules = Rules {
             replacements: vec![
                 Value::try_from([Value::try_from(" & ").unwrap(), Value::try_from(" and ").unwrap()]).unwrap()
             ],
@@ -80,7 +80,7 @@ mod test {
 
     #[test]
     fn test_one_abbreviation_mixed() {
-        let rules : Config = Config {
+        let rules : Rules = Rules {
             replacements: vec![
                 Value::try_from([Value::try_from("&").unwrap(), Value::try_from(" and ").unwrap()]).unwrap()
             ],
@@ -92,7 +92,7 @@ mod test {
 
     #[test]
     fn test_multiple_occurances() {
-        let rules : Config = Config {
+        let rules : Rules = Rules {
             replacements: vec![
                 Value::try_from([Value::try_from("&").unwrap(), Value::try_from("and").unwrap()]).unwrap()
             ],
@@ -104,7 +104,7 @@ mod test {
 
     #[test]
     fn test_multiple_abbreviations() {
-        let rules : Config = Config {
+        let rules : Rules = Rules {
             replacements: vec![
                 Value::try_from([Value::try_from("&").unwrap(), Value::try_from(" and ").unwrap()]).unwrap(),
                 Value::try_from([Value::try_from("etc.").unwrap(), Value::try_from("et cetera").unwrap()]).unwrap(),
@@ -118,7 +118,7 @@ mod test {
 
     #[test]
     fn test_replace_empty() {
-        let rules : Config = Config {
+        let rules : Rules = Rules {
             replacements: vec![
                 Value::try_from([Value::try_from("&").unwrap(), Value::try_from("").unwrap()]).unwrap(),
             ],

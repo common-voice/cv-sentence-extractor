@@ -1,8 +1,8 @@
-use crate::config::Config;
+use crate::rules::Rules;
 use toml::Value;
 use regex::Regex;
 
-pub fn check(rules: &Config, raw: &str) -> bool {
+pub fn check(rules: &Rules, raw: &str) -> bool {
     let trimmed = raw.trim();
     if trimmed.len() < rules.min_trimmed_length
         || rules.quote_start_with_letter
@@ -77,12 +77,12 @@ pub fn check(rules: &Config, raw: &str) -> bool {
 #[cfg(test)]
 mod test {
     use super::*;
-    use crate::config::load_config;
+    use crate::rules::load_rules;
     use toml::Value;
 
     #[test]
     fn test_min_trimmed_length() {
-        let rules : Config = Config {
+        let rules : Rules = Rules {
             min_trimmed_length: 3,
             ..Default::default()
         };
@@ -93,7 +93,7 @@ mod test {
 
     #[test]
     fn test_min_word_count() {
-        let rules : Config = Config {
+        let rules : Rules = Rules {
             min_word_count: 2,
             ..Default::default()
         };
@@ -104,7 +104,7 @@ mod test {
 
     #[test]
     fn test_max_word_count() {
-        let rules : Config = Config {
+        let rules : Rules = Rules {
             max_word_count: 2,
             ..Default::default()
         };
@@ -115,7 +115,7 @@ mod test {
 
     #[test]
     fn test_min_characters() {
-        let rules : Config = Config {
+        let rules : Rules = Rules {
             min_characters: 3,
             ..Default::default()
         };
@@ -126,14 +126,14 @@ mod test {
 
     #[test]
     fn test_may_end_with_colon() {
-        let mut rules : Config = Config {
+        let mut rules : Rules = Rules {
             may_end_with_colon: false,
             ..Default::default()
         };
 
         assert_eq!(check(&rules, &String::from("ends with colon:")), false);
 
-        rules = Config {
+        rules = Rules {
             may_end_with_colon: true,
             ..Default::default()
         };
@@ -143,7 +143,7 @@ mod test {
 
     #[test]
     fn test_quote_start_with_letter() {
-        let mut rules : Config = Config {
+        let mut rules : Rules = Rules {
             quote_start_with_letter: false,
             needs_letter_start: false,
             ..Default::default()
@@ -151,7 +151,7 @@ mod test {
 
         assert_eq!(check(&rules, &String::from("\"😊 foo")), true);
 
-        rules = Config {
+        rules = Rules {
             quote_start_with_letter: true,
             needs_letter_start: false,
             ..Default::default()
@@ -162,7 +162,7 @@ mod test {
 
     #[test]
     fn test_needs_punctuation_end() {
-        let mut rules : Config = Config {
+        let mut rules : Rules = Rules {
             needs_punctuation_end: false,
             ..Default::default()
         };
@@ -170,7 +170,7 @@ mod test {
         assert_eq!(check(&rules, &String::from("This has no punctuation")), true);
         assert_eq!(check(&rules, &String::from("This has punctuation.")), true);
 
-        rules = Config {
+        rules = Rules {
             needs_punctuation_end: true,
             ..Default::default()
         };
@@ -181,7 +181,7 @@ mod test {
 
     #[test]
     fn test_needs_letter_start() {
-        let mut rules : Config = Config {
+        let mut rules : Rules = Rules {
             needs_letter_start: false,
             ..Default::default()
         };
@@ -189,7 +189,7 @@ mod test {
         assert_eq!(check(&rules, &String::from("?Foo")), true);
         assert_eq!(check(&rules, &String::from("This has a normal start")), true);
 
-        rules = Config {
+        rules = Rules {
             needs_letter_start: true,
             ..Default::default()
         };
@@ -200,7 +200,7 @@ mod test {
 
     #[test]
     fn test_needs_uppercase_start() {
-        let mut rules : Config = Config {
+        let mut rules : Rules = Rules {
             needs_uppercase_start: false,
             ..Default::default()
         };
@@ -208,7 +208,7 @@ mod test {
         assert_eq!(check(&rules, &String::from("foo")), true);
         assert_eq!(check(&rules, &String::from("Foo")), true);
 
-        rules = Config {
+        rules = Rules {
             needs_uppercase_start: true,
             ..Default::default()
         };
@@ -219,7 +219,7 @@ mod test {
 
     #[test]
     fn test_disallowed_symbols() {
-        let rules : Config = Config {
+        let rules : Rules = Rules {
             disallowed_symbols: vec![Value::try_from('%').unwrap()],
             ..Default::default()
         };
@@ -230,7 +230,7 @@ mod test {
 
     #[test]
     fn test_allowed_symbols_regex() {
-        let rules : Config = Config {
+        let rules : Rules = Rules {
             allowed_symbols_regex: String::from("[\u{0020}-\u{005A}]"),
             ..Default::default()
         };
@@ -241,7 +241,7 @@ mod test {
 
     #[test]
     fn test_allowed_symbols_regex_over_disallowed() {
-        let rules : Config = Config {
+        let rules : Rules = Rules {
             allowed_symbols_regex: String::from("[\u{0020}-\u{005A}]"),
             disallowed_symbols: vec![Value::try_from('O').unwrap()],
             ..Default::default()
@@ -252,7 +252,7 @@ mod test {
 
     #[test]
     fn test_disallowed_words() {
-        let rules : Config = Config {
+        let rules : Rules = Rules {
             disallowed_words: ["blerg"].iter().map(|s| s.to_string()).collect(),
             ..Default::default()
         };
@@ -263,7 +263,7 @@ mod test {
         assert_eq!(check(&rules, &String::from("Here is a blerg, with comma")), false);
         assert_eq!(check(&rules, &String::from("This hasn't bl e r g")), true);
 
-        let rules : Config = Config {
+        let rules : Rules = Rules {
             disallowed_words: ["a's"].iter().map(|s| s.to_string()).collect(),
             ..Default::default()
         };
@@ -272,7 +272,7 @@ mod test {
 
     #[test]
     fn test_broken_whitespace() {
-        let rules : Config = Config {
+        let rules : Rules = Rules {
             broken_whitespace: vec![Value::try_from("  ").unwrap()],
             ..Default::default()
         };
@@ -283,7 +283,7 @@ mod test {
 
     #[test]
     fn test_abbreviation_patterns() {
-        let rules : Config = Config {
+        let rules : Rules = Rules {
             abbreviation_patterns: vec![Value::try_from("[A-Z]{2}").unwrap()],
             ..Default::default()
         };
@@ -294,7 +294,7 @@ mod test {
 
     #[test]
     fn test_uneven_quotes_allowed_default() {
-        let rules : Config = Config {
+        let rules : Rules = Rules {
             ..Default::default()
         };
 
@@ -303,7 +303,7 @@ mod test {
 
     #[test]
     fn test_uneven_quotes_allowed() {
-        let rules : Config = Config {
+        let rules : Rules = Rules {
             even_symbols: vec![],
             ..Default::default()
         };
@@ -314,7 +314,7 @@ mod test {
 
     #[test]
     fn test_uneven_quotes_not_allowed() {
-        let rules : Config = Config {
+        let rules : Rules = Rules {
             even_symbols: vec![Value::try_from("\"").unwrap(), Value::try_from("(").unwrap()],
             ..Default::default()
         };
@@ -325,7 +325,7 @@ mod test {
 
     #[test]
     fn test_uneven_quotes_not_allowed_even() {
-        let rules : Config = Config {
+        let rules : Rules = Rules {
             even_symbols: vec![Value::try_from("\"").unwrap()],
             ..Default::default()
         };
@@ -335,7 +335,7 @@ mod test {
 
     #[test]
     fn test_uneven_quotes_not_allowed_multiple() {
-        let rules : Config = Config {
+        let rules : Rules = Rules {
             even_symbols: vec![Value::try_from("\"").unwrap(), Value::try_from("'").unwrap()],
             ..Default::default()
         };
@@ -345,7 +345,7 @@ mod test {
 
     #[test]
     fn test_uneven_quotes_not_allowed_multiple_one_ok() {
-        let rules : Config = Config {
+        let rules : Rules = Rules {
             even_symbols: vec![Value::try_from("\"").unwrap(), Value::try_from("'").unwrap()],
             ..Default::default()
         };
@@ -355,7 +355,7 @@ mod test {
 
     #[test]
     fn test_english() {
-        let rules : Config = load_config("english");
+        let rules : Rules = load_rules("english");
 
         assert_eq!(check(&rules, &String::from("")), false);
         assert_eq!(check(&rules, &String::from("\"😊")), false);
@@ -378,7 +378,7 @@ mod test {
 
     #[test]
     fn test_french() {
-        let rules : Config = load_config("french");
+        let rules : Rules = load_rules("french");
 
         assert_eq!(check(&rules, &String::from("")), false);
         assert_eq!(check(&rules, &String::from("\"😊")), false);
@@ -406,7 +406,7 @@ mod test {
 
     #[test]
     fn test_german() {
-        let rules : Config = load_config("german");
+        let rules : Rules = load_rules("german");
 
         assert_eq!(check(&rules, &String::from("Dies ist ein korrekter Satz.")), true);
         assert_eq!(check(&rules, &String::from("Satzzeichen in der Mitte. Wird nicht akzeptiert.")), false);

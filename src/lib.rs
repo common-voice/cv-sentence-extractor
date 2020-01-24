@@ -12,4 +12,4 @@ mod extractor;
 mod checker;
 mod replacer;
 mod loader;
-mod config;
+mod rules;
