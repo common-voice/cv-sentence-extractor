@@ -7,6 +7,7 @@ use punkt::SentenceTokenizer;
 use punkt::TrainingData;
 use rand::Rng;
 use rand::rngs::ThreadRng;
+use std::collections::HashSet;
 use std::path::PathBuf;
 
 const MAX_SENTENCES_PER_ARTICLE : usize = 3;
@@ -14,7 +15,7 @@ const MAX_SENTENCES_PER_ARTICLE : usize = 3;
 pub fn extract(file_names: &[PathBuf], language: &str, no_check: bool) -> Result<(), String> {
     let config = load_config(&language);
     let training_data = get_training_data(language);
-    let mut existing_sentences = vec![];
+    let mut existing_sentences = HashSet::new();
     let mut char_count = 0;
     let mut sentence_count = 0;
     for file_name in file_names {
@@ -36,7 +37,7 @@ pub fn extract(file_names: &[PathBuf], language: &str, no_check: bool) -> Result
                 println!("{}", sentence);
                 char_count += sentence.chars().count();
                 sentence_count += 1;
-                existing_sentences.push(sentence);
+                existing_sentences.insert(sentence);
             }
         }
         eprintln!("avg chars per sentence = {:?}", char_count as f64 / f64::from(sentence_count));
@@ -48,7 +49,7 @@ pub fn extract(file_names: &[PathBuf], language: &str, no_check: bool) -> Result
 fn choose(
     rules: &Config,
     text: &str,
-    existing_sentences: &Vec<String>,
+    existing_sentences: &HashSet<String>,
     training_data: &TrainingData,
     amount: usize,
     predicate: impl FnMut(&Config, &str) -> bool,
@@ -69,7 +70,7 @@ fn choose(
 fn pick_sentences(
     rules: &Config,
     sentences_pool: Vec<String>,
-    existing_sentences: &Vec<String>,
+    existing_sentences: &HashSet<String>,
     amount: usize,
     mut predicate: impl FnMut(&Config, &str) -> bool
 ) -> Vec<String> {
@@ -93,7 +94,7 @@ fn pick_sentences(
         used_indexes.push(random_index);
 
         let sentence = &sentences_pool[random_index];
-        let not_already_chosen = !existing_sentences.contains(&sentence);
+        let not_already_chosen = !existing_sentences.contains(sentence);
         if predicate(rules, &sentence) && not_already_chosen {
             chosen_sentences.push(sentence.trim().to_string());
             chosen_sentences.sort();
@@ -167,7 +168,7 @@ mod test {
         let rules : Config = Config {
             ..Default::default()
         };
-        let existing_sentences = vec![];
+        let existing_sentences = HashSet::new();
         let sentences = vec![];
         let amount = 1;
 
@@ -179,7 +180,7 @@ mod test {
         let rules : Config = Config {
             ..Default::default()
         };
-        let existing_sentences = vec![];
+        let existing_sentences = HashSet::new();
         let sentences = vec![String::from("Test")];
         let amount = 1;
 
@@ -191,7 +192,7 @@ mod test {
         let rules : Config = Config {
             ..Default::default()
         };
-        let existing_sentences = vec![];
+        let existing_sentences = HashSet::new();
         let sentences = vec![
             String::from("Test"),
             String::from("Test2"),
@@ -208,7 +209,7 @@ mod test {
         let rules : Config = Config {
             ..Default::default()
         };
-        let existing_sentences = vec![];
+        let existing_sentences = HashSet::new();
         let sentences = vec![
             String::from("Test"),
             String::from("Test2"),
@@ -225,7 +226,7 @@ mod test {
         let rules : Config = Config {
             ..Default::default()
         };
-        let existing_sentences = vec![];
+        let existing_sentences = HashSet::new();
         let sentences = vec![
             String::from("Test"),
             String::from("Test"),
@@ -242,7 +243,7 @@ mod test {
         let rules : Config = Config {
             ..Default::default()
         };
-        let existing_sentences = vec![];
+        let existing_sentences = HashSet::new();
         let sentences = vec![
             String::from("Test2"),
             String::from("Test"),
@@ -259,10 +260,9 @@ mod test {
         let rules : Config = Config {
             ..Default::default()
         };
-        let existing_sentences = vec![
-            String::from("I am already existing"),
-            String::from("I am already existing too"),
-        ];
+        let mut existing_sentences = HashSet::new();
+        existing_sentences.insert(String::from("I am already existing"));
+        existing_sentences.insert(String::from("I am already existing too"));
         let sentences = vec![
             String::from("I am already existing"),
             String::from("I am already existing too"),
@@ -277,10 +277,9 @@ mod test {
         let rules : Config = Config {
             ..Default::default()
         };
-        let existing_sentences = vec![
-            String::from("I am already existing"),
-            String::from("Me too!"),
-        ];
+        let mut existing_sentences = HashSet::new();
+        existing_sentences.insert(String::from("I am already existing"));
+        existing_sentences.insert(String::from("Me too!"));
         let sentences = vec![
             String::from("Test"),
             String::from("I am already existing"),
@@ -297,7 +296,7 @@ mod test {
         let rules : Config = Config {
             ..Default::default()
         };
-        let existing_sentences = vec![];
+        let existing_sentences = HashSet::new();
         let sentences = vec![
             String::from("Test"),
             String::from("Test2"),
