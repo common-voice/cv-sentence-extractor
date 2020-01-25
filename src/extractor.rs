@@ -1,6 +1,7 @@
+use crate::config::Config;
 use crate::replacer;
 use crate::checker;
-use crate::loader::load;
+use crate::loader::load_file_names;
 use crate::rules::{load_rules, Rules};
 use punkt::params::Standard;
 use punkt::SentenceTokenizer;
@@ -10,27 +11,26 @@ use rand::rngs::ThreadRng;
 use std::collections::HashSet;
 use std::path::PathBuf;
 
-const MAX_SENTENCES_PER_ARTICLE : usize = 3;
-
-pub fn extract(file_names: &[PathBuf], language: &str, no_check: bool) -> Result<(), String> {
-    let rules = load_rules(&language);
-    let training_data = get_training_data(language);
+pub fn extract(config:  Config, mut loader: impl FnMut(&PathBuf) -> Result<Vec<String>, String>) -> Result<(), String> {
+    let rules = load_rules(&config.language);
+    let training_data = get_training_data(&config.language);
     let mut existing_sentences = HashSet::new();
     let mut char_count = 0;
     let mut sentence_count = 0;
+    let file_names = load_file_names(&config.directory).unwrap();
     for file_name in file_names {
         eprintln!("file_name = {:?}", file_name.to_string_lossy());
-        let texts = load(&file_name)?;
+        let texts = loader(&file_name)?;
         for text in texts {
+            let iteration_config = config.clone();
             let sentences = choose(
                 &rules,
                 &text,
                 &existing_sentences,
                 &training_data,
-                MAX_SENTENCES_PER_ARTICLE,
+                iteration_config,
                 checker::check,
                 replacer::replace_strings,
-                no_check
             );
 
             for sentence in sentences {
@@ -51,19 +51,24 @@ fn choose(
     text: &str,
     existing_sentences: &HashSet<String>,
     training_data: &TrainingData,
-    amount: usize,
+    config: Config,
     predicate: impl FnMut(&Rules, &str) -> bool,
     mut replacer: impl FnMut(&Rules, &str) -> String,
-    no_check: bool
 ) -> Vec<String> {
     let sentences_replaced_abbreviations: Vec<String> = SentenceTokenizer::<Standard>::new(text, training_data)
         .map(|item| { replacer(rules, item) })
         .collect();
 
-    if no_check {
+    if config.no_check {
         sentences_replaced_abbreviations
     } else {
-        pick_sentences(rules, sentences_replaced_abbreviations, existing_sentences, amount, predicate)
+        pick_sentences(
+            rules,
+            sentences_replaced_abbreviations,
+            existing_sentences,
+            config.max_sentences_per_text,
+            predicate,
+        )
     }
 }
 

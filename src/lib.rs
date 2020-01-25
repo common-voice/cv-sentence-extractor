@@ -13,3 +13,4 @@ mod checker;
 mod replacer;
 mod loader;
 mod rules;
+mod config;
