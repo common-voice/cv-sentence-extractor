@@ -1,5 +1,5 @@
 # Common Voice Sentence Extractor
-[![Travis Build Status](https://travis-ci.org/Common-Voice/common-voice-wiki-scraper.svg?branch=master)](https://travis-ci.org/Common-Voice/common-voice-wiki-scraper) [![AppVeyor Build Status](https://ci.appveyor.com/api/projects/status/github/MichaelKohler/common-voice-wiki-scraper?branch=master&svg=true)](https://ci.appveyor.com/project/MichaelKohler/common-voice-wiki-scraper/history)
+[![Travis Build Status](https://travis-ci.com/Common-Voice/common-voice-wiki-scraper.svg?branch=master)](https://travis-ci.com/Common-Voice/common-voice-wiki-scraper/) [![AppVeyor Build Status](https://ci.appveyor.com/api/projects/status/github/MichaelKohler/common-voice-wiki-scraper?branch=master&svg=true)](https://ci.appveyor.com/project/MichaelKohler/common-voice-wiki-scraper/history)
 
 ## Dependencies
 
