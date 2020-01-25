@@ -1,7 +1,8 @@
 use std::ffi::OsString;
 
+use crate::config::Config;
 use crate::extractor::extract;
-use crate::loader::load_file_names;
+use crate::loader::{load_wikiextractor};
 use clap::{App, Arg, ArgMatches, SubCommand};
 
 const VERSION: &str = env!("CARGO_PKG_VERSION");
@@ -51,12 +52,21 @@ where
     T: Into<OsString> + Clone,
 {
     let all_matches = parse_args(itr);
-    let matches = match all_matches.subcommand_matches("extract") {
-        Some(m) => m,
-        _ => return Err(String::from("did we forget the extract subcommand?")),
-    };
-    let file_names = load_file_names(&matches.value_of("dir").unwrap_or_default())?;
-    let language = &matches.value_of("language").unwrap_or_else(|| "english");
+    start(all_matches)
+}
 
-    extract(&file_names, language, matches.is_present("no_check"))
+fn start(all_matches: ArgMatches) -> Result<(), String> {
+    // Wikipedia
+    if let Some(matches) = all_matches.subcommand_matches("extract") {
+        let config = Config {
+            language: String::from(matches.value_of("language").unwrap_or_else(|| "english")),
+            no_check: matches.is_present("no_check"),
+            directory: String::from(matches.value_of("dir").unwrap_or_default()),
+            max_sentences_per_text: 3,
+        };
+
+        extract(config, load_wikiextractor)
+    } else {
+        Err(String::from("did we forget to add a subcommand?"))
+    }
 }

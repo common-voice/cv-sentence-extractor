@@ -1,4 +1,4 @@
-# Common Voice Wiki Sentence Extractor
+# Common Voice Sentence Extractor
 [![Travis Build Status](https://travis-ci.org/Common-Voice/common-voice-wiki-scraper.svg?branch=master)](https://travis-ci.org/Common-Voice/common-voice-wiki-scraper) [![AppVeyor Build Status](https://ci.appveyor.com/api/projects/status/github/MichaelKohler/common-voice-wiki-scraper?branch=master&svg=true)](https://ci.appveyor.com/project/MichaelKohler/common-voice-wiki-scraper/history)
 
 ## Dependencies
@@ -7,13 +7,23 @@
 
 Note: as long as we're using the current `punkt` dependency, we need to use the Nightly version of Rust.
 
-We need to download the WikiExtractor and this repo
+Clone this repo:
+
 ```
-git clone https://github.com/attardi/wikiextractor.git
 git clone https://github.com/Common-Voice/common-voice-wiki-scraper.git
 ```
 
-## Usage
+### Wikipedia Extraction
+
+You need to download the WikiExtractor:
+
+```
+git clone https://github.com/attardi/wikiextractor.git
+```
+
+## Extract Wikipedia
+
+We can only extract at most 3 sentences per article.
 
 1. Download the latest Wikipedia dataset [backup dump from Wikimedia](https://dumps.wikimedia.org/backup-index-bydb.html), select the one with `pages-articles-multistream` in its name.
 
@@ -34,16 +44,15 @@ python WikiExtractor.py --json ../enwiki-latest-pages-articles-multistream.xml
 *Important note: Please check the section about [creating a rules file](#using-language-rules) and [a blacklist](#create-a-blacklist-based-on-less-common-words) at this point, you might want to consider creating them and that process should happen before step 3.*
 
 3. Scrap the sentences into a new file from the WikiExtractor output dir (this might take more than 6h to finish)
+
 ```bash
 cd ../common-voice-wiki-scraper
 cargo run -- extract -l english -d ../wikiextractor/text/ >> wiki.en.txt
 ```
 
-*Tip: You don't need this last process to finish to start observing the output, wiki.en.txt should get a few hundred and thousands sentences in just a few minutes, and you can use that as a way to estimate the quality of the output early on and stop the process if you are not happy.*
+*Tip: You don't need this last process to finish to start observing the output, wiki.en.txt should get a few thousands sentences in just a few minutes, and you can use that as a way to estimate the quality of the output early on and stop the process if you are not happy.*
 
 ## Using language rules
-
-We can only extract at most 3 sentences per article.
 
 The following rules can be configured per language. Add a `<language>.toml` file in the `rules` directory to enable a new locale.
 
@@ -141,3 +150,11 @@ In order to get your language rules and blacklist incorporated in this repo, you
 - Get at least 3 different native speakers (ideally linguistics) to review a random sample of 100-500 sentences and estimate the average error ratio and comment (or link their comment) in the PR.
 
 Once we have your rules into the repo, we will be able to run the extraction from our side and incorporate the sentences into the Common Voice repo. But please take note that we have limited resources and we can't guarantee a specific date for us to run this process (we are looking into automating it).
+
+## Adding another scrape target
+
+If you find a new open data source that provides a lot of sentences ([Example](https://discourse.mozilla.org/t/using-the-europarl-dataset-with-sentences-from-speeches-from-the-european-parliament/50184/36)), we suggest to not go through through the Sentence Collector but rather adding a scrape target here. Before you do so, let's discuss it on [Discourse](https://discourse.mozilla.org/c/voice/) first!
+
+* In `app.rs`, add a new extraction command - same arguments as the `extract` task, but with a better - more descriptive - name identifying your data source
+* In `loader.rs` write your own loader according to the data structure - the data structure should be fairly simple, you might need to consider writing a separate script to fetch and prepare the sentences first (as we do with the WikiExtractor for Wikipedia)
+* In `app.rs` add a new `else if` in the `start` function to generate your config and start the extraction, passing your own custom loader you wrote

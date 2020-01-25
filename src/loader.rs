@@ -5,7 +5,7 @@ use std::io::Read;
 use std::path::Path;
 use std::path::PathBuf;
 
-pub fn load(file_name: &PathBuf) -> Result<Vec<String>, String> {
+pub fn load_wikiextractor(file_name: &PathBuf) -> Result<Vec<String>, String> {
     let mut file = File::open(file_name).map_err(|e| format!("{}", e))?;
     let mut json_str = String::new();
     file.read_to_string(&mut json_str)
