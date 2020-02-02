@@ -1,7 +1,15 @@
 # Common Voice Sentence Extractor
 [![Travis Build Status](https://travis-ci.com/Common-Voice/common-voice-wiki-scraper.svg?branch=master)](https://travis-ci.com/Common-Voice/common-voice-wiki-scraper/) [![AppVeyor Build Status](https://ci.appveyor.com/api/projects/status/github/MichaelKohler/common-voice-wiki-scraper?branch=master&svg=true)](https://ci.appveyor.com/project/MichaelKohler/common-voice-wiki-scraper/history)
 
-## Dependencies
+[Common Voice](https://voice.mozilla.org) is Mozilla's initiative to help teach machines how real people speak. For this we need to collect sentences that people can read out aloud on the website. Individual sentences can be submitted through the [Sentence Collector](https://common-voice.github.io/sentence-collector). This only can scale so far, so we also use automated tools to extract sentences from other sources.
+
+Right now this tool supports extractions from the following sources:
+
+* Wikipedia - max 3 sentences per articles
+
+For a source to be added, the dataset needs to be vetted by Mozilla to check license compatibility. If you know about a good source, please start a topic on [Discourse](https://discourse.mozilla.org/c/voice/). Once it's been verified that a source can be used, check the "Adding another scrape target" further below.
+
+## Setup
 
 - [Rust Nightly](https://rustup.rs/) (follow the instructions and customize the install to select the `nightly` channel)
 
@@ -21,7 +29,9 @@ You need to download the WikiExtractor:
 git clone https://github.com/attardi/wikiextractor.git
 ```
 
-## Extract Wikipedia
+## Extraction
+
+### Extract Wikipedia
 
 We can only extract at most 3 sentences per article.
 
