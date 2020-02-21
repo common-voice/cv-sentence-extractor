@@ -16,6 +16,7 @@ broken_whitespace = ["  ", " ,", " .", " ?", " !", " ;", " :", "„ ", " “", "
 # - პროფ. / დაახლ. / მეცნ. / and other abbreviations
 # - No words without vowels
 # - No sentences end with a semicolon
+# - Missing whitespace after comma, semicolon, etc.
 # - Sentence delimiter can only be at the end of a sentence
 # - No words with only one letter (" ა.", " ა:", "ა ", " ა ", " ა")
 abbreviation_patterns = [
