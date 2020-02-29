@@ -1,7 +1,7 @@
 min_trimmed_length = 3
 min_word_count = 2
-max_word_count = 14
-min_characters = 0
+max_word_count = 16
+min_characters = 2
 may_end_with_colon = false
 quote_start_with_letter = true
 needs_punctuation_end = false
@@ -14,6 +14,6 @@ disallowed_symbols = [
   'Λ', 'λ', 'μ', 'ν', 'Ξ', 'ξ', 'Π', 'π', 'ρ', 'Σ', 'σ', 'ς', 'τ',
   'υ', 'Φ', 'φ', 'χ', 'Ψ', 'ψ', 'Ω', 'ω', '©'
 ]
-broken_whitespace = ["  ", " ,", " .", " ?", " !", " ;"]
+broken_whitespace = ["  ", " ,", " .", " ?", " !", " ;", " :"]
 disallowed_words = []
 abbreviation_patterns = ["[A-Z]+\\.*[A-Z]", "[A-Z]\\.$", "[A-Za-z]+\\.+[A-Za-z]+\\.*", "\"\""]
