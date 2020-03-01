@@ -53,6 +53,7 @@ pub struct Rules {
     pub abbreviation_patterns: Array,
     pub replacements: Array,
     pub even_symbols: Array,
+    pub matching_symbols: Array,
 }
 
 impl Default for Rules {
@@ -74,6 +75,7 @@ impl Default for Rules {
             abbreviation_patterns: vec![],
             replacements: vec![],
             even_symbols: vec![],
+            matching_symbols: vec![],
         }
     }
 }

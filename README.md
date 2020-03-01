@@ -74,6 +74,7 @@ The following rules can be configured per language. Add a `<language>.toml` file
 | disallowed_symbols |  Array of disallowed symbols or letters. Only used when allowed_symbols_regex is not set or is an empty String. | String Array | all symbols allowed
 | disallowed_words |  Array of disallowed words | String Array | all words allowed
 | even_symbols |  Symbols that always need an event count | Char Array | []
+| matching_symbols |  Symbols that map to another | Array of matching configurations: each configuration is an Array of two values: `["match", "match"]`. See example below. | []
 | max_word_count |  Maximum number of words in a sentence | integer | 14
 | may_end_with_colon |  If a sentence can end with a : or not | boolean | false
 | min_characters |  Minimum of character occurrences | integer | 0
@@ -84,6 +85,26 @@ The following rules can be configured per language. Add a `<language>.toml` file
 | needs_uppercase_start |  If a sentence needs to start with an uppercase | boolean | false
 | quote_start_with_letter |  If a quote needs to start with a letter | boolean | true
 | replacements |  Replaces abbreviations or other words according to configuration | Array of replacement configurations: each configuration is an Array of two values: `["search", "replacement"]`. See example below. | nothing gets replaced
+
+### Example for `matching_symbols`
+
+```
+matching_symbols = [
+  ["„", "“"],
+  ["(", "]"],
+  ["[", ")"],
+]
+```
+
+This matches all occurrence of `„` with `“`, all occurrence of `(` with `]`, all occurrence of `[` with `)`.
+
+```
+Input: This is „a test“ and (another one]
+Output: Valid
+
+Input: This is (a test]]
+Output: Invalid
+```
 
 ### Example for `replacements`
 
