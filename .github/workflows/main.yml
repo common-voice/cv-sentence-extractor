@@ -1,0 +1,22 @@
+name: CI
+
+on: [push, pull_request]
+
+jobs:
+  test:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest, macOS-latest]
+        rust: [nightly]
+
+    steps:
+    - uses: hecrj/setup-rust-action@ve0938ba
+      with:
+        rust-version: ${{ matrix.rust }}
+        components: clippy
+    - uses: actions/checkout@master
+    - name: Run clippy
+      run: cargo clippy --all-targets --all-features
+    - name: Run tests
+      run: cargo test --verbose
