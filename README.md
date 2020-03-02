@@ -1,5 +1,4 @@
 # Common Voice Sentence Extractor
-[![Travis Build Status](https://travis-ci.com/Common-Voice/common-voice-wiki-scraper.svg?branch=master)](https://travis-ci.com/Common-Voice/common-voice-wiki-scraper/) [![AppVeyor Build Status](https://ci.appveyor.com/api/projects/status/github/MichaelKohler/common-voice-wiki-scraper?branch=master&svg=true)](https://ci.appveyor.com/project/MichaelKohler/common-voice-wiki-scraper/history)
 
 [Common Voice](https://voice.mozilla.org) is Mozilla's initiative to help teach machines how real people speak. For this we need to collect sentences that people can read out aloud on the website. Individual sentences can be submitted through the [Sentence Collector](https://common-voice.github.io/sentence-collector). This only can scale so far, so we also use automated tools to extract sentences from other sources.
 
