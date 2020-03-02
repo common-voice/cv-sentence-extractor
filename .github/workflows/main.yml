@@ -11,7 +11,7 @@ jobs:
         rust: [nightly]
 
     steps:
-    - uses: hecrj/setup-rust-action@ve0938ba
+    - uses: hecrj/setup-rust-action@e0938ba
       with:
         rust-version: ${{ matrix.rust }}
         components: clippy
