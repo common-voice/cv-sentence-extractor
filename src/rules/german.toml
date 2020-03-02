@@ -11,6 +11,10 @@ allowed_symbols_regex = "[\u0020-\u007BäöüßÄÖÜ„“‚‘’–\\.]"
 disallowed_symbols = []
 broken_whitespace = ["  ", " ,", " .", " ?", " !", " ;"]
 
+matching_symbols = [
+  ["„", "“"]
+]
+
 # Abbreviation examples for each regex, also cheating a bit and adding more regex which has nothing to do with abbreviations:
 #   - A.B or z.B.
 #   - Jahrhundert at the beginning of the sentence (circumvents wrongly splitted sentences from WikiExtractor such as "Im 3. Jahrhundert begann ..." leading to two incomplete sentences)
