@@ -90,18 +90,21 @@ The following rules can be configured per language. Add a `<language>.toml` file
 ```
 matching_symbols = [
   ["„", "“"],
-  ["(", "]"],
-  ["[", ")"],
+  ["“", "„"],
+  ["(", ")"],
+  [")", "("],
+  ["[", "]"],
+  ["]", "["],
 ]
 ```
 
-This matches all occurrence of `„` with `“`, all occurrence of `(` with `]`, all occurrence of `[` with `)`.
+This matches all occurrence of `„` with `“`, all occurrence of `(` with `)`, all occurrence of `[` with `]` and the other way around.
 
 ```
-Input: This is „a test“ and (another one]
+Input: This is „a test“ and (another one)
 Output: Valid
 
-Input: This is (a test]]
+Input: This is (a test))
 Output: Invalid
 ```
 
