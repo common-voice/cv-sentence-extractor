@@ -59,7 +59,7 @@ fn start(all_matches: ArgMatches) -> Result<(), String> {
     // Wikipedia
     if let Some(matches) = all_matches.subcommand_matches("extract") {
         let config = Config {
-            language: String::from(matches.value_of("language").unwrap_or_else(|| "en ")),
+            language: String::from(matches.value_of("language").unwrap_or_else(|| "en")),
             no_check: matches.is_present("no_check"),
             directory: String::from(matches.value_of("dir").unwrap_or_default()),
             max_sentences_per_text: 3,
