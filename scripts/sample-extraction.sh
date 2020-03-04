@@ -13,41 +13,45 @@ EXTRACTED_SENTENCES_PATH="$OUTPUT_PATH/extraction-sample.txt"
 
 mkdir -p $OUTPUT_PATH
 
-echo "Files created: $FILES_CREATED"
-echo "Files updated: $FILES_UPDATED"
-echo "Analyzing first rule file changed.."
-ALL_FILES="$FILES_CREATED $FILES_UPDATED"
-FIRST_CHANGED_RULES_FILE=( $(echo $ALL_FILES | grep -o 'src/rules/.*' || [[ $? == 1 ]]) )
+# echo "Files created: $FILES_CREATED"
+# echo "Files updated: $FILES_UPDATED"
+# echo "Analyzing first rule file changed.."
+# ALL_FILES="$FILES_CREATED $FILES_UPDATED"
+# FIRST_CHANGED_RULES_FILE=( $(echo $ALL_FILES | grep -o 'src/rules/.*' || [[ $? == 1 ]]) )
 
-if [ ${#FIRST_CHANGED_RULES_FILE[@]} == 0 ]; then
-  echo "Nothing to be done here.."
-  echo "" > $EXTRACTED_SENTENCES_PATH
-  exit 0
-fi
+# if [ ${#FIRST_CHANGED_RULES_FILE[@]} == 0 ]; then
+#   echo "Nothing to be done here.."
+#   echo "" > $EXTRACTED_SENTENCES_PATH
+#   exit 0
+# fi
 
-LANGUAGE_FILE_NAME=${FIRST_CHANGED_RULES_FILE/src\/rules\//""}
-LANGUAGE_FILE_NAME=${LANGUAGE_FILE_NAME/disallowed_words\//""}
-LANGUAGE=${LANGUAGE_FILE_NAME/.toml/""}
-LANGUAGE_CODE=${LANGUAGE/.txt/""}
-echo "Determined that we should run an export for $LANGUAGE_CODE"
+# LANGUAGE_FILE_NAME=${FIRST_CHANGED_RULES_FILE/src\/rules\//""}
+# LANGUAGE_FILE_NAME=${LANGUAGE_FILE_NAME/disallowed_words\//""}
+# LANGUAGE=${LANGUAGE_FILE_NAME/.toml/""}
+# LANGUAGE_CODE=${LANGUAGE/.txt/""}
+# echo "Determined that we should run an export for $LANGUAGE_CODE"
 
-DUMP_BASE_PATH="https://dumps.wikimedia.org/${LANGUAGE_CODE}wiki/latest/"
+LANGUAGE_CODE="en"
+# DUMP_BASE_PATH="https://dumps.wikimedia.org/${LANGUAGE_CODE}wiki/latest/"
 
-echo "Downloading Dump Listing..."
-curl $DUMP_BASE_PATH > listing.html
+# echo "Downloading Dump Listing..."
+# curl $DUMP_BASE_PATH > listing.html
 
-echo "Searching for correct file..."
-ARCHIVE_FILE_NAME_MATCHES=$(grep -o -e 'wiki-latest-pages-articles-multistream1.xml.*bz2' < listing.html || [[ $? == 1 ]])
-if [ -z $ARCHIVE_FILE_NAME_MATCHES ]; then
-  ARCHIVE_FILE_NAME_MATCHES=$(grep -o -e 'wiki-latest-pages-articles-multistream.xml.bz2' < listing.html)
-fi
+# echo "Searching for correct file..."
+# ARCHIVE_FILE_NAME_MATCHES=$(grep -o -e 'wiki-latest-pages-articles-multistream1.xml.*bz2' < listing.html || [[ $? == 1 ]])
+# if [ -z $ARCHIVE_FILE_NAME_MATCHES ]; then
+#   ARCHIVE_FILE_NAME_MATCHES=$(grep -o -e 'wiki-latest-pages-articles-multistream.xml.bz2' < listing.html)
+# fi
 
-ARCHIVE_FILE_NAME=$(echo $ARCHIVE_FILE_NAME_MATCHES | head -n1 | awk '{print $1;}')
+# ARCHIVE_FILE_NAME=$(echo $ARCHIVE_FILE_NAME_MATCHES | head -n1 | awk '{print $1;}')
 
-DUMP_URL="${DUMP_BASE_PATH}${LANGUAGE_CODE}${ARCHIVE_FILE_NAME}"
-rm listing.html
+# DUMP_URL="${DUMP_BASE_PATH}${LANGUAGE_CODE}${ARCHIVE_FILE_NAME}"
+# rm listing.html
 
-FILENAME=${ARCHIVE_FILE_NAME/.bz2/""}
+# FILENAME=${ARCHIVE_FILE_NAME/.bz2/""}
+DUMP_URL="https://dumps.wikimedia.org/enwiki/latest/enwiki-latest-pages-articles-multistream.xml.bz2"
+ARCHIVE_FILE_NAME="enwiki-latest-pages-articles-multistream.xml.bz2"
+FILENAME="enwiki-latest-pages-articles-multistream.xml"
 DUMP_PATH="$WORKSPACE/$ARCHIVE_FILE_NAME"
 EXTRACTED_DUMP_PATH="$WORKSPACE/$FILENAME"
 
