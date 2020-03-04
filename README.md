@@ -56,7 +56,7 @@ python WikiExtractor.py --json ../enwiki-latest-pages-articles-multistream.xml
 
 ```bash
 cd ../common-voice-wiki-scraper
-cargo run -- extract -l english -d ../wikiextractor/text/ >> wiki.en.txt
+cargo run -- extract -l en -d ../wikiextractor/text/ >> wiki.en.txt
 ```
 
 *Tip: You don't need this last process to finish to start observing the output, wiki.en.txt should get a few thousands sentences in just a few minutes, and you can use that as a way to estimate the quality of the output early on and stop the process if you are not happy.*
@@ -143,7 +143,7 @@ After running step 1 and 2 from the `Usage` section above, run:
 
 ```bash
 cd ../common-voice-wiki-scraper
-cargo run -- extract -d ../wikiextractor/text/ --no_check >> wiki.en.all.txt
+cargo run -- extract -l en -d ../wikiextractor/text/ --no_check >> wiki.en.all.txt
 ```
 
 Then you can use the cvtools scripts to generate a list of the word frequency:
@@ -164,7 +164,7 @@ grep -i "80" ./word_usage.en.txt
 Once you know the frequency limit, you can generate your blacklist by running:
 
 ```bash
-python3 ./word_usage.py -i ../common-voice-wiki-scraper/wiki.en.all.txt --max-frequency 80 --show-words-only >> ../common-voice-wiki-scraper/src/rules/disallowed_words/english.txt
+python3 ./word_usage.py -i ../common-voice-wiki-scraper/wiki.en.all.txt --max-frequency 80 --show-words-only >> ../common-voice-wiki-scraper/src/rules/disallowed_words/en.txt
 ```
 
 You can use also `--strip-by-apostrophe` which is handy for languages using `'` in their sentences to recognize more words.

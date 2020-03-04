@@ -1,0 +1,32 @@
+min_trimmed_length = 3
+min_word_count = 2
+max_word_count = 14
+min_characters = 2
+may_end_with_colon = false
+quote_start_with_letter = true
+needs_punctuation_end = false
+needs_letter_start = true
+needs_uppercase_start = true
+allowed_symbols_regex = "[\u0020-\u007BäöüßÄÖÜ„“‚‘’–\\.]"
+disallowed_symbols = []
+broken_whitespace = ["  ", " ,", " .", " ?", " !", " ;"]
+
+matching_symbols = [
+  ["„", "“"]
+]
+
+# Abbreviation examples for each regex, also cheating a bit and adding more regex which has nothing to do with abbreviations:
+#   - A.B or z.B.
+#   - Jahrhundert at the beginning of the sentence (circumvents wrongly splitted sentences from WikiExtractor such as "Im 3. Jahrhundert begann ..." leading to two incomplete sentences)
+#   - bzw. / ca. / gem. / v. Chr. / n. Chr. / sog. / Co. (Remy & Co.) / Art. (Art. drei des Bundesgesetzes) / and other abbreviations that could end up at the end of a sentence
+#   - Sentence delimiter can only be at the end of a sentence
+#   - No words with only one letter (" a.", " a", " a ", "a ")
+#   - Mixed upper/lowercase in words (LaSi - mostly chemical elements?)
+abbreviation_patterns = [
+  "[A-Z]+\\.*[A-Z]",
+  "^(Jahrhundert|Liga|Bundesliga)",
+  "bzw\\.|ca\\.|gem\\.|[v|n]\\.\\sChr\\.|sog\\.|Co\\.|Art\\.|geb\\.|hl\\.|int\\.|allg\\.|bes\\.|bez\\.|eigtl\\.|gegr\\.|ugs\\.|urspr\\.|usw\\.|zz\\.",
+  "[\\.|\\?|!].+$",
+  "(\\s[A-Za-z]{1}[\\.|\\?|!]*$)|(^[A-Za-z]{1}\\s)|\\s[A-Za-z]{1}\\s",
+  "[a-z][A-Z][a-z]",
+]

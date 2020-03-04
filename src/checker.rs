@@ -438,7 +438,7 @@ mod test {
 
     #[test]
     fn test_english() {
-        let rules : Rules = load_rules("english");
+        let rules : Rules = load_rules("en");
 
         assert_eq!(check(&rules, &String::from("")), false);
         assert_eq!(check(&rules, &String::from("\"😊")), false);
@@ -461,7 +461,7 @@ mod test {
 
     #[test]
     fn test_french() {
-        let rules : Rules = load_rules("french");
+        let rules : Rules = load_rules("fr");
 
         assert_eq!(check(&rules, &String::from("")), false);
         assert_eq!(check(&rules, &String::from("\"😊")), false);
@@ -489,7 +489,7 @@ mod test {
 
     #[test]
     fn test_german() {
-        let rules : Rules = load_rules("german");
+        let rules : Rules = load_rules("de");
 
         assert_eq!(check(&rules, &String::from("Dies ist ein korrekter Satz.")), true);
         assert_eq!(check(&rules, &String::from("Satzzeichen in der Mitte. Wird nicht akzeptiert.")), false);
