@@ -1,19 +1,19 @@
-min_trimmed_length = 3
-min_word_count = 3
-max_word_count = 14
+min_trimmed_length = 0
+min_word_count = 0
+max_word_count = 50
 min_characters = 0
 may_end_with_colon = false
-quote_start_with_letter = true
+quote_start_with_letter = false
 needs_punctuation_end = false
-needs_letter_start = true
+needs_letter_start = false
 needs_uppercase_start = false
-disallowed_symbols = [
-  '<', '>', '+', '*', '\', '#', '@', '^', '[', ']', '(', ')', '/',
- 'a', 'e', 'i', 'o',
-  'é', 'è', 'à', 'ç', 'Å',
-  'α', 'β', 'Γ', 'γ', 'Δ', 'δ', 'ε', 'ζ', 'η', 'Θ', 'θ', 'ι', 'κ',
-  'Λ', 'λ', 'μ', 'ν', 'Ξ', 'ξ', 'Π', 'π', 'ρ', 'Σ', 'σ', 'ς', 'τ',
-  'υ', 'Φ', 'φ', 'χ', 'Ψ', 'ψ', 'Ω', 'ω',
+matching_symbols = [
+  ["।", "."]
 ]
-broken_whitespace = ["  ", " ,", " .", " ?", " !", " ;"]
+replacements = [
+  ["।", "."]
+]
+disallowed_symbols = [
+  'a', 'e', 'i', 'o',
+]
 abbreviation_patterns = ["[A-Z]+\\.*[A-Z]"]

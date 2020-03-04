@@ -55,7 +55,8 @@ fn choose(
     predicate: impl FnMut(&Rules, &str) -> bool,
     mut replacer: impl FnMut(&Rules, &str) -> String,
 ) -> Vec<String> {
-    let sentences_replaced_abbreviations: Vec<String> = SentenceTokenizer::<Standard>::new(text, training_data)
+    let sentences_replaced_abbreviations: Vec<String> = SentenceTokenizer::<Standard>::new(replacer(rules, text).as_ref(), training_data)
+    //let sentences_replaced_abbreviations: Vec<String> = SentenceTokenizer::<Standard>::new(text, training_data)
         .map(|item| { replacer(rules, item) })
         .collect();
 
