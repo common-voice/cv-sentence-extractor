@@ -25,7 +25,7 @@ matching_symbols = [
 #   - Mixed upper/lowercase in words (LaSi - mostly chemical elements?)
 abbreviation_patterns = [
   "[A-Z]+\\.*[A-Z]",
-  "^(Jahrhundert|Liga|Bundesliga)",
+  "^(Jahrhundert|Liga|Bundesliga|Klasse)",
   "bzw\\.|ca\\.|gem\\.|[v|n]\\.\\sChr\\.|sog\\.|Co\\.|Art\\.|geb\\.|hl\\.|int\\.|allg\\.|bes\\.|bez\\.|eigtl\\.|gegr\\.|ugs\\.|urspr\\.|usw\\.|zz\\.",
   "[\\.|\\?|!].+$",
   "(\\s[A-Za-z]{1}[\\.|\\?|!]*$)|(^[A-Za-z]{1}\\s)|\\s[A-Za-z]{1}\\s",
