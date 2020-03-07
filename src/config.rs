@@ -9,7 +9,7 @@ pub struct Config {
 impl Default for Config {
     fn default() -> Config {
         Config {
-            language: String::from("english"),
+            language: String::from("en"),
             no_check: false,
             directory: String::from(""),
             max_sentences_per_text: 3,
