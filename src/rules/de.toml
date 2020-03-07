@@ -12,8 +12,7 @@ disallowed_symbols = []
 broken_whitespace = ["  ", " ,", " .", " ?", " !", " ;"]
 
 matching_symbols = [
-  ["„", "“"],
-  ["“", "„"]
+  ["„", "“"]
 ]
 
 # Abbreviation examples for each regex, also cheating a bit and adding more regex which has nothing to do with abbreviations:
