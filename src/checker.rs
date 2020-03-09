@@ -71,6 +71,17 @@ pub fn check(rules: &Rules, raw: &str) -> bool {
         }
     }
 
+    if !rules.matching_symbols.is_empty() {
+        let has_unmatching_symbols = rules.matching_symbols.iter().any(|match_symbol| {
+            let first_count = trimmed.matches(match_symbol[0].as_str().unwrap()).count();
+            let second_count = trimmed.matches(match_symbol[1].as_str().unwrap()).count();
+            first_count != second_count
+        });
+        if has_unmatching_symbols {
+            return false;
+        }
+    }
+
     true
 }
 
@@ -354,8 +365,80 @@ mod test {
     }
 
     #[test]
+    fn test_matching_quotes_valid() {
+        let rules : Rules = Rules {
+            matching_symbols: vec![
+                Value::try_from([Value::try_from("„").unwrap(), Value::try_from("“").unwrap()]).unwrap()
+            ],
+            ..Default::default()
+        };
+
+        assert_eq!(check(&rules, &String::from("This is „a quote“")), true);
+    }
+
+    #[test]
+    fn test_matching_quotes_invalid() {
+        let rules : Rules = Rules {
+            matching_symbols: vec![
+                Value::try_from([Value::try_from("„").unwrap(), Value::try_from("“").unwrap()]).unwrap()
+            ],
+            ..Default::default()
+        };
+
+        assert_eq!(check(&rules, &String::from("This is „a quote")), false);
+    }
+
+    #[test]
+    fn test_matching_quotes_valid_multiple() {
+        let rules : Rules = Rules {
+            matching_symbols: vec![
+                Value::try_from([Value::try_from("„").unwrap(), Value::try_from("“").unwrap()]).unwrap()
+            ],
+            ..Default::default()
+        };
+
+        assert_eq!(check(&rules, &String::from("This is „a quote“ and „another one“")), true);
+    }
+
+    #[test]
+    fn test_matching_quotes_invalid_multiple() {
+        let rules : Rules = Rules {
+            matching_symbols: vec![
+                Value::try_from([Value::try_from("„").unwrap(), Value::try_from("“").unwrap()]).unwrap()
+            ],
+            ..Default::default()
+        };
+
+        assert_eq!(check(&rules, &String::from("This is „a quote“ and another one“")), false);
+    }
+
+    #[test]
+    fn test_matching_bracket_valid() {
+        let rules : Rules = Rules {
+            matching_symbols: vec![
+                Value::try_from([Value::try_from("(").unwrap(), Value::try_from("]").unwrap()]).unwrap()
+            ],
+            ..Default::default()
+        };
+
+        assert_eq!(check(&rules, &String::from("This is (a bracket]")), true);
+    }
+
+    #[test]
+    fn test_matching_bracket_invalid() {
+        let rules : Rules = Rules {
+            matching_symbols: vec![
+                Value::try_from([Value::try_from("(").unwrap(), Value::try_from("]").unwrap()]).unwrap()
+            ],
+            ..Default::default()
+        };
+
+        assert_eq!(check(&rules, &String::from("This is (a bracket")), false);
+    }
+
+    #[test]
     fn test_english() {
-        let rules : Rules = load_rules("english");
+        let rules : Rules = load_rules("en");
 
         assert_eq!(check(&rules, &String::from("")), false);
         assert_eq!(check(&rules, &String::from("\"😊")), false);
@@ -378,7 +461,7 @@ mod test {
 
     #[test]
     fn test_french() {
-        let rules : Rules = load_rules("french");
+        let rules : Rules = load_rules("fr");
 
         assert_eq!(check(&rules, &String::from("")), false);
         assert_eq!(check(&rules, &String::from("\"😊")), false);
@@ -406,7 +489,7 @@ mod test {
 
     #[test]
     fn test_german() {
-        let rules : Rules = load_rules("german");
+        let rules : Rules = load_rules("de");
 
         assert_eq!(check(&rules, &String::from("Dies ist ein korrekter Satz.")), true);
         assert_eq!(check(&rules, &String::from("Satzzeichen in der Mitte. Wird nicht akzeptiert.")), false);
