@@ -1,6 +1,6 @@
-name: Sample Extraction
+name: Extraction
 
-on: [pull_request]
+on: [pull_request,push]
 
 jobs:
   extract:
@@ -15,15 +15,29 @@ jobs:
       with:
         rust-version: ${{ matrix.rust }}
     - uses: actions/checkout@master
+    - name: Get Commit Message
+      run: echo ::set-env name=COMMIT_MESSAGE::$(git log --format=%B -n 1 ${{ github.event.after }})
+
     - uses: futuratrepadeira/changed-files@b4ef6fe
+      if: "contains( github.ref , 'pull' )"
       id: files
       with:
         repo-token: ${{ secrets.GITHUB_TOKEN }}
-    - name: Sample extraction
-      run: ./scripts/sample-extraction.sh
+
+    - name: Full Extraction
+      if: "contains( env.COMMIT_MESSAGE , '--full-extraction' )"
+      run: ./scripts/extraction.sh full
       env:
         FILES_CREATED: ${{ steps.files.outputs.files_created }}
         FILES_UPDATED: ${{ steps.files.outputs.files_updated }}
+
+    - name: Sample Extraction
+      if: "!contains( env.COMMIT_MESSAGE , '--full-extraction' )"
+      run: ./scripts/extraction.sh
+      env:
+        FILES_CREATED: ${{ steps.files.outputs.files_created }}
+        FILES_UPDATED: ${{ steps.files.outputs.files_updated }}
+
     - uses: actions/upload-artifact@v1
       with:
         name: extraction-sample
