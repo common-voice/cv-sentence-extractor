@@ -10,6 +10,9 @@ needs_uppercase_start = false
 allowed_symbols_regex = "[\u10D0-\u10F0„“,;:–  —\\-\\?\\.!]"
 disallowed_symbols = []
 broken_whitespace = ["  ", " ,", " .", " ?", " !", " ;", " :", "„ ", " “", "„“", "“-", "-,", ".“", " -", "- ", "?-"]
+matching_symbols = [
+  ["„", "“"]
+]
 
 # Examples for each regex:
 # - Most abbreviations at the end of a sentence
