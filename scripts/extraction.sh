@@ -39,9 +39,11 @@ fi
 
 echo "Determined that we should run an export for $LANGUAGE_CODE"
 
-DUMP_BASE_PATH="https://dumps.wikimedia.org/${LANGUAGE_CODE}wiki/latest/"
+echo "Getting WikiExtractor"
+curl $WIKI_EXTRACTOR_URL > $WIKI_EXTRACTOR_PATH
 
 echo "Downloading Dump Listing..."
+DUMP_BASE_PATH="https://dumps.wikimedia.org/${LANGUAGE_CODE}wiki/latest/"
 curl $DUMP_BASE_PATH > listing.html
 
 echo "Searching for correct file..."
@@ -49,35 +51,50 @@ ARCHIVE_FILE_NAME_MATCHES=$(grep -o -e 'wiki-latest-pages-articles-multistream1.
 if [ -z $ARCHIVE_FILE_NAME_MATCHES ]; then
   ARCHIVE_FILE_NAME_MATCHES=$(grep -o -e 'wiki-latest-pages-articles-multistream.xml.bz2' < listing.html)
 fi
+rm listing.html
 
 ARCHIVE_FILE_NAME=$(echo $ARCHIVE_FILE_NAME_MATCHES | head -n1 | awk '{print $1;}')
 
-DUMP_URL="${DUMP_BASE_PATH}${LANGUAGE_CODE}${ARCHIVE_FILE_NAME}"
-rm listing.html
 
-FILENAME=${ARCHIVE_FILE_NAME/.bz2/""}
-DUMP_PATH="$WORKSPACE/$ARCHIVE_FILE_NAME"
-EXTRACTED_DUMP_PATH="$WORKSPACE/$FILENAME"
+function dump {
+  DUMP_URL="${DUMP_BASE_PATH}${LANGUAGE_CODE}$1"
+  FILENAME=${1/.bz2/""}
+  DUMP_PATH="$WORKSPACE/$1"
+  EXTRACTED_DUMP_PATH="$WORKSPACE/$FILENAME"
 
-echo "Downloading dump for $LANGUAGE_CODE at $DUMP_URL"
-curl $DUMP_URL > $DUMP_PATH
+  echo "Downloading dump for $LANGUAGE_CODE at $DUMP_URL"
+  curl $DUMP_URL > $DUMP_PATH
+}
 
-echo "Getting WikiExtractor"
-curl $WIKI_EXTRACTOR_URL > $WIKI_EXTRACTOR_PATH
+function extract {
+  pushd $WORKSPACE
+  echo "Extracting dump"
+  bzip2 -d -k $DUMP_PATH
 
-pushd $WORKSPACE
-echo "Extracting dump"
-bzip2 -d -k $DUMP_PATH
+  echo "Extracting with WikiExtractor"
+  if [ $TYPE == "sample" ]; then
+    timeout 30 python $WIKI_EXTRACTOR_PATH --processes 4 --json $EXTRACTED_DUMP_PATH || true
+  elif [ $TYPE == "full" ]; then
+    python $WIKI_EXTRACTOR_PATH --processes 4 --json $EXTRACTED_DUMP_PATH || true
+  fi
+  popd
 
-echo "Extracting with WikiExtractor"
-if [ $TYPE == "sample" ]; then
-  timeout 30 python $WIKI_EXTRACTOR_PATH --processes 4 --json $EXTRACTED_DUMP_PATH || true
-elif [ $TYPE == "full" ]; then
-  python $WIKI_EXTRACTOR_PATH --processes 4 --json $EXTRACTED_DUMP_PATH || true
-fi
-popd
+  echo "Running extraction"
+  pushd $PROJECT_ROOT
+  cargo run -- extract -l $LANGUAGE_CODE -d $EXTRACTED_TEXT_PATH >> $EXTRACTED_SENTENCES_PATH
+  popd
+}
 
-echo "Running extraction"
-pushd $PROJECT_ROOT
-cargo run -- extract -l $LANGUAGE_CODE -d $EXTRACTED_TEXT_PATH > $EXTRACTED_SENTENCES_PATH
-popd
+function cleanup {
+  rm -rf $DUMP_PATH
+  rm -rf $EXTRACTED_DUMP_PATH
+  rm -rf $EXTRACTED_TEXT_PATH
+}
+
+function main {
+  dump $ARCHIVE_FILE_NAME
+  extract
+  cleanup
+}
+
+main
