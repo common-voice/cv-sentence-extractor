@@ -1,4 +1,4 @@
-name: Extraction
+name: Wikipedia Extraction
 
 on: [pull_request,push]
 
@@ -24,21 +24,21 @@ jobs:
       with:
         repo-token: ${{ secrets.GITHUB_TOKEN }}
 
-    - name: Full Extraction
-      if: "contains( env.COMMIT_MESSAGE , '--full-extraction' )"
-      run: ./scripts/extraction.sh full
+    - name: Full Wikipedia Extraction
+      if: "contains( env.COMMIT_MESSAGE , '--full-wiki-extraction' )"
+      run: ./scripts/wiki-extraction.sh full
       env:
         FILES_CREATED: ${{ steps.files.outputs.files_created }}
         FILES_UPDATED: ${{ steps.files.outputs.files_updated }}
 
-    - name: Sample Extraction
-      if: "!contains( env.COMMIT_MESSAGE , '--full-extraction' )"
-      run: ./scripts/extraction.sh
+    - name: Sample Wikipedia Extraction
+      if: "!contains( env.COMMIT_MESSAGE , '--full-wiki-extraction' )"
+      run: ./scripts/wiki-extraction.sh
       env:
         FILES_CREATED: ${{ steps.files.outputs.files_created }}
         FILES_UPDATED: ${{ steps.files.outputs.files_updated }}
 
     - uses: actions/upload-artifact@v1
       with:
-        name: extraction-sample
+        name: extraction
         path: output/

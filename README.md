@@ -191,10 +191,14 @@ If you find a new open data source that provides a lot of sentences ([Example](h
 
 ## Automatic extraction
 
+Currently the following data sources are available for automatic extraction:
+
+* Wikipedia
+
 ### On every Pull Request
 
 On every PR we will [trigger a sample sentence extraction](https://discourse.mozilla.org/t/scraper-automatic-sample-sentences-extracted-in-pull-request/55217/3) which can be used for verification.
 
 ### On pushes to master
 
-On every push to master, we will run a full sentence extraction on the specified language if the commit message includes `--full-extraction=<language>` at the end of the message.
+On every push to master, we will run a full sentence extraction on the specified language if the commit message includes `--full-wiki-extraction=<language>` at the end of the message.

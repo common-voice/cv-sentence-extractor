@@ -10,7 +10,6 @@ WIKI_EXTRACTOR_URL="https://raw.githubusercontent.com/attardi/wikiextractor/mast
 WIKI_EXTRACTOR_PATH="$WORKSPACE/WikiExtractor.py"
 EXTRACTED_TEXT_PATH="$WORKSPACE/text"
 OUTPUT_PATH="$WORKSPACE/output"
-EXTRACTED_SENTENCES_PATH="$OUTPUT_PATH/extraction-sample.txt"
 mkdir -p $OUTPUT_PATH
 
 function dump {
@@ -66,10 +65,12 @@ if [ $TYPE == "sample" ]; then
   LANGUAGE_FILE_NAME=${LANGUAGE_FILE_NAME/disallowed_words\//""}
   LANGUAGE=${LANGUAGE_FILE_NAME/.toml/""}
   LANGUAGE_CODE=${LANGUAGE/.txt/""}
+  EXTRACTED_SENTENCES_PATH="$OUTPUT_PATH/extraction-sample.txt"
 elif [ $TYPE == "full" ]; then
   echo "Commit: $COMMIT_MESSAGE"
-  EXTRACTION_OPTION=$(echo $COMMIT_MESSAGE | grep -o -e '--full-extraction=.*$' || [[ $? == 1 ]])
-  LANGUAGE_CODE=${EXTRACTION_OPTION/"--full-extraction="/""} # TODO: make this prettier by only returing matched language
+  EXTRACTION_OPTION=$(echo $COMMIT_MESSAGE | grep -o -e '--full-wiki-extraction=.*$' || [[ $? == 1 ]])
+  LANGUAGE_CODE=${EXTRACTION_OPTION/"--full-wiki-extraction="/""} # TODO: make this prettier by only returing matched language
+  EXTRACTED_SENTENCES_PATH="$OUTPUT_PATH/wiki.txt"
 fi
 
 echo "Determined that we should run an export for $LANGUAGE_CODE"
