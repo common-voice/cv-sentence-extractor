@@ -49,6 +49,8 @@ function cleanup {
 
 
 if [ $TYPE == "sample" ]; then
+  EXTRACTED_SENTENCES_PATH="$OUTPUT_PATH/extraction-sample.txt"
+
   echo "Files created: $FILES_CREATED"
   echo "Files updated: $FILES_UPDATED"
   echo "Analyzing first rule file changed.."
@@ -65,7 +67,6 @@ if [ $TYPE == "sample" ]; then
   LANGUAGE_FILE_NAME=${LANGUAGE_FILE_NAME/disallowed_words\//""}
   LANGUAGE=${LANGUAGE_FILE_NAME/.toml/""}
   LANGUAGE_CODE=${LANGUAGE/.txt/""}
-  EXTRACTED_SENTENCES_PATH="$OUTPUT_PATH/extraction-sample.txt"
 elif [ $TYPE == "full" ]; then
   echo "Commit: $COMMIT_MESSAGE"
   EXTRACTION_OPTION=$(echo $COMMIT_MESSAGE | grep -o -e '--full-wiki-extraction=.*$' || [[ $? == 1 ]])
