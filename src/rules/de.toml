@@ -17,15 +17,19 @@ matching_symbols = [
 
 # Abbreviation examples for each regex, also cheating a bit and adding more regex which has nothing to do with abbreviations:
 #   - A.B or z.B.
-#   - Jahrhundert at the beginning of the sentence (circumvents wrongly splitted sentences from WikiExtractor such as "Im 3. Jahrhundert begann ..." leading to two incomplete sentences)
 #   - bzw. / ca. / gem. / v. Chr. / n. Chr. / sog. / Co. (Remy & Co.) / Art. (Art. drei des Bundesgesetzes) / and other abbreviations that could end up at the end of a sentence
+abbreviation_patterns = [
+  "[A-Z]+\\.*[A-Z]",
+  "bzw\\.|ca\\.|gem\\.|[v|n]\\.\\sChr\\.|sog\\.|Co\\.|Art\\.|geb\\.|hl\\.|int\\.|allg\\.|bes\\.|bez\\.|eigtl\\.|gegr\\.|ugs\\.|urspr\\.|usw\\.|zz\\.",
+]
+
+# Other patterns
+#   - Jahrhundert and others at the beginning of the sentence (circumvents wrongly splitted sentences from WikiExtractor such as "Im 3. Jahrhundert begann ..." leading to two incomplete sentences)
 #   - Sentence delimiter can only be at the end of a sentence
 #   - No words with only one letter (" a.", " a", " a ", "a ")
 #   - Mixed upper/lowercase in words (LaSi - mostly chemical elements?)
-abbreviation_patterns = [
-  "[A-Z]+\\.*[A-Z]",
+other_patterns = [
   "^(Jahrhundert|Liga|Bundesliga|Klasse)",
-  "bzw\\.|ca\\.|gem\\.|[v|n]\\.\\sChr\\.|sog\\.|Co\\.|Art\\.|geb\\.|hl\\.|int\\.|allg\\.|bes\\.|bez\\.|eigtl\\.|gegr\\.|ugs\\.|urspr\\.|usw\\.|zz\\.",
   "[\\.|\\?|!].+$",
   "(\\s[A-Za-z]{1}[\\.|\\?|!]*$)|(^[A-Za-z]{1}\\s)|\\s[A-Za-z]{1}\\s",
   "[a-z][A-Z][a-z]",
