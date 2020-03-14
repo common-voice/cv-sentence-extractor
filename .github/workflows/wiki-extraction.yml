@@ -38,6 +38,10 @@ jobs:
         FILES_CREATED: ${{ steps.files.outputs.files_created }}
         FILES_UPDATED: ${{ steps.files.outputs.files_updated }}
 
+    - name: Deduplicate Wikipedia Extraction
+      if: "contains( env.COMMIT_MESSAGE , '--full-wiki-extraction' )"
+      run: ./scripts/dedupe.sh wiki.txt
+
     - uses: actions/upload-artifact@v1
       with:
         name: extraction
