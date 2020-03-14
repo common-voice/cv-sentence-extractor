@@ -57,7 +57,11 @@ pub fn check(rules: &Rules, raw: &str) -> bool {
         let regex = Regex::new(Value::as_str(pattern).unwrap()).unwrap();
         regex.is_match(&trimmed)
     });
-    if abbr {
+    let other = rules.other_patterns.iter().any(|pattern| {
+        let regex = Regex::new(Value::as_str(pattern).unwrap()).unwrap();
+        regex.is_match(&trimmed)
+    });
+    if abbr || other {
         return false;
     }
 
@@ -301,6 +305,21 @@ mod test {
 
         assert_eq!(check(&rules, &String::from("This no two following uppercase letters")), true);
         assert_eq!(check(&rules, &String::from("This has two FOllowing uppercase letters")), false);
+    }
+
+    #[test]
+    fn test_other_patterns_long_words() {
+        let rules : Rules = Rules {
+            other_patterns: vec![Value::try_from("\\w{5,50}").unwrap()],
+            ..Default::default()
+        };
+
+        assert_eq!(check(&rules, &String::from("ये कलाकृतियां खजुराहो मंदिर की कलाकृतियों की याद दिलाती हैं.")), false);
+        assert_eq!(check(&rules, &String::from("φφδφξασκ")), false);
+        assert_eq!(check(&rules, &String::from("No long test")), true);
+        assert_eq!(check(&rules, &String::from("Longlong test this is")), false);
+        assert_eq!(check(&rules, &String::from("This is longlong test")), false);
+        assert_eq!(check(&rules, &String::from("This is test which is longlong")), false);
     }
 
     #[test]

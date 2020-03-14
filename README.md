@@ -67,7 +67,8 @@ The following rules can be configured per language. Add a `<language>.toml` file
 
 | Name   |      Description      |  Values | Default |
 |--------|-----------------------|---------|---------|
-| abbreviation_patterns |  Rust regex to match against | Rust Regex Array | all abbreviations allowed
+| abbreviation_patterns |  Rust regex defining abbreviations | Rust Regex Array | all abbreviations allowed
+| other_patterns |  Rust regex to disallow anything else | Rust Regex Array | all other patterns allowed
 | allowed_symbols_regex |  Regex of allowed symbols or letters. Each character gets matched against this pattern. | String Array | not used
 | broken_whitespace |  Array of broken whitespaces. This could for example disallow two spaces following each other | String Array | all types of whitespaces allowed
 | disallowed_symbols |  Array of disallowed symbols or letters. Only used when allowed_symbols_regex is not set or is an empty String. | String Array | all symbols allowed
