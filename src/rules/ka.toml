@@ -14,23 +14,28 @@ matching_symbols = [
   ["„", "“"]
 ]
 
-# Examples for each regex:
+# Abbreviation examples for each regex:
 # - Most abbreviations at the end of a sentence
 # - პროფ. / დაახლ. / მეცნ. / and other abbreviations
-# - No words without vowels
-# - No sentences end with a semicolon
-# - Missing whitespace after comma, semicolon, etc.
-# - Sentence delimiter can only be at the end of a sentence
-# - No words with only one letter (" ა.", " ა:", "ა ", " ა ", " ა")
+# - Abbreviations without vowels
 abbreviation_patterns = [
  "(\\s\\w{1}[^აეიოუს].$)|(\\s\\w{2}[^აეიოუთნრს].$)",
  "მო\\.|დას\\.|კულტ\\.|პროფ\\.|მეცნ\\.|მიახლ\\.|დაახლ\\.|დაახ\\.|ლათ\\.|გერ\\.|ინგლ\\.|რუს\\.|ბერძ\\.|მაგ[ \\.:]|მგუ[ \\.\\-]|ედპ[ \\.\\-]|სტუ[ \\.\\-]|თსუ|სსრ|ლკკ|აგგ|აშშ|ირბ|ნბა|ეცბ",
  "\\s[^აეიოუ]{2}+[\\s\\.\\-\\?!,;:“]",
+]
+
+# Other patterns
+# - No sentences end with a semicolon
+# - Missing whitespace after comma, semicolon, etc.
+# - Sentence delimiter can only be at the end of a sentence
+# - No words with only one letter (" ა.", " ა:", "ა ", " ა ", " ა")
+other_patterns = [
  ";$",
  "[,:;]\\S",
  "[\\.|\\?|!].+$",
  "(^[\u10D0-\u10F0]{1}[\\s\\-,;:„“])|(\\s[\u10D0-\u10F0]{1}[\\s\\.\\?\\-!,;:„“])|(„[\u10D0-\u10F0]{1}[\\s\\.\\?\\-!,;:“])"
-]
+ ]
+ 
 replacements = [
 # - Replace abbreviations
   ["და სხვ.", "და სხვა."],
