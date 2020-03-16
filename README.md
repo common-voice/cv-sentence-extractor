@@ -189,3 +189,17 @@ If you find a new open data source that provides a lot of sentences ([Example](h
 * In `app.rs`, add a new extraction command - same arguments as the `extract` task, but with a better - more descriptive - name identifying your data source
 * In `loader.rs` write your own loader according to the data structure - the data structure should be fairly simple, you might need to consider writing a separate script to fetch and prepare the sentences first (as we do with the WikiExtractor for Wikipedia)
 * In `app.rs` add a new `else if` in the `start` function to generate your config and start the extraction, passing your own custom loader you wrote
+
+## Automatic extraction
+
+Currently the following data sources are available for automatic extraction:
+
+* Wikipedia
+
+### On every Pull Request
+
+On every PR we will [trigger a sample sentence extraction](https://discourse.mozilla.org/t/scraper-automatic-sample-sentences-extracted-in-pull-request/55217/3) which can be used for verification.
+
+### On pushes to master
+
+On every push to master, we will run a full sentence extraction on the specified language if the commit message includes `--full-wiki-extraction=<language>` at the end of the message.

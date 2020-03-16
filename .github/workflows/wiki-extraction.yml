@@ -1,0 +1,48 @@
+name: Wikipedia Extraction
+
+on: [pull_request,push]
+
+jobs:
+  extract:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest]
+        rust: [nightly]
+
+    steps:
+    - uses: hecrj/setup-rust-action@e0938ba
+      with:
+        rust-version: ${{ matrix.rust }}
+    - uses: actions/checkout@master
+    - name: Get Commit Message
+      run: echo ::set-env name=COMMIT_MESSAGE::$(git log --format=%B -n 1 ${{ github.event.after }})
+
+    - uses: futuratrepadeira/changed-files@b4ef6fe
+      if: "contains( github.ref , 'pull' )"
+      id: files
+      with:
+        repo-token: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: Full Wikipedia Extraction
+      if: "contains( env.COMMIT_MESSAGE , '--full-wiki-extraction' )"
+      run: ./scripts/wiki-extraction.sh full
+      env:
+        FILES_CREATED: ${{ steps.files.outputs.files_created }}
+        FILES_UPDATED: ${{ steps.files.outputs.files_updated }}
+
+    - name: Sample Wikipedia Extraction
+      if: "!contains( env.COMMIT_MESSAGE , '--full-wiki-extraction' )"
+      run: ./scripts/wiki-extraction.sh
+      env:
+        FILES_CREATED: ${{ steps.files.outputs.files_created }}
+        FILES_UPDATED: ${{ steps.files.outputs.files_updated }}
+
+    - name: Deduplicate Wikipedia Extraction
+      if: "contains( env.COMMIT_MESSAGE , '--full-wiki-extraction' )"
+      run: ./scripts/dedupe.sh wiki.txt
+
+    - uses: actions/upload-artifact@v1
+      with:
+        name: extraction
+        path: output/
