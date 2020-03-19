@@ -51,8 +51,10 @@ pub struct Rules {
     pub disallowed_words: HashSet<String>,
     pub broken_whitespace: Array,
     pub abbreviation_patterns: Array,
+    pub other_patterns: Array,
     pub replacements: Array,
     pub even_symbols: Array,
+    pub matching_symbols: Array,
 }
 
 impl Default for Rules {
@@ -72,8 +74,10 @@ impl Default for Rules {
             disallowed_words: HashSet::new(),
             broken_whitespace: vec![],
             abbreviation_patterns: vec![],
+            other_patterns: vec![],
             replacements: vec![],
             even_symbols: vec![],
+            matching_symbols: vec![],
         }
     }
 }

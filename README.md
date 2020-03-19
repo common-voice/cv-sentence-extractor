@@ -1,5 +1,4 @@
 # Common Voice Sentence Extractor
-[![Travis Build Status](https://travis-ci.com/Common-Voice/common-voice-wiki-scraper.svg?branch=master)](https://travis-ci.com/Common-Voice/common-voice-wiki-scraper/) [![AppVeyor Build Status](https://ci.appveyor.com/api/projects/status/github/MichaelKohler/common-voice-wiki-scraper?branch=master&svg=true)](https://ci.appveyor.com/project/MichaelKohler/common-voice-wiki-scraper/history)
 
 [Common Voice](https://voice.mozilla.org) is Mozilla's initiative to help teach machines how real people speak. For this we need to collect sentences that people can read out aloud on the website. Individual sentences can be submitted through the [Sentence Collector](https://common-voice.github.io/sentence-collector). This only can scale so far, so we also use automated tools to extract sentences from other sources.
 
@@ -57,7 +56,7 @@ python WikiExtractor.py --json ../enwiki-latest-pages-articles-multistream.xml
 
 ```bash
 cd ../common-voice-wiki-scraper
-cargo run -- extract -l english -d ../wikiextractor/text/ >> wiki.en.txt
+cargo run -- extract -l en -d ../wikiextractor/text/ >> wiki.en.txt
 ```
 
 *Tip: You don't need this last process to finish to start observing the output, wiki.en.txt should get a few thousands sentences in just a few minutes, and you can use that as a way to estimate the quality of the output early on and stop the process if you are not happy.*
@@ -68,12 +67,13 @@ The following rules can be configured per language. Add a `<language>.toml` file
 
 | Name   |      Description      |  Values | Default |
 |--------|-----------------------|---------|---------|
-| abbreviation_patterns |  Rust regex to match against | Rust Regex Array | all abbreviations allowed
+| abbreviation_patterns |  Rust regex defining abbreviations | Rust Regex Array | all abbreviations allowed
 | allowed_symbols_regex |  Regex of allowed symbols or letters. Each character gets matched against this pattern. | String Array | not used
 | broken_whitespace |  Array of broken whitespaces. This could for example disallow two spaces following each other | String Array | all types of whitespaces allowed
 | disallowed_symbols |  Array of disallowed symbols or letters. Only used when allowed_symbols_regex is not set or is an empty String. | String Array | all symbols allowed
 | disallowed_words |  Array of disallowed words | String Array | all words allowed
 | even_symbols |  Symbols that always need an event count | Char Array | []
+| matching_symbols |  Symbols that map to another | Array of matching configurations: each configuration is an Array of two values: `["match", "match"]`. See example below. | []
 | max_word_count |  Maximum number of words in a sentence | integer | 14
 | may_end_with_colon |  If a sentence can end with a : or not | boolean | false
 | min_characters |  Minimum of character occurrences | integer | 0
@@ -82,8 +82,29 @@ The following rules can be configured per language. Add a `<language>.toml` file
 | needs_letter_start |  If a sentence needs to start with a letter | boolean | true
 | needs_punctuation_end |  If a sentence needs to end with a punctuation | boolean | false
 | needs_uppercase_start |  If a sentence needs to start with an uppercase | boolean | false
+| other_patterns |  Rust regex to disallow anything else | Rust Regex Array | all other patterns allowed
 | quote_start_with_letter |  If a quote needs to start with a letter | boolean | true
 | replacements |  Replaces abbreviations or other words according to configuration | Array of replacement configurations: each configuration is an Array of two values: `["search", "replacement"]`. See example below. | nothing gets replaced
+
+### Example for `matching_symbols`
+
+```
+matching_symbols = [
+  ["„", "“"],
+  ["(", ")"],
+  ["[", "]"]
+]
+```
+
+This matches all occurrence of `„` with `“`, all occurrence of `(` with `)`, all occurrence of `[` with `]`.
+
+```
+Input: This is „a test“ and (another one)
+Output: Valid
+
+Input: This is (a test))
+Output: Invalid
+```
 
 ### Example for `replacements`
 
@@ -123,7 +144,7 @@ After running step 1 and 2 from the `Usage` section above, run:
 
 ```bash
 cd ../common-voice-wiki-scraper
-cargo run -- extract -d ../wikiextractor/text/ --no_check >> wiki.en.all.txt
+cargo run -- extract -l en -d ../wikiextractor/text/ --no_check >> wiki.en.all.txt
 ```
 
 Then you can use the cvtools scripts to generate a list of the word frequency:
@@ -144,7 +165,7 @@ grep -i "80" ./word_usage.en.txt
 Once you know the frequency limit, you can generate your blacklist by running:
 
 ```bash
-python3 ./word_usage.py -i ../common-voice-wiki-scraper/wiki.en.all.txt --max-frequency 80 --show-words-only >> ../common-voice-wiki-scraper/src/rules/disallowed_words/english.txt
+python3 ./word_usage.py -i ../common-voice-wiki-scraper/wiki.en.all.txt --max-frequency 80 --show-words-only >> ../common-voice-wiki-scraper/src/rules/disallowed_words/en.txt
 ```
 
 You can use also `--strip-by-apostrophe` which is handy for languages using `'` in their sentences to recognize more words.
@@ -168,3 +189,17 @@ If you find a new open data source that provides a lot of sentences ([Example](h
 * In `app.rs`, add a new extraction command - same arguments as the `extract` task, but with a better - more descriptive - name identifying your data source
 * In `loader.rs` write your own loader according to the data structure - the data structure should be fairly simple, you might need to consider writing a separate script to fetch and prepare the sentences first (as we do with the WikiExtractor for Wikipedia)
 * In `app.rs` add a new `else if` in the `start` function to generate your config and start the extraction, passing your own custom loader you wrote
+
+## Automatic extraction
+
+Currently the following data sources are available for automatic extraction:
+
+* Wikipedia
+
+### On every Pull Request
+
+On every PR we will [trigger a sample sentence extraction](https://discourse.mozilla.org/t/scraper-automatic-sample-sentences-extracted-in-pull-request/55217/3) which can be used for verification.
+
+### On pushes to master
+
+On every push to master, we will run a full sentence extraction on the specified language if the commit message includes `--full-wiki-extraction=<language>` at the end of the message.

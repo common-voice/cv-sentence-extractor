@@ -57,7 +57,11 @@ pub fn check(rules: &Rules, raw: &str) -> bool {
         let regex = Regex::new(Value::as_str(pattern).unwrap()).unwrap();
         regex.is_match(&trimmed)
     });
-    if abbr {
+    let other = rules.other_patterns.iter().any(|pattern| {
+        let regex = Regex::new(Value::as_str(pattern).unwrap()).unwrap();
+        regex.is_match(&trimmed)
+    });
+    if abbr || other {
         return false;
     }
 
@@ -67,6 +71,17 @@ pub fn check(rules: &Rules, raw: &str) -> bool {
             count % 2 != 0
         });
         if has_uneven_symbols {
+            return false;
+        }
+    }
+
+    if !rules.matching_symbols.is_empty() {
+        let has_unmatching_symbols = rules.matching_symbols.iter().any(|match_symbol| {
+            let first_count = trimmed.matches(match_symbol[0].as_str().unwrap()).count();
+            let second_count = trimmed.matches(match_symbol[1].as_str().unwrap()).count();
+            first_count != second_count
+        });
+        if has_unmatching_symbols {
             return false;
         }
     }
@@ -293,6 +308,21 @@ mod test {
     }
 
     #[test]
+    fn test_other_patterns_long_words() {
+        let rules : Rules = Rules {
+            other_patterns: vec![Value::try_from("\\w{5,50}").unwrap()],
+            ..Default::default()
+        };
+
+        assert_eq!(check(&rules, &String::from("ये कलाकृतियां खजुराहो मंदिर की कलाकृतियों की याद दिलाती हैं.")), false);
+        assert_eq!(check(&rules, &String::from("φφδφξασκ")), false);
+        assert_eq!(check(&rules, &String::from("No long test")), true);
+        assert_eq!(check(&rules, &String::from("Longlong test this is")), false);
+        assert_eq!(check(&rules, &String::from("This is longlong test")), false);
+        assert_eq!(check(&rules, &String::from("This is test which is longlong")), false);
+    }
+
+    #[test]
     fn test_uneven_quotes_allowed_default() {
         let rules : Rules = Rules {
             ..Default::default()
@@ -354,8 +384,80 @@ mod test {
     }
 
     #[test]
+    fn test_matching_quotes_valid() {
+        let rules : Rules = Rules {
+            matching_symbols: vec![
+                Value::try_from([Value::try_from("„").unwrap(), Value::try_from("“").unwrap()]).unwrap()
+            ],
+            ..Default::default()
+        };
+
+        assert_eq!(check(&rules, &String::from("This is „a quote“")), true);
+    }
+
+    #[test]
+    fn test_matching_quotes_invalid() {
+        let rules : Rules = Rules {
+            matching_symbols: vec![
+                Value::try_from([Value::try_from("„").unwrap(), Value::try_from("“").unwrap()]).unwrap()
+            ],
+            ..Default::default()
+        };
+
+        assert_eq!(check(&rules, &String::from("This is „a quote")), false);
+    }
+
+    #[test]
+    fn test_matching_quotes_valid_multiple() {
+        let rules : Rules = Rules {
+            matching_symbols: vec![
+                Value::try_from([Value::try_from("„").unwrap(), Value::try_from("“").unwrap()]).unwrap()
+            ],
+            ..Default::default()
+        };
+
+        assert_eq!(check(&rules, &String::from("This is „a quote“ and „another one“")), true);
+    }
+
+    #[test]
+    fn test_matching_quotes_invalid_multiple() {
+        let rules : Rules = Rules {
+            matching_symbols: vec![
+                Value::try_from([Value::try_from("„").unwrap(), Value::try_from("“").unwrap()]).unwrap()
+            ],
+            ..Default::default()
+        };
+
+        assert_eq!(check(&rules, &String::from("This is „a quote“ and another one“")), false);
+    }
+
+    #[test]
+    fn test_matching_bracket_valid() {
+        let rules : Rules = Rules {
+            matching_symbols: vec![
+                Value::try_from([Value::try_from("(").unwrap(), Value::try_from("]").unwrap()]).unwrap()
+            ],
+            ..Default::default()
+        };
+
+        assert_eq!(check(&rules, &String::from("This is (a bracket]")), true);
+    }
+
+    #[test]
+    fn test_matching_bracket_invalid() {
+        let rules : Rules = Rules {
+            matching_symbols: vec![
+                Value::try_from([Value::try_from("(").unwrap(), Value::try_from("]").unwrap()]).unwrap()
+            ],
+            ..Default::default()
+        };
+
+        assert_eq!(check(&rules, &String::from("This is (a bracket")), false);
+    }
+
+    #[test]
     fn test_english() {
-        let rules : Rules = load_rules("english");
+        let rules : Rules = load_rules("en");
 
         assert_eq!(check(&rules, &String::from("")), false);
         assert_eq!(check(&rules, &String::from("\"😊")), false);
@@ -378,7 +480,7 @@ mod test {
 
     #[test]
     fn test_french() {
-        let rules : Rules = load_rules("french");
+        let rules : Rules = load_rules("fr");
 
         assert_eq!(check(&rules, &String::from("")), false);
         assert_eq!(check(&rules, &String::from("\"😊")), false);
@@ -406,7 +508,7 @@ mod test {
 
     #[test]
     fn test_german() {
-        let rules : Rules = load_rules("german");
+        let rules : Rules = load_rules("de");
 
         assert_eq!(check(&rules, &String::from("Dies ist ein korrekter Satz.")), true);
         assert_eq!(check(&rules, &String::from("Satzzeichen in der Mitte. Wird nicht akzeptiert.")), false);
