@@ -16,3 +16,20 @@ impl Default for Config {
         }
     }
 }
+
+#[cfg(test)]
+mod test {
+    use super::*;
+
+    #[test]
+    fn test_default_config() {
+        let config : Config = Config {
+            ..Default::default()
+        };
+
+        assert_eq!(config.language, "en");
+        assert_eq!(config.no_check, false);
+        assert_eq!(config.directory, "");
+        assert_eq!(config.max_sentences_per_text, 3);
+    }
+}
