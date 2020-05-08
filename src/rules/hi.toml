@@ -1,5 +1,5 @@
 min_trimmed_length = 3
-min_word_count = 1
+min_word_count = 5
 max_word_count = 25
 min_characters = 0
 may_end_with_colon = false
