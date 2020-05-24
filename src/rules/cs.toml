@@ -1,5 +1,5 @@
-allowed_symbols_regex="[A-Za-zěščřžýáíéóďťňúůĚŠČŘŽÝÁÍÉÓĎŤŇäöüÚ‚–\\. \"\\[\\]\\(\\)„“]"
-matching_symbols = [["„", "“"], ["(", ")"], ["[", "]"]]
+allowed_symbols_regex="[A-Za-zěščřžýáíéóďťňúůĚŠČŘŽÝÁÍÉÓĎŤŇäöüÚ‚–\\. \"„“]"
+matching_symbols = [["„", "“"]]
 min_trimmed_length = 6
 min_word_count = 1
 max_word_count = 14
