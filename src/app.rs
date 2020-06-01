@@ -30,6 +30,12 @@ where
                         .takes_value(true)
                         .number_of_values(1)
                         .help("input dir to glob"),
+                )
+                .arg(
+                    Arg::with_name("trans")
+                        .short("t")
+                        .long("trans")
+                        .help("auto translate tradistional chinese to simplify chinese"),
                 ),
         )
         .get_matches_from(itr)
@@ -51,6 +57,7 @@ where
 
 fn extract(matches: &ArgMatches) -> Result<()> {
     let file_names = load_file_names(matches.value_of("dir").unwrap())?;
+    let auto_translate = matches.is_present("trans");
 
     let mut sentences = vec![];
     for file_name in file_names {
@@ -58,7 +65,7 @@ fn extract(matches: &ArgMatches) -> Result<()> {
         let texts = load(&file_name)?;
         for text in texts {
             let mut article_sentences = vec![];
-            for next in SentenceExtractor::new(&text) {
+            for next in SentenceExtractor::new_with_translate_opt(&text, auto_translate) {
                 article_sentences.push(next);
             }
             article_sentences.sort_by(|a, b| a.len().partial_cmp(&b.len()).unwrap().reverse());

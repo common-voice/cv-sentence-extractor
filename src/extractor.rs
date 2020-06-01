@@ -5,17 +5,21 @@ use crate::standard_characters::STANDARD_CHARACTERS;
 
 static TERMINAL_PUNCTUATIONS: [char; 3] = ['。', '？', '！'];
 static PUNCTUATIONS: [char; 37] = [
-    '"', '"', '、', '‧', '—', '—', '—', '～', '“', '”', '；', '·', '：', '‘',
-    '•', '─', '兀', '∶', '∧', '∨', '，', '、', '．', '；', '：', '＃', '＆',
-    '＊', '＋', '－', '＜', '＞', '＝', '＄', '％', '＠', '，',
+    '"', '"', '、', '‧', '—', '—', '—', '～', '“', '”', '；', '·', '：', '‘', '•', '─', '兀', '∶',
+    '∧', '∨', '，', '、', '．', '；', '：', '＃', '＆', '＊', '＋', '－', '＜', '＞', '＝', '＄',
+    '％', '＠', '，',
 ];
 
 pub struct SentenceExtractor {
     text: String,
+    /// Translate workd traditional chinese to simplify chinese
+    translate: bool,
 }
 
 impl SentenceExtractor {
-    pub fn new(text: &str) -> SentenceExtractor {
+    /// New the Extractor with transalte option for translate traditional chinese to simplify
+    /// chinese or not
+    pub fn new_with_translate_opt(text: &str, translate: bool) -> SentenceExtractor {
         let lines: Vec<&str> = text.lines().collect();
         SentenceExtractor {
             text: if lines.len() > 1 {
@@ -29,6 +33,7 @@ impl SentenceExtractor {
             } else {
                 text.to_string()
             },
+            translate,
         }
     }
 }
@@ -69,10 +74,13 @@ impl Iterator for SentenceExtractor {
                 .collect::<String>();
 
             next_item = PARANS.replace(&next_item, "").to_string();
-            next_item = next_item
-                .chars()
-                .map(|c| CHARACTER_MAP.get(&c).unwrap_or(&c).clone())
-                .collect();
+
+            if self.translate {
+                next_item = next_item
+                    .chars()
+                    .map(|c| CHARACTER_MAP.get(&c).unwrap_or(&c).clone())
+                    .collect();
+            }
 
             let count = next_item.chars().count();
             if is_invalid(&next_item)
