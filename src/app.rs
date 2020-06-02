@@ -31,12 +31,9 @@ where
                         .number_of_values(1)
                         .help("input dir to glob"),
                 )
-                .arg(
-                    Arg::with_name("trans")
-                        .short("t")
-                        .long("trans")
-                        .help("auto translate tradistional chinese to simplify chinese"),
-                ),
+                .arg(Arg::with_name("trans").short("t").long("trans").help(
+                    "automatically translate words from traditional Chinese into simplify Chinese",
+                )),
         )
         .get_matches_from(itr)
 }
