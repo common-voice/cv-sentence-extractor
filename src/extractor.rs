@@ -12,13 +12,13 @@ static PUNCTUATIONS: [char; 37] = [
 
 pub struct SentenceExtractor {
     text: String,
-    /// Translate workd traditional chinese to simplify chinese
+    /// Boolean option for translate words from traditional Chinese into simplify Chinese
     translate: bool,
 }
 
 impl SentenceExtractor {
-    /// New the Extractor with transalte option for translate traditional chinese to simplify
-    /// chinese or not
+    /// New the Extractor with translate option for automatically translate words from traditional Chinese into
+    /// simplify Chinese
     pub fn new_with_translate_opt(text: &str, translate: bool) -> SentenceExtractor {
         let lines: Vec<&str> = text.lines().collect();
         SentenceExtractor {
