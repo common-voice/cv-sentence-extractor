@@ -50,7 +50,7 @@ cd wikiextractor
 python WikiExtractor.py --json ../enwiki-latest-pages-articles-multistream.xml
 ```
 
-*Important note: Please check the section about [creating a rules file](#using-language-rules) and [a blacklist](#create-a-blacklist-based-on-less-common-words) at this point, you might want to consider creating them and that process should happen before step 3.*
+*Important note: Please check the section about [creating a rules file](#using-language-rules) and [a blocklist](#create-a-blocklist-based-on-less-common-words) at this point, you might want to consider creating them and that process should happen before step 3.*
 
 3. Scrap the sentences into a new file from the WikiExtractor output dir (this might take more than 6h to finish)
 
@@ -126,7 +126,7 @@ Input: I am foo test a test
 Output: I am hi a hi
 ```
 
-## Using disallowed words (blacklisting)
+## Using disallowed words
 
 In order to increase the quality of the final output, you might want to consider filtering out some words that are complex, too long or non-native.
 
@@ -134,9 +134,9 @@ You can do this by adding these words to the language rules file for your langua
 
 If your list is too long, you can also place a `<language>.txt` file in the `rules/disallowed_words` directory to enable a new locale. Each word should be on a new line.
 
-### Create a blacklist based on less common words
+### Create a blocklist based on less common words
 
-You can create a solid blacklist by generating a list of the less common words from your Wikipedia.
+You can create a solid blocklist by generating a list of the less common words from your Wikipedia.
 
 To do so, first you should create a full export with all Wikipedia sentences. Note that all processes below will take a while to execute.
 
@@ -162,7 +162,7 @@ You will have to read the `word_usage.en.txt` file to decide where you should pu
 grep -i "80" ./word_usage.en.txt
 ```
 
-Once you know the frequency limit, you can generate your blacklist by running:
+Once you know the frequency limit, you can generate your blocklist by running:
 
 ```bash
 python3 ./word_usage.py -i ../common-voice-wiki-scraper/wiki.en.all.txt --max-frequency 80 --show-words-only >> ../common-voice-wiki-scraper/src/rules/disallowed_words/en.txt
@@ -172,12 +172,12 @@ You can use also `--strip-by-apostrophe` which is handy for languages using `'` 
 
 When you run the scrapping in step 2 from the `Usage` section this list will automatically be used if present.
 
-## Getting your rules/blacklist incorporated
+## Getting your rules/blocklist incorporated
 
-In order to get your language rules and blacklist incorporated in this repo, you will need to create a Pull Request explaining the following:
+In order to get your language rules and blocklist incorporated in this repo, you will need to create a Pull Request explaining the following:
 
 - How many sentences did you get at the end?
-- How did you create the blacklist file?
+- How did you create the blocklist file?
 - Get at least 3 different native speakers (ideally linguistics) to review a random sample of 100-500 sentences and estimate the average error ratio and comment (or link their comment) in the PR.
 
 Once we have your rules into the repo, we will be able to run the extraction from our side and incorporate the sentences into the Common Voice repo. But please take note that we have limited resources and we can't guarantee a specific date for us to run this process (we are looking into automating it).
