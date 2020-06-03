@@ -33,7 +33,31 @@ where
                 )
                 .arg(Arg::with_name("trans").short("t").long("trans").help(
                     "automatically translate words from traditional Chinese into simplify Chinese",
-                )),
+                ))
+                .arg(
+                    Arg::with_name("short sentence length")
+                        .short("s")
+                        .long("short")
+                        .takes_value(true)
+                        .number_of_values(1)
+                        .help("The suitable shortest sentence length"),
+                )
+                .arg(
+                    Arg::with_name("long sentence length")
+                        .short("l")
+                        .long("long")
+                        .takes_value(true)
+                        .number_of_values(1)
+                        .help("The suitable logest sentence length"),
+                )
+                .arg(
+                    Arg::with_name("auxiliary symbols")
+                        .short("a")
+                        .long("aux")
+                        .takes_value(true)
+                        .number_of_values(1)
+                        .help("The auxiliary symbols for extracting long sentence"),
+                ),
         )
         .get_matches_from(itr)
 }

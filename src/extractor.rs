@@ -1,3 +1,5 @@
+use std::default::Default;
+
 use regex::Regex;
 
 use crate::character_map::CHARACTER_MAP;
@@ -14,6 +16,17 @@ pub struct SentenceExtractor {
     text: String,
     /// Boolean option for translate words from traditional Chinese into simplify Chinese
     translate: bool,
+    auxiliary_symbols: Vec<char>,
+}
+
+impl Default for SentenceExtractor {
+    fn default() -> Self {
+        SentenceExtractor {
+            text: String::new(),
+            translate: true,
+            auxiliary_symbols: vec!['，', '：', '；'],
+        }
+    }
 }
 
 impl SentenceExtractor {
@@ -34,6 +47,7 @@ impl SentenceExtractor {
                 text.to_string()
             },
             translate,
+            ..Default::default()
         }
     }
 }
