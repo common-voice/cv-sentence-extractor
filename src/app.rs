@@ -17,9 +17,9 @@ where
     T: Into<OsString> + Clone,
 {
     App::new("common-voice-yotp")
-        .about("extract wiki dumps in simplified Chinese")
+        .about("extract wiki dumps in Chinese")
         .version(VERSION)
-        .author("Florian Merz <flomerz@gmail.com>")
+        .author("Florian Merz <flomerz@gmail.com>, Antonio Yang <yanganto@gmail.com>")
         .subcommand(
             SubCommand::with_name("extract")
                 .about("tempalte stuff like helm template does")
@@ -48,7 +48,7 @@ where
                         .long("long")
                         .takes_value(true)
                         .number_of_values(1)
-                        .help("The suitable logest sentence length"),
+                        .help("The suitable longest sentence length"),
                 )
                 .arg(
                     Arg::with_name("auxiliary symbols")
