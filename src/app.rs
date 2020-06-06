@@ -11,6 +11,7 @@ const VERSION: &str = env!("CARGO_PKG_VERSION");
 
 const AVG_CHAR_TIME: f64 = 0.25_f64;
 
+#[rustfmt::skip]  // Skip rust fmt to place Args and Options with same format
 pub fn parse_args<'a, I, T>(itr: I) -> ArgMatches<'a>
 where
     I: IntoIterator<Item = T>,
@@ -31,9 +32,12 @@ where
                         .number_of_values(1)
                         .help("input dir to glob"),
                 )
-                .arg(Arg::with_name("trans").short("t").long("trans").help(
-                    "automatically translate words from traditional Chinese into simplify Chinese",
-                ))
+                .arg(
+                    Arg::with_name("trans")
+                        .short("t")
+                        .long("trans")
+                        .help("automatically translate words from traditional Chinese into simplified Chinese"),
+                )
                 .arg(
                     Arg::with_name("short sentence length")
                         .short("s")
@@ -101,7 +105,7 @@ fn extract(matches: &ArgMatches) -> Result<()> {
         let texts = load(&file_name)?;
         for text in texts {
             let mut article_sentences = vec![];
-            for next in SentenceExtractor::new_with_opt(
+            for next in SentenceExtractor::new(
                 &text,
                 auto_translate,
                 shortest_length,
@@ -149,13 +153,8 @@ mod test {
     fn test_extractor() {
         let file_names = load_file_names("src/test_data/").unwrap();
         let texts = load(&file_names[0]).unwrap();
-        let mut iter = SentenceExtractor::new_with_opt(
-            texts[0].as_str(),
-            false,
-            3,
-            38,
-            vec!['，', '：', '；'],
-        );
+        let mut iter =
+            SentenceExtractor::new(texts[0].as_str(), false, 3, 38, vec!['，', '：', '；']);
         assert_eq!(iter.next().unwrap(), "愛因斯坦係一位理論物理學家");
         assert_eq!(
             iter.next().unwrap(),
