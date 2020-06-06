@@ -39,8 +39,8 @@ impl Default for SentenceExtractor {
 
 impl SentenceExtractor {
     /// New the Extractor with translate option for automatically translate words from traditional Chinese into
-    /// simplify Chinese
-    pub fn new_with_opt(
+    /// simplified Chinese
+    pub fn new(
         text: &str,
         translate: bool,
         shortest_length: usize,
@@ -116,7 +116,7 @@ impl Iterator for SentenceExtractor {
             // remove words in brackets
             next_item = PARANS.replace(&next_item, "").to_string();
 
-            // transalte words into simplify format
+            // transalte words into simplified format
             if self.translate {
                 next_item = next_item
                     .chars()
