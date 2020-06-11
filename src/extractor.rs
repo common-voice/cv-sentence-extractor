@@ -22,6 +22,8 @@ pub struct SentenceExtractor {
     shortest_length: usize,
     longest_length: usize,
     cut_with_auxiliary_symbols: bool,
+    first_sentence: bool,
+    previous_string: Option<String>,
 }
 
 impl Default for SentenceExtractor {
@@ -32,15 +34,17 @@ impl Default for SentenceExtractor {
             auxiliary_symbols: vec!['，', '：', '；', '。', '？', '！', '\n'],
             shortest_length: 3,
             longest_length: 38,
-            cut_with_auxiliary_symbols: false,
+            cut_with_auxiliary_symbols: true,
+            first_sentence: true,
+            previous_string: Some(String::new()),
         }
     }
 }
 
 impl SentenceExtractor {
     /// New the Extractor with translate option for automatically translate words from traditional Chinese into
-    /// simplify Chinese
-    pub fn new_with_opt(
+    /// simplified Chinese
+    pub fn new(
         text: &str,
         translate: bool,
         shortest_length: usize,
@@ -102,12 +106,19 @@ impl Iterator for SentenceExtractor {
                     .position(|&c| TERMINAL_PUNCTUATIONS.contains(&c))
             };
             let index = end_index.unwrap_or(chars.len());
-            let mut next_item = chars
-                .iter()
-                .take(index)
-                .collect::<String>()
-                .trim()
-                .to_string();
+            let mut next_item = if let Some(s) = self.previous_string.clone() {
+                s
+            } else {
+                String::new()
+            };
+            next_item.push_str(
+                &chars
+                    .iter()
+                    .take(index)
+                    .collect::<String>()
+                    .trim()
+                    .to_string(),
+            );
             self.text = chars
                 .iter()
                 .skip(index + (if end_index.is_some() { 1 } else { 0 }))
@@ -116,7 +127,7 @@ impl Iterator for SentenceExtractor {
             // remove words in brackets
             next_item = PARANS.replace(&next_item, "").to_string();
 
-            // transalte words into simplify format
+            // transalte words into simplified format
             if self.translate {
                 next_item = next_item
                     .chars()
@@ -125,7 +136,12 @@ impl Iterator for SentenceExtractor {
             }
             // adjust sentence in a suitable length
             let count = next_item.chars().count();
-            if count > self.longest_length {
+            if self.first_sentence && count < self.longest_length {
+                self.previous_string = Some(next_item.to_string());
+                self.cut_with_auxiliary_symbols = false;
+                self.first_sentence = false;
+                continue;
+            } else if count >= self.longest_length && !self.first_sentence {
                 self.cut_with_auxiliary_symbols = true;
                 continue;
             } else if is_invalid(&next_item) || count < self.shortest_length {
@@ -140,6 +156,7 @@ impl Iterator for SentenceExtractor {
                 continue;
             }
 
+            self.previous_string = None;
             return Some(next_item.trim().to_string());
         }
     }
