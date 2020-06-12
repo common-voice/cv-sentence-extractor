@@ -8,6 +8,10 @@ fn test_extractor() {
     assert_eq!(iter.next().unwrap(), "愛因斯坦係一位理論物理學家");
     assert_eq!(
         iter.next().unwrap(),
+        "佢最出名嘅係發表咗相對論，另外喺量子力學、統計力學、同埋宇宙學方面都有好大貢獻"
+    );
+    assert_eq!(
+        iter.next().unwrap(),
         "愛因斯坦喺德國烏爾姆市出世，一年後成家人搬咗去慕尼黑"
     );
     assert_eq!(iter.next().unwrap(), "佢屋企都係猶太人，但係冇入猶太教");
@@ -30,13 +34,18 @@ fn test_extractor() {
     );
     assert_eq!(
         iter.next().unwrap(),
-        "最新嘅理論話愛因斯坦應該係患咗亞氏保加症，係自閉症嘅一種"
+        "最新嘅理論話愛因斯坦應該係患咗亞氏保加症"
     );
+    assert_eq!(iter.next().unwrap(), "係自閉症嘅一種");
     assert_eq!(
         iter.next().unwrap(),
         "因為當時呢個病未畀人發現，佢父母重以為佢係低能"
     );
-    assert_eq!(iter.next().unwrap(), "因為佢成功發現光電效應");
+    assert_eq!(
+        iter.next().unwrap(),
+        "愛因斯坦話自己之所以諗得出相對論，正係因為細個時學嘢慢，遲過其他小朋友開始思索時空"
+    );
+    assert_eq!(iter.next().unwrap(), "到嗰陣思想已經比較成熟");
     assert_eq!(iter.next().unwrap(), "後來佢又寫咗好多有關時空，物質嘅理論");
     assert_eq!(
         iter.next().unwrap(),
@@ -56,4 +65,16 @@ fn test_extractor_with_bondary_condition() {
     let mut iter = SentenceExtractor::new(texts[0].as_str(), false, 1, 1, vec!['，', '：', '；']);
     assert_eq!(iter.next().unwrap(), "春");
     assert_eq!(iter.next().unwrap(), "花秋");
+    assert_eq!(iter.next().unwrap(), "月何時");
+    assert_eq!(iter.next().unwrap(), "了往事知");
+    assert_eq!(iter.next().unwrap(), "多");
+    assert_eq!(iter.next().unwrap(), "少小");
+    assert_eq!(iter.next().unwrap(), "樓昨夜");
+    assert_eq!(iter.next().unwrap(), "又東風故");
+    assert_eq!(iter.next().unwrap(), "國、不堪、回首月、明中雕欄");
+    assert_eq!(iter.next().unwrap(), "玉");
+    assert_eq!(iter.next().unwrap(), "砌");
+    assert_eq!(iter.next().unwrap(), "應在「只」是《朱》顏");
+    assert_eq!(iter.next().unwrap(), "改『問』君【能】有…幾—多．愁");
+    assert!(iter.next().is_none());
 }
