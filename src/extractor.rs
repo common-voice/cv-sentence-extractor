@@ -21,9 +21,6 @@ pub struct SentenceExtractor {
     auxiliary_symbols: Vec<char>,
     shortest_length: usize,
     longest_length: usize,
-    cut_with_auxiliary_symbols: bool,
-    first_sentence: bool,
-    previous_string: Option<String>,
 }
 
 impl Default for SentenceExtractor {
@@ -34,9 +31,6 @@ impl Default for SentenceExtractor {
             auxiliary_symbols: vec!['，', '：', '；', '。', '？', '！', '\n'],
             shortest_length: 3,
             longest_length: 38,
-            cut_with_auxiliary_symbols: true,
-            first_sentence: true,
-            previous_string: Some(String::new()),
         }
     }
 }
@@ -85,6 +79,19 @@ lazy_static! {
     static ref PARANS: Regex = Regex::new("（.*）").unwrap();
 }
 
+impl SentenceExtractor {
+    fn get_cutting_point(&self, chars: &Vec<char>) -> Option<usize> {
+        for (idx, c) in chars.iter().enumerate() {
+            if idx >= self.longest_length && self.auxiliary_symbols.contains(&c) {
+                return Some(idx);
+            } else if TERMINAL_PUNCTUATIONS.contains(&c) {
+                return Some(idx);
+            }
+        }
+        return None;
+    }
+}
+
 impl Iterator for SentenceExtractor {
     type Item = String;
 
@@ -95,30 +102,14 @@ impl Iterator for SentenceExtractor {
             }
 
             let chars = self.text.chars().collect::<Vec<_>>();
-            let end_index = if self.cut_with_auxiliary_symbols {
-                self.cut_with_auxiliary_symbols = false;
-                chars
-                    .iter()
-                    .position(|&c| self.auxiliary_symbols.contains(&c))
-            } else {
-                chars
-                    .iter()
-                    .position(|&c| TERMINAL_PUNCTUATIONS.contains(&c))
-            };
+            let end_index = self.get_cutting_point(&chars);
             let index = end_index.unwrap_or(chars.len());
-            let mut next_item = if let Some(s) = self.previous_string.clone() {
-                s
-            } else {
-                String::new()
-            };
-            next_item.push_str(
-                &chars
-                    .iter()
-                    .take(index)
-                    .collect::<String>()
-                    .trim()
-                    .to_string(),
-            );
+            let mut next_item = chars
+                .iter()
+                .take(index)
+                .collect::<String>()
+                .trim()
+                .to_string();
             self.text = chars
                 .iter()
                 .skip(index + (if end_index.is_some() { 1 } else { 0 }))
@@ -134,17 +125,8 @@ impl Iterator for SentenceExtractor {
                     .map(|c| CHARACTER_MAP.get(&c).unwrap_or(&c).clone())
                     .collect();
             }
-            // adjust sentence in a suitable length
             let count = next_item.chars().count();
-            if self.first_sentence && count < self.longest_length {
-                self.previous_string = Some(next_item.to_string());
-                self.cut_with_auxiliary_symbols = false;
-                self.first_sentence = false;
-                continue;
-            } else if count >= self.longest_length && !self.first_sentence {
-                self.cut_with_auxiliary_symbols = true;
-                continue;
-            } else if is_invalid(&next_item) || count < self.shortest_length {
+            if is_invalid(&next_item) || count < self.shortest_length {
                 continue;
             } else if self.translate
                 && next_item.chars().any(|c| {
@@ -156,7 +138,6 @@ impl Iterator for SentenceExtractor {
                 continue;
             }
 
-            self.previous_string = None;
             return Some(next_item.trim().to_string());
         }
     }
