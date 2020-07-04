@@ -55,7 +55,7 @@ python WikiExtractor.py --json ../enwiki-latest-pages-articles-multistream.xml
 3. Scrape the sentences into a new file from the WikiExtractor output dir (this might take more than 6h to finish)
 
 ```bash
-cd ../common-voice-wiki-scraper
+cd ../cv-sentence-extractor
 cargo run -- extract -l en -d ../wikiextractor/text/ >> wiki.en.txt
 ```
 
