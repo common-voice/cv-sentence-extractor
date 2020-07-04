@@ -52,7 +52,7 @@ python WikiExtractor.py --json ../enwiki-latest-pages-articles-multistream.xml
 
 *Important note: Please check the section about [creating a rules file](#using-language-rules) and [a blocklist](#create-a-blocklist-based-on-less-common-words) at this point, you might want to consider creating them and that process should happen before step 3.*
 
-3. Scrap the sentences into a new file from the WikiExtractor output dir (this might take more than 6h to finish)
+3. Scrape the sentences into a new file from the WikiExtractor output dir (this might take more than 6h to finish)
 
 ```bash
 cd ../common-voice-wiki-scraper
