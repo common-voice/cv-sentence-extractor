@@ -203,3 +203,29 @@ On every PR we will [trigger a sample sentence extraction](https://discourse.moz
 ### On pushes to master
 
 On every push to master, we will run a full sentence extraction on the specified language if the commit message includes `--full-wiki-extraction=<language>` at the end of the message.
+
+## Manual trigger
+
+Jobs can be triggered manually by adding a comment to an issue or Pull Request.
+
+```
+/action [job] [language] [otherParams]
+```
+
+* job: name of the job to run, this can be any of: extract, blocklist, and whatever new sources will use as "subcommand"
+* language: language code to process for: en, de, ...
+* otherParams: any other params needed depending on the job
+
+The job will then add a comment with its URL, so you can check the output and download the files you need.
+
+### Extracting from Wikipedia - English
+
+```
+/action extract en
+```
+
+### Create a blocklist for English - 80 occurrences threshold
+
+```
+/action blocklist en 80
+```

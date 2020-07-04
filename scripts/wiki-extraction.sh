@@ -2,6 +2,11 @@
 set -e
 set -o pipefail
 
+# Example calls:
+#   ./wiki-extraction.sh                - defaults to "sample" - used on PR - based changed files
+#   ./wiki-extraction.sh extract        - full extraction - based on commit message info
+#   ./wiki-extraction.sh extract en     - extracting full English
+
 TYPE=${1:-sample}
 HERE=$(dirname $0)
 PROJECT_ROOT=$HERE/..
@@ -30,14 +35,20 @@ function extract {
   echo "Extracting with WikiExtractor"
   if [ $TYPE == "sample" ]; then
     timeout 30 python $WIKI_EXTRACTOR_PATH --processes 4 --json $EXTRACTED_DUMP_PATH || true
-  elif [ $TYPE == "full" ]; then
+  elif [ $TYPE == "extract" ] || [ $TYPE == "blocklist" ]; then
     python $WIKI_EXTRACTOR_PATH --processes 4 --json $EXTRACTED_DUMP_PATH || true
   fi
   popd
 
   echo "Running extraction"
   pushd $PROJECT_ROOT
-  cargo run -- extract -l $LANGUAGE_CODE -d $EXTRACTED_TEXT_PATH >> $EXTRACTED_SENTENCES_PATH
+
+  if [ $TYPE == "blocklist" ]; then
+    cargo run -- extract -l $LANGUAGE_CODE -d $EXTRACTED_TEXT_PATH >> $EXTRACTED_SENTENCES_PATH
+  else
+    cargo run -- extract -l $LANGUAGE_CODE -d $EXTRACTED_TEXT_PATH --no_check >> $EXTRACTED_SENTENCES_PATH
+  fi
+
   popd
 }
 
@@ -67,11 +78,19 @@ if [ $TYPE == "sample" ]; then
   LANGUAGE_FILE_NAME=${LANGUAGE_FILE_NAME/disallowed_words\//""}
   LANGUAGE=${LANGUAGE_FILE_NAME/.toml/""}
   LANGUAGE_CODE=${LANGUAGE/.txt/""}
-elif [ $TYPE == "full" ]; then
+elif [ $TYPE == "extract" ] && [ -n "$2" ]; then
+  LANGUAGE_CODE=$2
+  EXTRACTED_SENTENCES_PATH="$OUTPUT_PATH/wiki.txt"
+elif [ $TYPE == "extract" ]; then
+  # Fallback if no language passed
   echo "Commit: $COMMIT_MESSAGE"
   EXTRACTION_OPTION=$(echo $COMMIT_MESSAGE | grep -o -e '--full-wiki-extraction=.*$' || [[ $? == 1 ]])
   LANGUAGE_CODE=${EXTRACTION_OPTION/"--full-wiki-extraction="/""} # TODO: make this prettier by only returing matched language
   EXTRACTED_SENTENCES_PATH="$OUTPUT_PATH/wiki.txt"
+elif [ $TYPE == "blocklist" ] && [ -n "$2" ]; then
+  LANGUAGE_CODE=$2
+  EXTRACTED_SENTENCES_PATH="$WORKSPACE/full-extract-do-not-use.txt"
+  touch $WORKSPACE/src/rules/$LANGUAGE_CODE.toml
 fi
 
 echo "Determined that we should run an export for $LANGUAGE_CODE"
