@@ -17,7 +17,7 @@ Note: as long as we're using the current `punkt` dependency, we need to use the 
 Clone this repo:
 
 ```
-git clone https://github.com/Common-Voice/common-voice-wiki-scraper.git
+git clone https://github.com/Common-Voice/cv-sentence-extractor.git
 ```
 
 ### Wikipedia Extraction
