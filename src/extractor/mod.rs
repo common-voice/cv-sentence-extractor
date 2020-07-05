@@ -6,6 +6,10 @@ use std::fmt::Debug;
 use crate::character_map::{CHARACTER_MAP, SYMBOL_MAP};
 use crate::standard_characters::STANDARD_CHARACTERS;
 
+mod error;
+
+type ExtractorError = error::Error;
+
 static TERMINAL_PUNCTUATIONS: [char; 4] = ['。', '？', '！', '\n'];
 static PUNCTUATIONS: [char; 37] = [
     '"', '"', '、', '‧', '—', '—', '—', '～', '“', '”', '；', '·', '：', '‘', '•', '─', '兀', '︰',
@@ -74,14 +78,33 @@ impl<'a> SentenceExtractorBuilder<'a> {
         self.inner.longest_length = longest_length;
         self
     }
-    pub fn auxiliary_symbols(mut self, auxiliary_symbols: &'a mut Vec<char>) -> Self {
+    pub fn auxiliary_symbols(
+        mut self,
+        auxiliary_symbols: &'a mut Vec<char>,
+    ) -> Result<Self, ExtractorError> {
+        for s in auxiliary_symbols.iter() {
+            if self.inner.ignore_symbols.unwrap_or_default().contains(s) {
+                return Err(ExtractorError::OptionsConflic(format!(
+                    "'{}' is ignored",
+                    s
+                )));
+            }
+        }
         auxiliary_symbols.extend_from_slice(&TERMINAL_PUNCTUATIONS);
         self.inner.auxiliary_symbols = auxiliary_symbols;
-        self
+        Ok(self)
     }
-    pub fn ignore_symbols(mut self, ignore_symbols: &'a Vec<char>) -> Self {
+    pub fn ignore_symbols(mut self, ignore_symbols: &'a Vec<char>) -> Result<Self, ExtractorError> {
+        for s in ignore_symbols {
+            if self.inner.auxiliary_symbols.contains(s) {
+                return Err(ExtractorError::OptionsConflic(format!(
+                    "'{}' is used to determine the cuting point for sentance",
+                    s
+                )));
+            }
+        }
         self.inner.ignore_symbols = Some(&ignore_symbols);
-        self
+        Ok(self)
     }
 }
 // ignore_symbols: Vec<char>,

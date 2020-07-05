@@ -121,8 +121,8 @@ fn extract(matches: &ArgMatches) -> Result<()> {
         .translate(matches.is_present("trans"))
         .shortest_length(shortest_length)
         .longest_length(longest_length)
-        .auxiliary_symbols(&mut auxiliary_symbols)
-        .ignore_symbols(&ignore_symbols);
+        .auxiliary_symbols(&mut auxiliary_symbols)?
+        .ignore_symbols(&ignore_symbols)?;
 
     let mut sentences = vec![];
 

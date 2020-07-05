@@ -89,7 +89,9 @@ fn test_extractor_with_bondary_condition() {
 fn test_extractor_with_ignore_symbols() {
     let texts = load(&PathBuf::from("src/test_data/wiki_02")).unwrap();
     let ignore_symbols = vec!['「', '」'];
-    let mut builder = SentenceExtractorBuilder::new().ignore_symbols(&ignore_symbols);
+    let mut builder = SentenceExtractorBuilder::new()
+        .ignore_symbols(&ignore_symbols)
+        .unwrap();
     let mut iter = builder.build(texts[0].as_str());
 
     assert_eq!(iter.next().unwrap(), "噬魂師係由大久保篤創作嘅日本漫畫作品");
@@ -108,4 +110,34 @@ fn test_extractor_with_ignore_symbols() {
     assert_eq!(iter.next().unwrap(), "武器可以控制同支援工匠靈魂波長嘅增強");
     assert_eq!(iter.next().unwrap(), "工匠就擁有探測靈魂種類同位置");
     assert!(iter.next().is_none());
+}
+
+#[test]
+fn test_extractor_handle_ignore_symbol_conflict() {
+    let ignore_symbols = vec!['，'];
+    let builder = SentenceExtractorBuilder::new().ignore_symbols(&ignore_symbols);
+    assert!(builder.is_err());
+    if let Err(e) = builder {
+        assert_eq!(
+            e.to_string(),
+            "Options conflict: '，' is used to determine the cuting point for sentance".to_string()
+        );
+    }
+}
+
+#[test]
+fn test_extractor_handle_auxiliary_symbol_conflict() {
+    let ignore_symbols = vec!['「', '」', '＃'];
+    let mut auxiliary_symbols = vec!['＃', '；', '：'];
+    let builder = SentenceExtractorBuilder::new()
+        .ignore_symbols(&ignore_symbols)
+        .unwrap()
+        .auxiliary_symbols(&mut auxiliary_symbols);
+    assert!(builder.is_err());
+    if let Err(e) = builder {
+        assert_eq!(
+            e.to_string(),
+            "Options conflict: '＃' is ignored".to_string()
+        );
+    }
 }
