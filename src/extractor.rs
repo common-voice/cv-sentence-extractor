@@ -3,71 +3,88 @@ use std::default::Default;
 use regex::Regex;
 use std::fmt::Debug;
 
-use crate::character_map::CHARACTER_MAP;
+use crate::character_map::{CHARACTER_MAP, SYMBOL_MAP};
 use crate::standard_characters::STANDARD_CHARACTERS;
 
 static TERMINAL_PUNCTUATIONS: [char; 4] = ['。', '？', '！', '\n'];
 static PUNCTUATIONS: [char; 37] = [
-    '"', '"', '、', '‧', '—', '—', '—', '～', '“', '”', '；', '·', '：', '‘', '•', '─', '兀', '∶',
-    '∧', '∨', '，', '、', '．', '；', '：', '＃', '＆', '＊', '＋', '－', '＜', '＞', '＝', '＄',
+    '"', '"', '、', '‧', '—', '—', '—', '～', '“', '”', '；', '·', '：', '‘', '•', '─', '兀', '︰',
+    '︿', '﹀', '，', '、', '．', '；', '：', '＃', '＆', '＊', '＋', '－', '＜', '＞', '＝', '＄',
     '％', '＠', '，',
 ];
+static DEFAULT_AUXILIARY_SYMBOLS: [char; 7] = ['，', '：', '；', '。', '？', '！', '\n'];
 
-#[derive(Debug)]
-pub struct SentenceExtractor {
+#[derive(Debug, Clone)]
+pub struct SentenceExtractor<'a> {
     text: String,
     /// Boolean option for translate words from traditional Chinese into simplify Chinese
     translate: bool,
-    auxiliary_symbols: Vec<char>,
+    auxiliary_symbols: &'a [char],
+    ignore_symbols: Option<&'a [char]>,
     shortest_length: usize,
     longest_length: usize,
 }
 
-impl Default for SentenceExtractor {
+impl Default for SentenceExtractor<'_> {
     fn default() -> Self {
         SentenceExtractor {
             text: String::new(),
-            translate: true,
-            auxiliary_symbols: vec!['，', '：', '；', '。', '？', '！', '\n'],
+            translate: false,
+            auxiliary_symbols: &DEFAULT_AUXILIARY_SYMBOLS,
             shortest_length: 3,
             longest_length: 38,
+            ignore_symbols: None,
         }
     }
 }
 
-impl SentenceExtractor {
-    /// New the Extractor with translate option for automatically translate words from traditional Chinese into
-    /// simplified Chinese
-    pub fn new(
-        text: &str,
-        translate: bool,
-        shortest_length: usize,
-        longest_length: usize,
-        auxiliary_symbols: Vec<char>,
-    ) -> SentenceExtractor {
-        let lines: Vec<&str> = text.lines().collect();
-        let mut merge_symbols = auxiliary_symbols;
-        merge_symbols.extend_from_slice(&TERMINAL_PUNCTUATIONS);
-        SentenceExtractor {
-            text: if lines.len() > 1 {
-                // skip disambiguation pages
-                if lines.first().unwrap().contains("消歧義") {
-                    String::default()
-                } else {
-                    // skip title
-                    lines[1..].join("")
-                }
-            } else {
-                text.to_string()
-            },
-            translate,
-            shortest_length,
-            longest_length,
-            auxiliary_symbols: merge_symbols,
-            ..Default::default()
+pub struct SentenceExtractorBuilder<'a> {
+    inner: SentenceExtractor<'a>,
+}
+impl<'a> SentenceExtractorBuilder<'a> {
+    pub fn new() -> SentenceExtractorBuilder<'a> {
+        SentenceExtractorBuilder {
+            inner: SentenceExtractor::default(),
         }
     }
+    pub fn build(&mut self, text: &str) -> SentenceExtractor {
+        let lines: Vec<&str> = text.lines().collect();
+        self.inner.text = if lines.len() > 1 {
+            // skip disambiguation pages
+            if lines.first().unwrap().contains("消歧義") {
+                String::default()
+            } else {
+                // skip title
+                lines[1..].join("")
+            }
+        } else {
+            text.to_string()
+        };
+        self.inner.clone()
+    }
+    pub fn translate(mut self, translate: bool) -> Self {
+        self.inner.translate = translate;
+        self
+    }
+    pub fn shortest_length(mut self, shortest_length: usize) -> Self {
+        self.inner.shortest_length = shortest_length;
+        self
+    }
+    pub fn longest_length(mut self, longest_length: usize) -> Self {
+        self.inner.longest_length = longest_length;
+        self
+    }
+    pub fn auxiliary_symbols(mut self, auxiliary_symbols: &'a mut Vec<char>) -> Self {
+        auxiliary_symbols.extend_from_slice(&TERMINAL_PUNCTUATIONS);
+        self.inner.auxiliary_symbols = auxiliary_symbols;
+        self
+    }
+    pub fn ignore_symbols(mut self, ignore_symbols: &'a Vec<char>) -> Self {
+        self.inner.ignore_symbols = Some(&ignore_symbols);
+        self
+    }
 }
+// ignore_symbols: Vec<char>,
 
 fn is_invalid(s: &str) -> bool {
     !s.chars().next().unwrap_or_default().is_alphabetic()
@@ -79,7 +96,7 @@ lazy_static! {
     static ref PARANS: Regex = Regex::new("（.*）").unwrap();
 }
 
-impl SentenceExtractor {
+impl<'a> SentenceExtractor<'a> {
     fn get_cutting_point(&self, chars: &Vec<char>) -> Option<usize> {
         for (idx, c) in chars.iter().enumerate() {
             if idx >= self.longest_length && self.auxiliary_symbols.contains(&c) {
@@ -92,7 +109,7 @@ impl SentenceExtractor {
     }
 }
 
-impl Iterator for SentenceExtractor {
+impl<'a> Iterator for SentenceExtractor<'a> {
     type Item = String;
 
     fn next(&mut self) -> Option<String> {
@@ -101,7 +118,20 @@ impl Iterator for SentenceExtractor {
                 return None;
             }
 
-            let chars = self.text.chars().collect::<Vec<_>>();
+            // normalized and disambiguate the input chars
+            let chars = self
+                .text
+                .chars()
+                .map(|c| SYMBOL_MAP.get(&c).unwrap_or(&c).clone())
+                .filter(|c| {
+                    if let Some(ignore_symbols) = self.ignore_symbols {
+                        !ignore_symbols.contains(c)
+                    } else {
+                        true
+                    }
+                })
+                .collect::<Vec<_>>();
+
             let end_index = self.get_cutting_point(&chars);
             let index = end_index.unwrap_or(chars.len());
             let mut next_item = chars
@@ -118,7 +148,7 @@ impl Iterator for SentenceExtractor {
             // remove words in brackets
             next_item = PARANS.replace(&next_item, "").to_string();
 
-            // transalte words into simplified format
+            // translate words into simplified format
             if self.translate {
                 next_item = next_item
                     .chars()
@@ -132,7 +162,8 @@ impl Iterator for SentenceExtractor {
                 && next_item.chars().any(|c| {
                     !TERMINAL_PUNCTUATIONS.contains(&c)
                         && !PUNCTUATIONS.contains(&c)
-                        && !STANDARD_CHARACTERS.contains(&c) // NOTE Standard characters only work for simplify chinese words
+                        && !STANDARD_CHARACTERS.contains(&c)
+                    // NOTE Standard characters only work for simplify chinese words
                 })
             {
                 continue;
