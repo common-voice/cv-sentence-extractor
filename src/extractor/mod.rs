@@ -23,9 +23,13 @@ pub struct SentenceExtractor<'a> {
     text: String,
     /// Boolean option for translate words from traditional Chinese into simplify Chinese
     translate: bool,
+    /// Symbols to cut sentence when it goes too long
     auxiliary_symbols: &'a [char],
+    /// The Symbols will be ignored
     ignore_symbols: Option<&'a [char]>,
+    /// Skip the sentence shorter than shortest length
     shortest_length: usize,
+    /// Use auxiliary symbols to cut sentence when it longer than longest length
     longest_length: usize,
 }
 

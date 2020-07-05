@@ -21,6 +21,10 @@ Currently it only works for the chinese wiki.
     - start with non-alphabetic characters
     - contain ascii characters
     - contain only non-alphabetic characters
-    - are shorter than 3 characters
-    - are longer than 38 characters
-- replaces traditional characters with their simplified counterpart
+    - are shorter than 3 characters (can be changed with `-s` option)
+    - are longer than 38 characters (can be changed with `-l` option)
+
+## Options
+- replaces traditional characters with their simplified counterpart (with `-t` option)
+- ignore symbols (with `-i` option)
+- cutting long sentence with auxiliary symbols (with `-a` option)
