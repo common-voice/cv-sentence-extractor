@@ -26,7 +26,7 @@ jobs:
 
     - name: Full Wikipedia Extraction
       if: "contains( env.COMMIT_MESSAGE , '--full-wiki-extraction' )"
-      run: ./scripts/wiki-extraction.sh full
+      run: ./scripts/wiki-extraction.sh extract
       env:
         FILES_CREATED: ${{ steps.files.outputs.files_created }}
         FILES_UPDATED: ${{ steps.files.outputs.files_updated }}
