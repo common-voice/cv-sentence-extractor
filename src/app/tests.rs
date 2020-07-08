@@ -4,7 +4,9 @@ use std::path::PathBuf;
 #[test]
 fn test_extractor() {
     let texts = load(&PathBuf::from("src/test_data/wiki_00")).unwrap();
-    let mut iter = SentenceExtractor::new(texts[0].as_str(), false, 3, 38, vec!['，', '：', '；']);
+    let mut builder = SentenceExtractorBuilder::new();
+    let mut iter = builder.build(texts[0].as_str());
+
     assert_eq!(iter.next().unwrap(), "愛因斯坦係一位理論物理學家");
     assert_eq!(
         iter.next().unwrap(),
@@ -62,7 +64,11 @@ fn test_extractor() {
 #[test]
 fn test_extractor_with_bondary_condition() {
     let texts = load(&PathBuf::from("src/test_data/wiki_01")).unwrap();
-    let mut iter = SentenceExtractor::new(texts[0].as_str(), false, 1, 1, vec!['，', '：', '；']);
+    let mut builder = SentenceExtractorBuilder::new()
+        .shortest_length(1)
+        .longest_length(1);
+
+    let mut iter = builder.build(texts[0].as_str());
     assert_eq!(iter.next().unwrap(), "春");
     assert_eq!(iter.next().unwrap(), "花秋");
     assert_eq!(iter.next().unwrap(), "月何時");
@@ -77,4 +83,61 @@ fn test_extractor_with_bondary_condition() {
     assert_eq!(iter.next().unwrap(), "應在「只」是《朱》顏");
     assert_eq!(iter.next().unwrap(), "改『問』君【能】有…幾—多．愁");
     assert!(iter.next().is_none());
+}
+
+#[test]
+fn test_extractor_with_ignore_symbols() {
+    let texts = load(&PathBuf::from("src/test_data/wiki_02")).unwrap();
+    let ignore_symbols = vec!['「', '」'];
+    let mut builder = SentenceExtractorBuilder::new()
+        .ignore_symbols(&ignore_symbols)
+        .unwrap();
+    let mut iter = builder.build(texts[0].as_str());
+
+    assert_eq!(iter.next().unwrap(), "噬魂師係由大久保篤創作嘅日本漫畫作品");
+    assert_eq!(
+        iter.next().unwrap(),
+        "舞台為死神武器工匠專門學校，俗稱死武專"
+    );
+    assert_eq!(
+        iter.next().unwrap(),
+        "工匠同武器係一對嘅，工匠同武器嘅靈魂波長配合會令到戰鬥力提高"
+    );
+    assert_eq!(
+        iter.next().unwrap(),
+        "工匠參與實戰，武器則會變化成自己擅長形態嘅武器支援工匠"
+    );
+    assert_eq!(iter.next().unwrap(), "武器可以控制同支援工匠靈魂波長嘅增強");
+    assert_eq!(iter.next().unwrap(), "工匠就擁有探測靈魂種類同位置");
+    assert!(iter.next().is_none());
+}
+
+#[test]
+fn test_extractor_handle_ignore_symbol_conflict() {
+    let ignore_symbols = vec!['，'];
+    let builder = SentenceExtractorBuilder::new().ignore_symbols(&ignore_symbols);
+    assert!(builder.is_err());
+    if let Err(e) = builder {
+        assert_eq!(
+            e.to_string(),
+            "Options conflict: '，' is used to determine the cuting point for sentance".to_string()
+        );
+    }
+}
+
+#[test]
+fn test_extractor_handle_auxiliary_symbol_conflict() {
+    let ignore_symbols = vec!['「', '」', '＃'];
+    let mut auxiliary_symbols = vec!['＃', '；', '：'];
+    let builder = SentenceExtractorBuilder::new()
+        .ignore_symbols(&ignore_symbols)
+        .unwrap()
+        .auxiliary_symbols(&mut auxiliary_symbols);
+    assert!(builder.is_err());
+    if let Err(e) = builder {
+        assert_eq!(
+            e.to_string(),
+            "Options conflict: '＃' is ignored".to_string()
+        );
+    }
 }

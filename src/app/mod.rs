@@ -1,5 +1,6 @@
+use crate::character_map::SYMBOL_MAP;
 use crate::errors::*;
-use crate::extractor::SentenceExtractor;
+use crate::extractor::SentenceExtractorBuilder;
 use crate::loader::load;
 use crate::loader::load_file_names;
 
@@ -64,6 +65,14 @@ where
                         .takes_value(true)
                         .number_of_values(1)
                         .help("The auxiliary symbols for extracting long sentence"),
+                )
+                .arg(
+                    Arg::with_name("ignore symbols")
+                        .short("i")
+                        .long("ignore")
+                        .takes_value(true)
+                        .number_of_values(1)
+                        .help("The symbols will be ignored when extracting"),
                 ),
         )
         .get_matches_from(itr)
@@ -85,7 +94,6 @@ where
 
 fn extract(matches: &ArgMatches) -> Result<()> {
     let file_names = load_file_names(matches.value_of("dir").unwrap())?;
-    let auto_translate = matches.is_present("trans");
     let shortest_length = matches
         .value_of("short sentence length")
         .unwrap_or("3")
@@ -96,25 +104,34 @@ fn extract(matches: &ArgMatches) -> Result<()> {
         .unwrap_or("38")
         .parse::<usize>()
         .unwrap();
-    let auxiliary_symbols: Vec<char> = matches
+    let mut auxiliary_symbols: Vec<char> = matches
         .value_of("auxiliary symbols")
         .unwrap_or("")
         .chars()
+        .map(|c| SYMBOL_MAP.get(&c).unwrap_or(&c).clone())
+        .collect();
+    let ignore_symbols: Vec<char> = matches
+        .value_of("ignore symbols")
+        .unwrap_or("")
+        .chars()
+        .map(|c| SYMBOL_MAP.get(&c).unwrap_or(&c).clone())
         .collect();
 
+    let mut builder = SentenceExtractorBuilder::new()
+        .translate(matches.is_present("trans"))
+        .shortest_length(shortest_length)
+        .longest_length(longest_length)
+        .auxiliary_symbols(&mut auxiliary_symbols)?
+        .ignore_symbols(&ignore_symbols)?;
+
     let mut sentences = vec![];
+
     for file_name in file_names {
         eprintln!("file_name = {:?}", file_name.to_string_lossy());
         let texts = load(&file_name)?;
         for text in texts {
             let mut article_sentences = vec![];
-            for next in SentenceExtractor::new(
-                &text,
-                auto_translate,
-                shortest_length,
-                longest_length,
-                auxiliary_symbols.clone(),
-            ) {
+            for next in builder.build(&text) {
                 article_sentences.push(next);
             }
             article_sentences.sort_by(|a, b| a.len().partial_cmp(&b.len()).unwrap().reverse());
