@@ -141,3 +141,16 @@ fn test_extractor_handle_auxiliary_symbol_conflict() {
         );
     }
 }
+
+#[test]
+fn test_extractor_with_ending_symbols() {
+    let texts = load(&PathBuf::from("src/test_data/wiki_01")).unwrap();
+    let mut builder = SentenceExtractorBuilder::new().chop_ending_symbol(false);
+
+    let mut iter = builder.build(texts[0].as_str());
+    assert_eq!(iter.next().unwrap(), "春，花秋，月何時，了往事知。");
+    assert_eq!(iter.next().unwrap(), "樓昨夜。");
+    assert_eq!(iter.next().unwrap(), "又東風故。");
+    assert_eq!(iter.next().unwrap(), "國、不堪、回首月、明中雕欄。");
+    assert!(iter.next().is_none());
+}

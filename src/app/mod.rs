@@ -74,6 +74,12 @@ where
                         .takes_value(true)
                         .number_of_values(1)
                         .help("The symbols will be ignored when extracting"),
+                )
+                .arg(
+                    Arg::with_name("chop ending symbol")
+                        .short("c")
+                        .long("chop")
+                        .help("chop the ending symbol"),
                 ),
         )
         .get_matches_from(itr)
@@ -120,6 +126,7 @@ fn extract(matches: &ArgMatches) -> Result<()> {
 
     let mut builder = SentenceExtractorBuilder::new()
         .translate(matches.is_present("trans"))
+        .chop_ending_symbol(matches.is_present("chop"))
         .shortest_length(shortest_length)
         .longest_length(longest_length)
         .auxiliary_symbols(&mut auxiliary_symbols)?
