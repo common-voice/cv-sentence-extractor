@@ -136,18 +136,24 @@ fn extract(matches: &ArgMatches) -> Result<()> {
                 article_sentences.push(next);
             }
 
-            // Random chose 3 sentence from the article
-            let mut used_idxes = vec![];
-            let mut rng = thread_rng();
-            while used_idxes.len() < 3 {
-                let r = rng.gen_range(0, article_sentences.len());
-                used_idxes.push(r);
-            }
-            let used_sentences: Vec<String> = vec![
-                article_sentences[used_idxes[0]].clone(),
-                article_sentences[used_idxes[1]].clone(),
-                article_sentences[used_idxes[2]].clone(),
-            ];
+            // Randomly chose at most 3 sentence from the article
+            let used_sentences = if article_sentences.len() > 3 {
+                let mut used_idxes = vec![];
+                let mut rng = thread_rng();
+                while used_idxes.len() < 3 {
+                    let r = rng.gen_range(0, article_sentences.len());
+                    if !used_idxes.contains(&r) {
+                        used_idxes.push(r);
+                    }
+                }
+                vec![
+                    article_sentences[used_idxes[0]].clone(),
+                    article_sentences[used_idxes[1]].clone(),
+                    article_sentences[used_idxes[2]].clone(),
+                ]
+            } else {
+                article_sentences
+            };
 
             for sentence in used_sentences.clone() {
                 println!("{}", sentence);
