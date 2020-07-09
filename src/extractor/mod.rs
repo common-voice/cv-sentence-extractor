@@ -132,15 +132,26 @@ lazy_static! {
 
 impl<'a> SentenceExtractor<'a> {
     fn get_cutting_point<'b>(&self, chars: &'b Vec<char>) -> Option<(usize, Option<&'b char>)> {
+        let mut previous_cuting_point = None;
         for (idx, c) in chars.iter().enumerate() {
-            if (idx >= self.longest_length && self.auxiliary_symbols.contains(&c))
-                || TERMINAL_PUNCTUATIONS.contains(&c)
-            {
+            if TERMINAL_PUNCTUATIONS.contains(&c) {
                 if c.is_whitespace() {
                     return Some((idx, None));
                 } else {
                     return Some((idx, Some(c)));
                 }
+            }
+
+            if self.auxiliary_symbols.contains(&c) {
+                previous_cuting_point = if c.is_whitespace() {
+                    Some((idx, None))
+                } else {
+                    Some((idx, Some(c)))
+                };
+            };
+
+            if idx >= self.longest_length && previous_cuting_point.is_some() {
+                return previous_cuting_point;
             }
         }
         return None;
