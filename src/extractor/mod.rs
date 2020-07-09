@@ -48,7 +48,6 @@ impl Default for SentenceExtractor<'_> {
         }
     }
 }
-
 pub struct SentenceExtractorBuilder<'a> {
     inner: SentenceExtractor<'a>,
 }
@@ -65,8 +64,19 @@ impl<'a> SentenceExtractorBuilder<'a> {
             if lines.first().unwrap().contains("消歧義") {
                 String::default()
             } else {
-                // skip title
-                lines[1..].join("")
+                // skip title and normalized and disambiguate the input chars
+                lines[1..]
+                    .join("")
+                    .chars()
+                    .map(|c| SYMBOL_MAP.get(&c).unwrap_or(&c).clone())
+                    .filter(|c| {
+                        if let Some(ignore_symbols) = self.inner.ignore_symbols {
+                            !ignore_symbols.contains(c)
+                        } else {
+                            true
+                        }
+                    })
+                    .collect::<String>()
             }
         } else {
             text.to_string()
@@ -167,20 +177,7 @@ impl<'a> Iterator for SentenceExtractor<'a> {
                 return None;
             }
 
-            // normalized and disambiguate the input chars
-            let chars = self
-                .text
-                .chars()
-                .map(|c| SYMBOL_MAP.get(&c).unwrap_or(&c).clone())
-                .filter(|c| {
-                    if let Some(ignore_symbols) = self.ignore_symbols {
-                        !ignore_symbols.contains(c)
-                    } else {
-                        true
-                    }
-                })
-                .collect::<Vec<_>>();
-
+            let chars = self.text.chars().collect::<Vec<_>>();
             let end = self.get_cutting_point(&chars);
             let (index, ending_symbol) = end.unwrap_or((chars.len(), None));
             let mut next_item = chars
