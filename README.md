@@ -14,7 +14,7 @@ cargo run -- extract -d <WIKI_EXTRACTOR_OUT_DIR>
 
 ## Rules
 Currently it only works for the chinese wiki.
-- extract at most 3 sentences per article
+- random extract 3 sentences per article
 - skip disambiguation pages
 - skip title
 - skip sentences that...

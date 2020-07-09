@@ -4,9 +4,10 @@ use crate::extractor::SentenceExtractorBuilder;
 use crate::loader::load;
 use crate::loader::load_file_names;
 
-use clap::{App, Arg, ArgMatches, SubCommand};
-use std::cmp::{max, min};
 use std::ffi::OsString;
+
+use clap::{App, Arg, ArgMatches, SubCommand};
+use rand::{thread_rng, Rng};
 
 #[cfg(test)]
 mod tests;
@@ -134,15 +135,19 @@ fn extract(matches: &ArgMatches) -> Result<()> {
             for next in builder.build(&text) {
                 article_sentences.push(next);
             }
-            article_sentences.sort_by(|a, b| a.len().partial_cmp(&b.len()).unwrap().reverse());
-            let used_sentences = &mut article_sentences.clone()[..min(
-                max(
-                    (article_sentences.len() as f32 * 0.1_f32).floor() as usize,
-                    3,
-                ),
-                article_sentences.len(),
-            )]
-                .to_owned();
+
+            // Random chose 3 sentence from the article
+            let mut used_idxes = vec![];
+            let mut rng = thread_rng();
+            while used_idxes.len() < 3 {
+                let r = rng.gen_range(0, article_sentences.len());
+                used_idxes.push(r);
+            }
+            let used_sentences: Vec<String> = vec![
+                article_sentences[used_idxes[0]].clone(),
+                article_sentences[used_idxes[1]].clone(),
+                article_sentences[used_idxes[2]].clone(),
+            ];
 
             for sentence in used_sentences.clone() {
                 println!("{}", sentence);
