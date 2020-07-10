@@ -126,7 +126,7 @@ fn extract(matches: &ArgMatches) -> Result<()> {
 
     let mut builder = SentenceExtractorBuilder::new()
         .translate(matches.is_present("trans"))
-        .chop_ending_symbol(matches.is_present("chop"))
+        .chop_ending_symbol(matches.is_present("chop ending symbol"))
         .shortest_length(shortest_length)
         .longest_length(longest_length)
         .auxiliary_symbols(&mut auxiliary_symbols)?

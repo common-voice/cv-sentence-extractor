@@ -202,7 +202,8 @@ impl<'a> Iterator for SentenceExtractor<'a> {
                     .collect();
             }
             let count = next_item.chars().count();
-            if is_invalid(&next_item) || count < self.shortest_length {
+            if is_invalid(&next_item) || count < self.shortest_length || count > self.longest_length
+            {
                 continue;
             } else if self.translate
                 && next_item.chars().any(|c| {

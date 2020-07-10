@@ -74,18 +74,9 @@ fn test_extractor_with_bondary_condition() {
 
     let mut iter = builder.build(texts[0].as_str());
     assert_eq!(iter.next().unwrap(), "春");
-    assert_eq!(iter.next().unwrap(), "花秋");
-    assert_eq!(iter.next().unwrap(), "月何時");
-    assert_eq!(iter.next().unwrap(), "了往事知");
     assert_eq!(iter.next().unwrap(), "多");
-    assert_eq!(iter.next().unwrap(), "少小");
-    assert_eq!(iter.next().unwrap(), "樓昨夜");
-    assert_eq!(iter.next().unwrap(), "又東風故");
-    assert_eq!(iter.next().unwrap(), "國、不堪、回首月、明中雕欄");
     assert_eq!(iter.next().unwrap(), "玉");
     assert_eq!(iter.next().unwrap(), "砌");
-    assert_eq!(iter.next().unwrap(), "應在「只」是《朱》顏");
-    assert_eq!(iter.next().unwrap(), "改『問』君【能】有…幾—多．愁");
     assert!(iter.next().is_none());
 }
 
