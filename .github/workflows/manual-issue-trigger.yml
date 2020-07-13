@@ -21,7 +21,7 @@ jobs:
     - name: Get Comment
       id: comment
       run: |
-        ACTION_LINE=$(echo "${{ github.event.comment.body }}" | grep "/action" || echo "no-action")
+        ACTION_LINE=$(echo "${{ github.event.comment.body }}" | grep "/action " || echo "no-action")
         ACTION=${ACTION_LINE/\/action /""}
         echo "##[set-output name=action;]$ACTION"
     - name: Output Command
