@@ -31,6 +31,8 @@ pub struct SentenceExtractor<'a> {
     shortest_length: usize,
     /// Use auxiliary symbols to cut sentence when it longer than longest length
     longest_length: usize,
+    /// Show the ending symbol of sentence if any
+    ending_symbol: bool,
 }
 
 impl Default for SentenceExtractor<'_> {
@@ -42,10 +44,10 @@ impl Default for SentenceExtractor<'_> {
             shortest_length: 3,
             longest_length: 38,
             ignore_symbols: None,
+            ending_symbol: false,
         }
     }
 }
-
 pub struct SentenceExtractorBuilder<'a> {
     inner: SentenceExtractor<'a>,
 }
@@ -62,8 +64,19 @@ impl<'a> SentenceExtractorBuilder<'a> {
             if lines.first().unwrap().contains("消歧義") {
                 String::default()
             } else {
-                // skip title
-                lines[1..].join("")
+                // skip title and normalized and disambiguate the input chars
+                lines[1..]
+                    .join("")
+                    .chars()
+                    .map(|c| SYMBOL_MAP.get(&c).unwrap_or(&c).clone())
+                    .filter(|c| {
+                        if let Some(ignore_symbols) = self.inner.ignore_symbols {
+                            !ignore_symbols.contains(c)
+                        } else {
+                            true
+                        }
+                    })
+                    .collect::<String>()
             }
         } else {
             text.to_string()
@@ -80,6 +93,10 @@ impl<'a> SentenceExtractorBuilder<'a> {
     }
     pub fn longest_length(mut self, longest_length: usize) -> Self {
         self.inner.longest_length = longest_length;
+        self
+    }
+    pub fn chop_ending_symbol(mut self, chop: bool) -> Self {
+        self.inner.ending_symbol = !chop;
         self
     }
     pub fn auxiliary_symbols(
@@ -124,12 +141,27 @@ lazy_static! {
 }
 
 impl<'a> SentenceExtractor<'a> {
-    fn get_cutting_point(&self, chars: &Vec<char>) -> Option<usize> {
+    fn get_cutting_point<'b>(&self, chars: &'b Vec<char>) -> Option<(usize, Option<&'b char>)> {
+        let mut previous_cuting_point = None;
         for (idx, c) in chars.iter().enumerate() {
-            if idx >= self.longest_length && self.auxiliary_symbols.contains(&c) {
-                return Some(idx);
-            } else if TERMINAL_PUNCTUATIONS.contains(&c) {
-                return Some(idx);
+            if TERMINAL_PUNCTUATIONS.contains(&c) {
+                if c.is_whitespace() {
+                    return Some((idx, None));
+                } else {
+                    return Some((idx, Some(c)));
+                }
+            }
+
+            if self.auxiliary_symbols.contains(&c) {
+                previous_cuting_point = if c.is_whitespace() {
+                    Some((idx, None))
+                } else {
+                    Some((idx, Some(c)))
+                };
+            };
+
+            if idx >= self.longest_length && previous_cuting_point.is_some() {
+                return previous_cuting_point;
             }
         }
         return None;
@@ -145,22 +177,9 @@ impl<'a> Iterator for SentenceExtractor<'a> {
                 return None;
             }
 
-            // normalized and disambiguate the input chars
-            let chars = self
-                .text
-                .chars()
-                .map(|c| SYMBOL_MAP.get(&c).unwrap_or(&c).clone())
-                .filter(|c| {
-                    if let Some(ignore_symbols) = self.ignore_symbols {
-                        !ignore_symbols.contains(c)
-                    } else {
-                        true
-                    }
-                })
-                .collect::<Vec<_>>();
-
-            let end_index = self.get_cutting_point(&chars);
-            let index = end_index.unwrap_or(chars.len());
+            let chars = self.text.chars().collect::<Vec<_>>();
+            let end = self.get_cutting_point(&chars);
+            let (index, ending_symbol) = end.unwrap_or((chars.len(), None));
             let mut next_item = chars
                 .iter()
                 .take(index)
@@ -169,7 +188,7 @@ impl<'a> Iterator for SentenceExtractor<'a> {
                 .to_string();
             self.text = chars
                 .iter()
-                .skip(index + (if end_index.is_some() { 1 } else { 0 }))
+                .skip(index + (if end.is_some() { 1 } else { 0 }))
                 .collect::<String>();
 
             // remove words in brackets
@@ -183,7 +202,8 @@ impl<'a> Iterator for SentenceExtractor<'a> {
                     .collect();
             }
             let count = next_item.chars().count();
-            if is_invalid(&next_item) || count < self.shortest_length {
+            if is_invalid(&next_item) || count < self.shortest_length || count > self.longest_length
+            {
                 continue;
             } else if self.translate
                 && next_item.chars().any(|c| {
@@ -195,8 +215,11 @@ impl<'a> Iterator for SentenceExtractor<'a> {
             {
                 continue;
             }
-
-            return Some(next_item.trim().to_string());
+            return if self.ending_symbol && ending_symbol.is_some() {
+                Some(format!("{}{}", next_item.trim(), ending_symbol.unwrap()))
+            } else {
+                Some(next_item.trim().to_string())
+            };
         }
     }
 }

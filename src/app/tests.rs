@@ -8,9 +8,10 @@ fn test_extractor() {
     let mut iter = builder.build(texts[0].as_str());
 
     assert_eq!(iter.next().unwrap(), "愛因斯坦係一位理論物理學家");
+    assert_eq!(iter.next().unwrap(), "佢最出名嘅係發表咗相對論");
     assert_eq!(
         iter.next().unwrap(),
-        "佢最出名嘅係發表咗相對論，另外喺量子力學、統計力學、同埋宇宙學方面都有好大貢獻"
+        "另外喺量子力學、統計力學、同埋宇宙學方面都有好大貢獻"
     );
     assert_eq!(
         iter.next().unwrap(),
@@ -45,9 +46,12 @@ fn test_extractor() {
     );
     assert_eq!(
         iter.next().unwrap(),
-        "愛因斯坦話自己之所以諗得出相對論，正係因為細個時學嘢慢，遲過其他小朋友開始思索時空"
+        "愛因斯坦話自己之所以諗得出相對論，正係因為細個時學嘢慢"
     );
-    assert_eq!(iter.next().unwrap(), "到嗰陣思想已經比較成熟");
+    assert_eq!(
+        iter.next().unwrap(),
+        "遲過其他小朋友開始思索時空，到嗰陣思想已經比較成熟"
+    );
     assert_eq!(iter.next().unwrap(), "後來佢又寫咗好多有關時空，物質嘅理論");
     assert_eq!(
         iter.next().unwrap(),
@@ -70,18 +74,9 @@ fn test_extractor_with_bondary_condition() {
 
     let mut iter = builder.build(texts[0].as_str());
     assert_eq!(iter.next().unwrap(), "春");
-    assert_eq!(iter.next().unwrap(), "花秋");
-    assert_eq!(iter.next().unwrap(), "月何時");
-    assert_eq!(iter.next().unwrap(), "了往事知");
     assert_eq!(iter.next().unwrap(), "多");
-    assert_eq!(iter.next().unwrap(), "少小");
-    assert_eq!(iter.next().unwrap(), "樓昨夜");
-    assert_eq!(iter.next().unwrap(), "又東風故");
-    assert_eq!(iter.next().unwrap(), "國、不堪、回首月、明中雕欄");
     assert_eq!(iter.next().unwrap(), "玉");
     assert_eq!(iter.next().unwrap(), "砌");
-    assert_eq!(iter.next().unwrap(), "應在「只」是《朱》顏");
-    assert_eq!(iter.next().unwrap(), "改『問』君【能】有…幾—多．愁");
     assert!(iter.next().is_none());
 }
 
@@ -140,4 +135,21 @@ fn test_extractor_handle_auxiliary_symbol_conflict() {
             "Options conflict: '＃' is ignored".to_string()
         );
     }
+}
+
+#[test]
+fn test_extractor_with_ending_symbols() {
+    let texts = load(&PathBuf::from("src/test_data/wiki_01")).unwrap();
+    let mut builder = SentenceExtractorBuilder::new().chop_ending_symbol(false);
+
+    let mut iter = builder.build(texts[0].as_str());
+    assert_eq!(iter.next().unwrap(), "春，花秋，月何時，了往事知。");
+    assert_eq!(iter.next().unwrap(), "樓昨夜。");
+    assert_eq!(iter.next().unwrap(), "又東風故。");
+    assert_eq!(iter.next().unwrap(), "國、不堪、回首月、明中雕欄。");
+    assert_eq!(
+        iter.next().unwrap(),
+        "應在「只」是《朱》顏：改『問』君【能】有…幾—多．愁；"
+    );
+    assert!(iter.next().is_none());
 }

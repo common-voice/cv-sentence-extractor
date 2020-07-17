@@ -14,7 +14,7 @@ cargo run -- extract -d <WIKI_EXTRACTOR_OUT_DIR>
 
 ## Rules
 Currently it only works for the chinese wiki.
-- extract at most 3 sentences per article
+- randomly extract at most 3 sentences per article
 - skip disambiguation pages
 - skip title
 - skip sentences that...
@@ -28,3 +28,4 @@ Currently it only works for the chinese wiki.
 - replaces traditional characters with their simplified counterpart (with `-t` option)
 - ignore symbols (with `-i` option)
 - cutting long sentence with auxiliary symbols (with `-a` option)
+- choping the ending symbol of a sentence (with `-c` option)
