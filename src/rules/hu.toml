@@ -7,7 +7,7 @@ quote_start_with_letter = true
 needs_punctuation_end = false
 needs_letter_start = true
 needs_uppercase_start = true
-allowed_symbols_regex = "[0-9A-Za-záÁéÉíÍóÓöÖőŐúÚüÜ„“‚‘’ –\\.?!]"
+allowed_symbols_regex = "[0-9A-Za-záÁéÉíÍóÓöÖőŐúÚüÜ„“‚‘’\\- –\\.\\?!]"
 disallowed_symbols = []
 broken_whitespace = ["  ", " ,", " .", " ?", " !", " ;"]
 
@@ -16,5 +16,5 @@ matching_symbols = [
 ]
 
 abbreviation_patterns = [
-  "ún\\.|ref\\.|[Rr]\\. kath\\.|vm\\.|stb\\.|ill\\.|pl\\.|Bt\\.|Kft\\.|Kht\\.|vhr\\.|tsz\\.|Zrt\\.|Nyrt\\.|Rt\\.|KKT\\.|Mo\\.|Bp\\.|Özv\\.|Korm\\.|Kr\\. ?e\\.|Kr\\. ?u\\.|[MDCLXVI]+\\.|BSc\\.|MSc\\.|Dr\\.|Phd\\.|ltp\\.|vb\\.|km\\.|nm\\.|dm\\.|mg\\.|KW\\.|W\\.|kb\\.|sz\\." ,
+  "[AÁBCDEÉFGHIÍJKLMNOÓÖŐPQRSTUÚVWXYZ]\\.|Várm\\.|ún\\.|ref\\.|kir\\.|[Rr]\\. kath\\.|róm\\.|vm\\.|stb\\.|ill\\.|pl\\.|Bt\\.|Kft\\.|Kht\\.|vhr\\.|tsz\\.|u\\.|hsz\\.|ifj\\.|gk\\.|jan\\.|feb\\.|márc\\.|máj\\.|ápr\\.|jún\\.|júl\\.|aug\\.|szept\\.|okt\\.|nov\\.|dec\\.|közt\\.|min\\.|max\\.|[Oo]rsz\\.|id\\.|Zrt\\.|Nyrt\\.|Rt\\.|KKT\\.|Mo\\.|Bp\\.|Özv\\.|Korm\\.|Kr\\.|Kr\\. ?e\\.|Kr\\. ?u\\.|[MDCLXVI]+\\.|BSc\\.|MSc\\.|Dr\\.|Phd\\.|ltp\\.|vb\\.|km\\.|nm\\.|dm\\.|mg\\.|KW\\.|W\\.|kb\\.|sz\\." ,
 ]
