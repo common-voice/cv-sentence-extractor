@@ -8,31 +8,25 @@ use crate::standard_characters::STANDARD_CHARACTERS;
 
 mod error;
 
-type ExtractorError = error::Error;
-
-static TERMINAL_PUNCTUATIONS: [char; 4] = ['。', '？', '！', '\n'];
+static SHOWUP_PUNCTUATIONS: [char; 2] = ['？', '！'];
+static TERMINAL_PUNCTUATIONS: [char; 8] = ['，', '。', '、', '：', '？', '；', '！', '\n'];
 static PUNCTUATIONS: [char; 37] = [
     '"', '"', '、', '‧', '—', '—', '—', '～', '“', '”', '；', '·', '：', '‘', '•', '─', '兀', '︰',
     '︿', '﹀', '，', '、', '．', '；', '：', '＃', '＆', '＊', '＋', '－', '＜', '＞', '＝', '＄',
     '％', '＠', '，',
 ];
-static DEFAULT_AUXILIARY_SYMBOLS: [char; 7] = ['，', '：', '；', '。', '？', '！', '\n'];
 
 #[derive(Debug, Clone)]
 pub struct SentenceExtractor<'a> {
     text: String,
     /// Boolean option for translate words from traditional Chinese into simplify Chinese
     translate: bool,
-    /// Symbols to cut sentence when it goes too long
-    auxiliary_symbols: &'a [char],
     /// The Symbols will be ignored
     ignore_symbols: Option<&'a [char]>,
     /// Skip the sentence shorter than shortest length
     shortest_length: usize,
     /// Use auxiliary symbols to cut sentence when it longer than longest length
     longest_length: usize,
-    /// Show the ending symbol of sentence if any
-    ending_symbol: bool,
 }
 
 impl Default for SentenceExtractor<'_> {
@@ -40,11 +34,9 @@ impl Default for SentenceExtractor<'_> {
         SentenceExtractor {
             text: String::new(),
             translate: false,
-            auxiliary_symbols: &DEFAULT_AUXILIARY_SYMBOLS,
             shortest_length: 3,
             longest_length: 38,
             ignore_symbols: None,
-            ending_symbol: false,
         }
     }
 }
@@ -95,37 +87,9 @@ impl<'a> SentenceExtractorBuilder<'a> {
         self.inner.longest_length = longest_length;
         self
     }
-    pub fn chop_ending_symbol(mut self, chop: bool) -> Self {
-        self.inner.ending_symbol = !chop;
-        self
-    }
-    pub fn auxiliary_symbols(
-        mut self,
-        auxiliary_symbols: &'a mut Vec<char>,
-    ) -> Result<Self, ExtractorError> {
-        for s in auxiliary_symbols.iter() {
-            if self.inner.ignore_symbols.unwrap_or_default().contains(s) {
-                return Err(ExtractorError::OptionsConflic(format!(
-                    "'{}' is ignored",
-                    s
-                )));
-            }
-        }
-        auxiliary_symbols.extend_from_slice(&TERMINAL_PUNCTUATIONS);
-        self.inner.auxiliary_symbols = auxiliary_symbols;
-        Ok(self)
-    }
-    pub fn ignore_symbols(mut self, ignore_symbols: &'a Vec<char>) -> Result<Self, ExtractorError> {
-        for s in ignore_symbols {
-            if self.inner.auxiliary_symbols.contains(s) {
-                return Err(ExtractorError::OptionsConflic(format!(
-                    "'{}' is used to determine the cuting point for sentance",
-                    s
-                )));
-            }
-        }
+    pub fn ignore_symbols(mut self, ignore_symbols: &'a Vec<char>) -> Self {
         self.inner.ignore_symbols = Some(&ignore_symbols);
-        Ok(self)
+        self
     }
 }
 // ignore_symbols: Vec<char>,
@@ -142,7 +106,6 @@ lazy_static! {
 
 impl<'a> SentenceExtractor<'a> {
     fn get_cutting_point<'b>(&self, chars: &'b Vec<char>) -> Option<(usize, Option<&'b char>)> {
-        let mut previous_cuting_point = None;
         for (idx, c) in chars.iter().enumerate() {
             if TERMINAL_PUNCTUATIONS.contains(&c) {
                 if c.is_whitespace() {
@@ -150,18 +113,6 @@ impl<'a> SentenceExtractor<'a> {
                 } else {
                     return Some((idx, Some(c)));
                 }
-            }
-
-            if self.auxiliary_symbols.contains(&c) {
-                previous_cuting_point = if c.is_whitespace() {
-                    Some((idx, None))
-                } else {
-                    Some((idx, Some(c)))
-                };
-            };
-
-            if idx >= self.longest_length && previous_cuting_point.is_some() {
-                return previous_cuting_point;
             }
         }
         return None;
@@ -215,11 +166,12 @@ impl<'a> Iterator for SentenceExtractor<'a> {
             {
                 continue;
             }
-            return if self.ending_symbol && ending_symbol.is_some() {
-                Some(format!("{}{}", next_item.trim(), ending_symbol.unwrap()))
-            } else {
-                Some(next_item.trim().to_string())
-            };
+            if let Some(e) = ending_symbol {
+                if SHOWUP_PUNCTUATIONS.contains(&e) {
+                    return Some(format!("{}{}", next_item.trim(), e));
+                }
+            }
+            return Some(next_item.trim().to_string());
         }
     }
 }
