@@ -47,7 +47,7 @@ bzip2 -d enwiki-latest-pages-articles-multistream.xml.bz2
 
 ```bash
 cd wikiextractor
-python wikiextractor/extract.py --json ../enwiki-latest-pages-articles-multistream.xml
+python WikiExtractor.py --json ../enwiki-latest-pages-articles-multistream.xml
 ```
 
 *Important note: Please check the section about [creating a rules file](#using-language-rules) and [a blocklist](#create-a-blocklist-based-on-less-common-words) at this point, you might want to consider creating them and that process should happen before step 3.*
