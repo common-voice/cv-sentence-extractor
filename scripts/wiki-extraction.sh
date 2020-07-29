@@ -11,8 +11,8 @@ TYPE=${1:-sample}
 HERE=$(dirname $0)
 PROJECT_ROOT=$HERE/..
 WORKSPACE=${GITHUB_WORKSPACE:-/tmp}
-WIKI_EXTRACTOR_URL="https://raw.githubusercontent.com/attardi/wikiextractor/master/WikiExtractor.py"
-WIKI_EXTRACTOR_PATH="$WORKSPACE/WikiExtractor.py"
+WIKI_EXTRACTOR_URL="https://raw.githubusercontent.com/attardi/wikiextractor/62bdbe6106148f8a870c7d1d9bc0d2536d174237/wikiextractor/extract.py"
+WIKI_EXTRACTOR_PATH="$WORKSPACE/extract.py"
 EXTRACTED_TEXT_PATH="$WORKSPACE/text"
 OUTPUT_PATH="$WORKSPACE/output"
 mkdir -p $OUTPUT_PATH
