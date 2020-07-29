@@ -103,16 +103,16 @@ DUMP_BASE_PATH="https://dumps.wikimedia.org/${LANGUAGE_CODE}wiki/latest/"
 curl $DUMP_BASE_PATH > listing.html
 
 echo "Searching for correct files..."
-ARCHIVE_FILE_NAME_MATCHES=($(grep -o  -P -e 'wiki-latest-pages-articles-multistream\d*.xml-.*bz2"' < listing.html || [[ $? == 1 ]]))
+ARCHIVE_FILE_NAME_MATCHES=($(grep -o -P -e 'wiki-latest-pages-articles-multistream\d*.xml-.*bz2"' < listing.html || [[ $? == 1 ]]))
 if [ ${#ARCHIVE_FILE_NAME_MATCHES[@]} == 0 ]; then
-  ARCHIVE_FILE_NAME_MATCHES=($(grep -o  -P -e 'wiki-latest-pages-articles-multistream.xml.bz2"' < listing.html))
+  ARCHIVE_FILE_NAME_MATCHES=($(grep -o -P -e 'wiki-latest-pages-articles-multistream.xml.bz2"' < listing.html))
 fi
 rm listing.html
 
 for archive in "${ARCHIVE_FILE_NAME_MATCHES[@]}"
 do
     ARCHIVE_FILE_NAME=${archive/%?/}
-    echo "Starting extraction for ... $ARCHIVE_FILE_NAME" # TODO: make this prettier and not even return " when grepping...
+    echo "Starting extraction for ... $ARCHIVE_FILE_NAME"
     dump $ARCHIVE_FILE_NAME
     extract
     cleanup
