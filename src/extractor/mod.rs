@@ -9,7 +9,7 @@ use crate::standard_characters::STANDARD_CHARACTERS;
 mod error;
 
 static SHOWUP_PUNCTUATIONS: [char; 2] = ['？', '！'];
-static TERMINAL_PUNCTUATIONS: [char; 8] = ['，', '。', '、', '：', '？', '；', '！', '\n'];
+static TERMINAL_PUNCTUATIONS: [char; 10] = ['（', '）', '，', '。', '、', '：', '？', '；', '！', '\n'];
 static PUNCTUATIONS: [char; 37] = [
     '"', '"', '、', '‧', '—', '—', '—', '～', '“', '”', '；', '·', '：', '‘', '•', '─', '兀', '︰',
     '︿', '﹀', '，', '、', '．', '；', '：', '＃', '＆', '＊', '＋', '－', '＜', '＞', '＝', '＄',

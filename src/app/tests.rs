@@ -7,9 +7,10 @@ fn test_extractor() {
     let mut builder = SentenceExtractorBuilder::new();
     let mut iter = builder.build(texts[0].as_str());
 
-    assert_eq!(iter.next().unwrap(), "愛因斯坦（");
+    assert_eq!(iter.next().unwrap(), "愛因斯坦");
     assert_eq!(iter.next().unwrap(), "全名音譯");
     assert_eq!(iter.next().unwrap(), "阿爾拔·愛因斯坦");
+    assert_eq!(iter.next().unwrap(), "係一位理論物理學家");
     assert_eq!(iter.next().unwrap(), "佢最出名嘅係發表咗相對論");
     assert_eq!(iter.next().unwrap(), "另外喺量子力學");
     assert_eq!(iter.next().unwrap(), "統計力學");
@@ -71,6 +72,8 @@ fn test_extractor_with_bondary_condition() {
     assert_eq!(iter.next().unwrap(), "國");
     assert_eq!(iter.next().unwrap(), "玉？");
     assert_eq!(iter.next().unwrap(), "砌！");
+    assert_eq!(iter.next().unwrap(), "應");
+    assert_eq!(iter.next().unwrap(), "猶");
     assert!(iter.next().is_none());
 }
 
@@ -81,7 +84,8 @@ fn test_extractor_with_ignore_symbols() {
     let mut builder = SentenceExtractorBuilder::new().ignore_symbols(&ignore_symbols);
     let mut iter = builder.build(texts[0].as_str());
 
-    assert_eq!(iter.next().unwrap(), "噬魂師係由大久保篤創作嘅日本漫畫作品");
+    assert_eq!(iter.next().unwrap(), "噬魂師");
+    assert_eq!(iter.next().unwrap(), "係由大久保篤創作嘅日本漫畫作品");
     assert_eq!(iter.next().unwrap(), "舞台為死神武器工匠專門學校");
     assert_eq!(iter.next().unwrap(), "俗稱死武專");
     assert_eq!(iter.next().unwrap(), "呢間學校係專門培育工匠同武器");
@@ -111,7 +115,7 @@ fn test_extractor_with_ending_symbols() {
     assert_eq!(iter.next().unwrap(), "又東風故");
     assert_eq!(iter.next().unwrap(), "回首月");
     assert_eq!(iter.next().unwrap(), "明中雕欄");
-    assert_eq!(iter.next().unwrap(), "應在「只」是《朱》顏");
+    assert_eq!(iter.next().unwrap(), "在「只」是《朱》顏");
     assert_eq!(iter.next().unwrap(), "改『問』君【能】有…幾—多．愁");
     assert!(iter.next().is_none());
 }
