@@ -17,7 +17,7 @@ Currently it only works for the chinese wiki.
 - randomly extract at most 3 sentences per article
 - skip disambiguation pages
 - skip title
-- cutting sentence with these symbols `，`, `。`, `、`, `：`, `？`, `；`, `！`
+- cutting sentence with these symbols `，`, `。`, `、`, `：`, `？`, `；`, `！`, `（` & `）`
 - show the ending symbol if it is `？` or `！`
 - skip sentences that...
   - start with non-alphabetic characters
