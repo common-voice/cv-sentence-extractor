@@ -60,14 +60,6 @@ where
                         .help("The suitable longest sentence length"),
                 )
                 .arg(
-                    Arg::with_name("auxiliary symbols")
-                        .short("a")
-                        .long("aux")
-                        .takes_value(true)
-                        .number_of_values(1)
-                        .help("The auxiliary symbols for extracting long sentence"),
-                )
-                .arg(
                     Arg::with_name("ignore symbols")
                         .short("i")
                         .long("ignore")
@@ -75,12 +67,6 @@ where
                         .number_of_values(1)
                         .help("The symbols will be ignored when extracting"),
                 )
-                .arg(
-                    Arg::with_name("chop ending symbol")
-                        .short("c")
-                        .long("chop")
-                        .help("chop the ending symbol"),
-                ),
         )
         .get_matches_from(itr)
 }
@@ -111,12 +97,6 @@ fn extract(matches: &ArgMatches) -> Result<()> {
         .unwrap_or("38")
         .parse::<usize>()
         .unwrap();
-    let mut auxiliary_symbols: Vec<char> = matches
-        .value_of("auxiliary symbols")
-        .unwrap_or("")
-        .chars()
-        .map(|c| SYMBOL_MAP.get(&c).unwrap_or(&c).clone())
-        .collect();
     let ignore_symbols: Vec<char> = matches
         .value_of("ignore symbols")
         .unwrap_or("")
@@ -126,11 +106,9 @@ fn extract(matches: &ArgMatches) -> Result<()> {
 
     let mut builder = SentenceExtractorBuilder::new()
         .translate(matches.is_present("trans"))
-        .chop_ending_symbol(matches.is_present("chop ending symbol"))
         .shortest_length(shortest_length)
         .longest_length(longest_length)
-        .auxiliary_symbols(&mut auxiliary_symbols)?
-        .ignore_symbols(&ignore_symbols)?;
+        .ignore_symbols(&ignore_symbols);
 
     let mut sentences = vec![];
 
