@@ -67,6 +67,30 @@ where
                         .number_of_values(1)
                         .help("The symbols will be ignored when extracting"),
                 )
+                .arg(
+                    Arg::with_name("ignore symbols file")
+                        .short("I")
+                        .long("ignore-file")
+                        .takes_value(true)
+                        .number_of_values(1)
+                        .help("The symbols in the file will be ignored when extracting"),
+                )
+                .arg(
+                    Arg::with_name("black list symbols")
+                        .short("b")
+                        .long("black")
+                        .takes_value(true)
+                        .number_of_values(1)
+                        .help("The sentence with black symbols will be ignored when extracting"),
+                )
+                .arg(
+                    Arg::with_name("black list symbols file")
+                        .short("B")
+                        .long("black-file")
+                        .takes_value(true)
+                        .number_of_values(1)
+                        .help("The sentence with black symbols stored in file will be ignored when extracting"),
+                )
         )
         .get_matches_from(itr)
 }
