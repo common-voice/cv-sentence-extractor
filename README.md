@@ -29,3 +29,5 @@ Currently it only works for the chinese wiki.
 ## Options
 - replaces traditional characters with their simplified counterpart (with `-t` option)
 - ignore symbols (with `-i` option)
+- load ignore symbols from a file (with `-I` option)
+  - here is an example file, `/src/test_data/black_chars.txt`.
