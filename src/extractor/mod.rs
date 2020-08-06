@@ -9,7 +9,8 @@ use crate::standard_characters::STANDARD_CHARACTERS;
 mod error;
 
 static SHOWUP_PUNCTUATIONS: [char; 2] = ['？', '！'];
-static TERMINAL_PUNCTUATIONS: [char; 10] = ['（', '）', '，', '。', '、', '：', '？', '；', '！', '\n'];
+static TERMINAL_PUNCTUATIONS: [char; 10] =
+    ['（', '）', '，', '。', '、', '：', '？', '；', '！', '\n'];
 static PUNCTUATIONS: [char; 37] = [
     '"', '"', '、', '‧', '—', '—', '—', '～', '“', '”', '；', '·', '：', '‘', '•', '─', '兀', '︰',
     '︿', '﹀', '，', '、', '．', '；', '：', '＃', '＆', '＊', '＋', '－', '＜', '＞', '＝', '＄',
@@ -21,12 +22,12 @@ pub struct SentenceExtractor<'a> {
     text: String,
     /// Boolean option for translate words from traditional Chinese into simplify Chinese
     translate: bool,
-    /// The Symbols will be ignored
-    ignore_symbols: Option<&'a [char]>,
     /// Skip the sentence shorter than shortest length
     shortest_length: usize,
     /// Use auxiliary symbols to cut sentence when it longer than longest length
     longest_length: usize,
+    /// The sentence including the black list symbols will be droped
+    black_list_symbols: Option<&'a [char]>,
 }
 
 impl Default for SentenceExtractor<'_> {
@@ -36,33 +37,38 @@ impl Default for SentenceExtractor<'_> {
             translate: false,
             shortest_length: 3,
             longest_length: 38,
-            ignore_symbols: None,
+            black_list_symbols: None,
         }
     }
 }
 pub struct SentenceExtractorBuilder<'a> {
     inner: SentenceExtractor<'a>,
+    /// The symbols will be ignored
+    ignore_symbols: Option<&'a [char]>,
 }
 impl<'a> SentenceExtractorBuilder<'a> {
     pub fn new() -> SentenceExtractorBuilder<'a> {
         SentenceExtractorBuilder {
             inner: SentenceExtractor::default(),
+            ignore_symbols: None,
         }
     }
     pub fn build(&mut self, text: &str) -> SentenceExtractor {
         let lines: Vec<&str> = text.lines().collect();
+
         self.inner.text = if lines.len() > 1 {
             // skip disambiguation pages
             if lines.first().unwrap().contains("消歧義") {
                 String::default()
             } else {
                 // skip title and normalized and disambiguate the input chars
+                // ignore symbols
                 lines[1..]
                     .join("")
                     .chars()
                     .map(|c| SYMBOL_MAP.get(&c).unwrap_or(&c).clone())
                     .filter(|c| {
-                        if let Some(ignore_symbols) = self.inner.ignore_symbols {
+                        if let Some(ignore_symbols) = self.ignore_symbols {
                             !ignore_symbols.contains(c)
                         } else {
                             true
@@ -88,7 +94,11 @@ impl<'a> SentenceExtractorBuilder<'a> {
         self
     }
     pub fn ignore_symbols(mut self, ignore_symbols: &'a Vec<char>) -> Self {
-        self.inner.ignore_symbols = Some(&ignore_symbols);
+        self.ignore_symbols = Some(&ignore_symbols);
+        self
+    }
+    pub fn black_list_symbols(mut self, black_list_symbols: &'a Vec<char>) -> Self {
+        self.inner.black_list_symbols = Some(&black_list_symbols);
         self
     }
 }
@@ -152,6 +162,19 @@ impl<'a> Iterator for SentenceExtractor<'a> {
                     .map(|c| CHARACTER_MAP.get(&c).unwrap_or(&c).clone())
                     .collect();
             }
+            if let Some(black_list_symbols) = self.black_list_symbols {
+                let mut has_black_symbols = false;
+                for c in next_item.chars() {
+                    if black_list_symbols.contains(&c) {
+                        has_black_symbols = true;
+                        break;
+                    }
+                }
+                if has_black_symbols {
+                    continue;
+                }
+            }
+
             let count = next_item.chars().count();
             if is_invalid(&next_item) || count < self.shortest_length || count > self.longest_length
             {

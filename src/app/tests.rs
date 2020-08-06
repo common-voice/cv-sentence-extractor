@@ -119,3 +119,19 @@ fn test_extractor_with_ending_symbols() {
     assert_eq!(iter.next().unwrap(), "改『問』君【能】有…幾—多．愁");
     assert!(iter.next().is_none());
 }
+
+#[test]
+fn test_extractor_with_black_list_symbols() {
+    let texts = load(&PathBuf::from("src/test_data/wiki_01")).unwrap();
+    let black_list_symbols = vec!['《', '》'];
+    let mut builder = SentenceExtractorBuilder::new().black_list_symbols(&black_list_symbols);
+    let mut iter = builder.build(texts[0].as_str());
+    assert_eq!(iter.next().unwrap(), "月何時");
+    assert_eq!(iter.next().unwrap(), "了往事知");
+    assert_eq!(iter.next().unwrap(), "樓昨夜");
+    assert_eq!(iter.next().unwrap(), "又東風故");
+    assert_eq!(iter.next().unwrap(), "回首月");
+    assert_eq!(iter.next().unwrap(), "明中雕欄");
+    assert_eq!(iter.next().unwrap(), "改『問』君【能】有…幾—多．愁");
+    assert!(iter.next().is_none());
+}

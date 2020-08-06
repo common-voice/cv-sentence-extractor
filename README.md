@@ -30,4 +30,6 @@ Currently it only works for the chinese wiki.
 - replaces traditional characters with their simplified counterpart (with `-t` option)
 - ignore symbols (with `-i` option)
 - load ignore symbols from a file (with `-I` option)
+- black list symbols (with `-b` option)
+- load black list symbols from a file (with `-B` option)
   - here is an example file, `/src/test_data/black_chars.txt`.
