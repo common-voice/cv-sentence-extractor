@@ -5,6 +5,8 @@ use crate::loader::load;
 use crate::loader::load_file_names;
 
 use std::ffi::OsString;
+use std::fs::File;
+use std::io::{BufRead, BufReader};
 
 use clap::{App, Arg, ArgMatches, SubCommand};
 use rand::{thread_rng, Rng};
@@ -67,6 +69,30 @@ where
                         .number_of_values(1)
                         .help("The symbols will be ignored when extracting"),
                 )
+                .arg(
+                    Arg::with_name("ignore symbols file")
+                        .short("I")
+                        .long("ignore-file")
+                        .takes_value(true)
+                        .number_of_values(1)
+                        .help("The symbols in the file will be ignored when extracting"),
+                )
+                .arg(
+                    Arg::with_name("black list symbols")
+                        .short("b")
+                        .long("black-list")
+                        .takes_value(true)
+                        .number_of_values(1)
+                        .help("The sentence including black list symbols will be dropped when extracting"),
+                )
+                .arg(
+                    Arg::with_name("black list symbols file")
+                        .short("B")
+                        .long("black-list-file")
+                        .takes_value(true)
+                        .number_of_values(1)
+                        .help("The sentence including black list symbols from the file will be dropped when extracting"),
+                )
         )
         .get_matches_from(itr)
 }
@@ -97,18 +123,54 @@ fn extract(matches: &ArgMatches) -> Result<()> {
         .unwrap_or("38")
         .parse::<usize>()
         .unwrap();
-    let ignore_symbols: Vec<char> = matches
+    let mut ignore_symbols: Vec<char> = matches
         .value_of("ignore symbols")
         .unwrap_or("")
         .chars()
         .map(|c| SYMBOL_MAP.get(&c).unwrap_or(&c).clone())
         .collect();
+    if matches.is_present("ignore symbols file") {
+        let f = File::open(matches.value_of("ignore symbols file").unwrap())?;
+        for line in BufReader::new(f).lines() {
+            if let Ok(l) = line {
+                let mut char_list: Vec<char> = l
+                    .chars()
+                    .map(|c| SYMBOL_MAP.get(&c).unwrap_or(&c).clone())
+                    .into_iter()
+                    .filter(|s| !s.is_ascii_whitespace())
+                    .collect();
+                ignore_symbols.append(&mut char_list);
+            }
+        }
+    }
+    let mut black_list_symbols: Vec<char> = matches
+        .value_of("black list symbols")
+        .unwrap_or("")
+        .chars()
+        .map(|c| SYMBOL_MAP.get(&c).unwrap_or(&c).clone())
+        .collect();
+
+    if matches.is_present("black list symbols file") {
+        let f = File::open(matches.value_of("black list symbols file").unwrap())?;
+        for line in BufReader::new(f).lines() {
+            if let Ok(l) = line {
+                let mut char_list: Vec<char> = l
+                    .chars()
+                    .map(|c| SYMBOL_MAP.get(&c).unwrap_or(&c).clone())
+                    .into_iter()
+                    .filter(|s| !s.is_ascii_whitespace())
+                    .collect();
+                black_list_symbols.append(&mut char_list);
+            }
+        }
+    }
 
     let mut builder = SentenceExtractorBuilder::new()
         .translate(matches.is_present("trans"))
         .shortest_length(shortest_length)
         .longest_length(longest_length)
-        .ignore_symbols(&ignore_symbols);
+        .ignore_symbols(&ignore_symbols)
+        .black_list_symbols(&black_list_symbols);
 
     let mut sentences = vec![];
 
