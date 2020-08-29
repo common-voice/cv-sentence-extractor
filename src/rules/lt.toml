@@ -1,0 +1,30 @@
+allowed_symbols_regex="[A-Za-ząčęėįšųūžĄČĘĖĮŠŲŪŽ‚–\\. \"„“]"
+matching_symbols = [["„", "“"]]
+min_trimmed_length = 6
+min_word_count = 3
+max_word_count = 14
+min_characters = 1
+may_end_with_colon = false
+quote_start_with_letter = true
+needs_punctuation_end = true
+needs_letter_start = true
+needs_uppercase_start = true
+broken_whitespace = ["  ", " ,", " .", " ?", " !", " ;"]
+disallowed_symbols = [
+  '<', '>', '+', '*', '\', '#', '@', '^', '[', ']', '(', ')', '/',
+  'é', 'è', 'à', 'ç', 'Å',
+  'α', 'β', 'Γ', 'γ', 'Δ', 'δ', 'ε', 'ζ', 'η', 'Θ', 'θ', 'ι', 'κ',
+  'Λ', 'λ', 'μ', 'ν', 'Ξ', 'ξ', 'Π', 'π', 'ρ', 'Σ', 'σ', 'ς', 'τ',
+  'υ', 'Φ', 'φ', 'χ', 'Ψ', 'ψ', 'Ω', 'ω',
+  '«', '»', '”', 'º', '&'
+]
+abbreviation_patterns = [
+	"[A-ZĄČĘĖĮŠŲŪŽ]+\\.",
+	"[A-ZĄČĘĖĮŠŲŪŽ]+\\.*[A-ZĄČĘĖĮŠŲŪŽ]",
+	# for UAB, LŽS and similar
+	"[A-ZĄČĘĖĮŠŲŪŽ]{2,}",
+	# coommon abbr
+	"kt\\.|pr\\.|[Vv]yr\\.|[Mm]ot\\.|žr\\.|Šv\\.|[Šš]vč\\.|mėn\\.|el\\.|Dž\\.|įv\\.|dab\\.|gel\\.|ež\\.|[Nn]r\\.|I\\s",
+	# chemical elements?
+	"Cl"
+]
