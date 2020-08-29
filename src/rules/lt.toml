@@ -20,9 +20,11 @@ disallowed_symbols = [
 ]
 abbreviation_patterns = [
 	"[A-ZĄČĘĖĮŠŲŪŽ]+\\.",
-	"[A-Z]+\\.*[A-Z]",
+	"[A-ZĄČĘĖĮŠŲŪŽ]+\\.*[A-ZĄČĘĖĮŠŲŪŽ]",
+	# for UAB, LŽS and similar
+	"[A-ZĄČĘĖĮŠŲŪŽ]{2,}",
 	# coommon abbr
-	"kt\\.|pr\\.|[Vv]yr\\.|[Mm]ot\\.|žr\\.|Šv\\.|[Šš]vč\\.|mėn\\.|el\\.|Dž\\.|įv\\.|dab\\.|gel\\.|ež\\.|[Nn]r\\.",
+	"kt\\.|pr\\.|[Vv]yr\\.|[Mm]ot\\.|žr\\.|Šv\\.|[Šš]vč\\.|mėn\\.|el\\.|Dž\\.|įv\\.|dab\\.|gel\\.|ež\\.|[Nn]r\\.|I\\s",
 	# chemical elements?
 	"Cl"
 ]
