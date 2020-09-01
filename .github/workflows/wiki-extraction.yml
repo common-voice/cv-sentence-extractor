@@ -46,3 +46,8 @@ jobs:
       with:
         name: extraction
         path: output/
+
+    - uses: actions/upload-artifact@v1
+      with:
+        name: wikiextractor-output
+        path: text/

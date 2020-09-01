@@ -55,7 +55,6 @@ function extract {
 function cleanup {
   rm -rf $DUMP_PATH
   rm -rf $EXTRACTED_DUMP_PATH
-  rm -rf $EXTRACTED_TEXT_PATH
 }
 
 
