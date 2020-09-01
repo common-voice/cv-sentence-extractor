@@ -11,7 +11,7 @@ TYPE=${1:-sample}
 HERE=$(dirname $0)
 PROJECT_ROOT=$HERE/..
 WORKSPACE=${GITHUB_WORKSPACE:-/tmp}
-WIKI_EXTRACTOR_URL="https://raw.githubusercontent.com/attardi/wikiextractor/master/WikiExtractor.py"
+WIKI_EXTRACTOR_URL="https://raw.githubusercontent.com/attardi/wikiextractor/e4abb4cbd019b0257824ee47c23dd163919b731b/WikiExtractor.py"
 WIKI_EXTRACTOR_PATH="$WORKSPACE/WikiExtractor.py"
 EXTRACTED_TEXT_PATH="$WORKSPACE/text"
 OUTPUT_PATH="$WORKSPACE/output"
@@ -44,9 +44,9 @@ function extract {
   pushd $PROJECT_ROOT
 
   if [ $TYPE == "blocklist" ]; then
-    cargo run -- extract -l $LANGUAGE_CODE -d $EXTRACTED_TEXT_PATH >> $EXTRACTED_SENTENCES_PATH
-  else
     cargo run -- extract -l $LANGUAGE_CODE -d $EXTRACTED_TEXT_PATH --no_check >> $EXTRACTED_SENTENCES_PATH
+  else
+    cargo run -- extract -l $LANGUAGE_CODE -d $EXTRACTED_TEXT_PATH >> $EXTRACTED_SENTENCES_PATH
   fi
 
   popd
@@ -55,7 +55,6 @@ function extract {
 function cleanup {
   rm -rf $DUMP_PATH
   rm -rf $EXTRACTED_DUMP_PATH
-  rm -rf $EXTRACTED_TEXT_PATH
 }
 
 
@@ -84,8 +83,7 @@ elif [ $TYPE == "extract" ] && [ -n "$2" ]; then
 elif [ $TYPE == "extract" ]; then
   # Fallback if no language passed
   echo "Commit: $COMMIT_MESSAGE"
-  EXTRACTION_OPTION=$(echo $COMMIT_MESSAGE | grep -o -e '--full-wiki-extraction=.*$' || [[ $? == 1 ]])
-  LANGUAGE_CODE=${EXTRACTION_OPTION/"--full-wiki-extraction="/""} # TODO: make this prettier by only returing matched language
+  LANGUAGE_CODE=$(echo $COMMIT_MESSAGE | sed -n 's/^.*full-wiki-extraction=\(\S*\).*$/\1/p' || [[ $? == 1 ]])
   EXTRACTED_SENTENCES_PATH="$OUTPUT_PATH/wiki.txt"
 elif [ $TYPE == "blocklist" ] && [ -n "$2" ]; then
   LANGUAGE_CODE=$2
@@ -103,16 +101,16 @@ DUMP_BASE_PATH="https://dumps.wikimedia.org/${LANGUAGE_CODE}wiki/latest/"
 curl $DUMP_BASE_PATH > listing.html
 
 echo "Searching for correct files..."
-ARCHIVE_FILE_NAME_MATCHES=($(grep -o  -P -e 'wiki-latest-pages-articles-multistream\d*.xml-.*bz2"' < listing.html || [[ $? == 1 ]]))
+ARCHIVE_FILE_NAME_MATCHES=($(grep -o -P -e 'wiki-latest-pages-articles-multistream\d*.xml-.*bz2"' < listing.html || [[ $? == 1 ]]))
 if [ ${#ARCHIVE_FILE_NAME_MATCHES[@]} == 0 ]; then
-  ARCHIVE_FILE_NAME_MATCHES=($(grep -o  -P -e 'wiki-latest-pages-articles-multistream.xml.bz2"' < listing.html))
+  ARCHIVE_FILE_NAME_MATCHES=($(grep -o -P -e 'wiki-latest-pages-articles-multistream.xml.bz2"' < listing.html))
 fi
 rm listing.html
 
 for archive in "${ARCHIVE_FILE_NAME_MATCHES[@]}"
 do
     ARCHIVE_FILE_NAME=${archive/%?/}
-    echo "Starting extraction for ... $ARCHIVE_FILE_NAME" # TODO: make this prettier and not even return " when grepping...
+    echo "Starting extraction for ... $ARCHIVE_FILE_NAME"
     dump $ARCHIVE_FILE_NAME
     extract
     cleanup

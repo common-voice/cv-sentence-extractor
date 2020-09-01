@@ -47,6 +47,7 @@ bzip2 -d enwiki-latest-pages-articles-multistream.xml.bz2
 
 ```bash
 cd wikiextractor
+git checkout e4abb4cbd019b0257824ee47c23dd163919b731b
 python WikiExtractor.py --json ../enwiki-latest-pages-articles-multistream.xml
 ```
 
@@ -143,7 +144,7 @@ To do so, first you should create a full export with all Wikipedia sentences. No
 After running step 1 and 2 from the `Usage` section above, run:
 
 ```bash
-cd ../common-voice-wiki-scraper
+cd ../cv-sentence-extractor
 cargo run -- extract -l en -d ../wikiextractor/text/ --no_check >> wiki.en.all.txt
 ```
 
@@ -153,7 +154,7 @@ Then you can use the cvtools scripts to generate a list of the word frequency:
 cd  ..
 git clone https://github.com/dabinat/cvtools/
 cd cvtools
-python3 ./word_usage.py -i ../common-voice-wiki-scraper/wiki.en.all.txt >> word_usage.en.txt
+python3 ./word_usage.py -i ../cv-sentence-extractor/wiki.en.all.txt >> word_usage.en.txt
 ```
 
 You will have to read the `word_usage.en.txt` file to decide where you should put the limit. Usually words with less than 80-60 repetitions are bad.
@@ -165,7 +166,7 @@ grep -i "80" ./word_usage.en.txt
 Once you know the frequency limit, you can generate your blocklist by running:
 
 ```bash
-python3 ./word_usage.py -i ../common-voice-wiki-scraper/wiki.en.all.txt --max-frequency 80 --show-words-only >> ../common-voice-wiki-scraper/src/rules/disallowed_words/en.txt
+python3 ./word_usage.py -i ../cv-sentence-extractor/wiki.en.all.txt --max-frequency 80 --show-words-only >> ../cv-sentence-extractor/src/rules/disallowed_words/en.txt
 ```
 
 You can use also `--strip-by-apostrophe` which is handy for languages using `'` in their sentences to recognize more words.
