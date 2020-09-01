@@ -47,6 +47,7 @@ bzip2 -d enwiki-latest-pages-articles-multistream.xml.bz2
 
 ```bash
 cd wikiextractor
+git checkout e4abb4cbd019b0257824ee47c23dd163919b731b
 python WikiExtractor.py --json ../enwiki-latest-pages-articles-multistream.xml
 ```
 
