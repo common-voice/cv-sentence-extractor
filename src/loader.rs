@@ -42,9 +42,9 @@ pub fn load_wikiextractor(file_name: &PathBuf) -> Result<Vec<String>, String> {
         .collect())
 }
 
-pub fn load_file_names(dir_name: &str) -> Result<Vec<PathBuf>, String> {
+pub fn load_file_names(dir_name: &str, prefix: &str) -> Result<Vec<PathBuf>, String> {
     let chart_path = Path::new(dir_name);
-    let glob_path = format!("{}/**/wiki_*", chart_path.to_string_lossy());
+    let glob_path = format!("{}/**/{}*", chart_path.to_string_lossy(), prefix);
     glob(&glob_path)
         .map_err(|e| format!("{}", e))?
         .map(|p| p.map_err(|e| format!("{}", e)))

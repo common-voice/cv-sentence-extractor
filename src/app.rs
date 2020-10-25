@@ -63,6 +63,7 @@ fn start(all_matches: ArgMatches) -> Result<(), String> {
             no_check: matches.is_present("no_check"),
             directory: String::from(matches.value_of("dir").unwrap_or_default()),
             max_sentences_per_text: 3,
+            file_prefix: String::from("wiki_"),
         };
 
         extract(config, load_wikiextractor)

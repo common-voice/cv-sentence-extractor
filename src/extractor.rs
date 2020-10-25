@@ -17,7 +17,7 @@ pub fn extract(config:  Config, mut loader: impl FnMut(&PathBuf) -> Result<Vec<S
     let mut existing_sentences = HashSet::new();
     let mut char_count = 0;
     let mut sentence_count = 0;
-    let file_names = load_file_names(&config.directory).unwrap();
+    let file_names = load_file_names(&config.directory, &config.file_prefix).unwrap();
     for file_name in file_names {
         eprintln!("file_name = {:?}", file_name.to_string_lossy());
         let texts = loader(&file_name)?;

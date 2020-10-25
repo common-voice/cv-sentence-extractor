@@ -4,6 +4,7 @@ pub struct Config {
     pub no_check: bool,
     pub directory: String,
     pub max_sentences_per_text: usize,
+    pub file_prefix: String,
 }
 
 impl Default for Config {
@@ -13,6 +14,7 @@ impl Default for Config {
             no_check: false,
             directory: String::from(""),
             max_sentences_per_text: 3,
+            file_prefix: String::from("wiki_"),
         }
     }
 }
@@ -31,5 +33,6 @@ mod test {
         assert_eq!(config.no_check, false);
         assert_eq!(config.directory, "");
         assert_eq!(config.max_sentences_per_text, 3);
+        assert_eq!(config.file_prefix, "wiki_");
     }
 }
