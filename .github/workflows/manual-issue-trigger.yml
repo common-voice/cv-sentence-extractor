@@ -58,11 +58,11 @@ jobs:
     - name: Generate Blocklist
       if: "contains(steps.comment.outputs.action, 'blocklist')"
       run: ./scripts/create-blocklist.sh ${{ steps.comment.outputs.action }}
-    - uses: actions/upload-artifact@v1
+    - uses: actions/upload-artifact@v2
       if: "contains(steps.comment.outputs.action, 'blocklist')"
       with:
         name: blocklist
-        path: output/
+        path: output/*
 
     - name: Create final comment
       if: "!contains(steps.comment.outputs.action, 'no-action')"
