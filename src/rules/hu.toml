@@ -16,5 +16,10 @@ matching_symbols = [
 ]
 
 abbreviation_patterns = [
-  "[AÁBCDEÉFGHIÍJKLMNOÓÖŐPQRSTUÚVWXYZ]\\.|Várm\\.|ún\\.|ref\\.|kir\\.|[Rr]\\. kath\\.|róm\\.|vm\\.|stb\\.|ill\\.|pl\\.|Bt\\.|Kft\\.|Kht\\.|vhr\\.|tsz\\.|u\\.|hsz\\.|ifj\\.|gk\\.|jan\\.|feb\\.|márc\\.|máj\\.|ápr\\.|jún\\.|júl\\.|aug\\.|szept\\.|okt\\.|nov\\.|dec\\.|közt\\.|min\\.|max\\.|[Oo]rsz\\.|id\\.|Zrt\\.|Nyrt\\.|Rt\\.|KKT\\.|Mo\\.|Bp\\.|Özv\\.|Korm\\.|Kr\\.|Kr\\. ?e\\.|Kr\\. ?u\\.|[MDCLXVI]+\\.|BSc\\.|MSc\\.|Dr\\.|Phd\\.|ltp\\.|vb\\.|km\\.|nm\\.|dm\\.|mg\\.|KW\\.|W\\.|kb\\.|sz\\." ,
+  "[AÁBCDEÉFGHIÍJKLMNOÓÖŐPQRSTUÚVWXYZ]\\.|[AÁBCDEÉFGHIÍJKLMNOÓÖŐPQRSTUÚVWXYZ]{2,}|Várm\\.|ún\\.|ref\\.|kir\\.|[Rr]\\. kath\\.|róm\\.|vm\\.|stb\\.|ill\\.|pl\\.|Bt\\.|Kft\\.|Kht\\.|vhr\\.|tsz\\.|u\\.|hsz\\.|ifj\\.|gk\\.|jan\\.|feb\\.|márc\\.|máj\\.|ápr\\.|jún\\.|júl\\.|aug\\.|szept\\.|okt\\.|nov\\.|dec\\.|közt\\.|min\\.|max\\.|[Oo]rsz\\.|id\\.|Zrt\\.|Nyrt\\.|Rt\\.|KKT\\.|Mo\\.|Bp\\.|Özv\\.|Korm\\.|Kr\\.|Kr\\. ?e\\.|Kr\\. ?u\\.|[MDCLXVI]+\\.|BSc\\.|MSc\\.|Dr\\.|Phd\\.|ltp\\.|vb\\.|km\\.|nm\\.|dm\\.|mg\\.|KW\\.|W\\.|kb\\.|sz\\." ,
+]
+
+other_patterns = [
+  "[AÁBCDEÉFGHIÍJKLMNOÓÖŐPQRSTUÚVWXYZ]-",
+  "\\s-",
 ]
