@@ -81,3 +81,34 @@ impl Default for Rules {
         }
     }
 }
+
+#[cfg(test)]
+mod test {
+    use super::*;
+
+    #[test]
+    fn test_default_rules() {
+        let rules : Rules = Rules {
+            ..Default::default()
+        };
+
+        assert_eq!(rules.min_trimmed_length, 3);
+        assert_eq!(rules.min_word_count, 1);
+        assert_eq!(rules.max_word_count, 14);
+        assert_eq!(rules.min_characters, 0);
+        assert_eq!(rules.may_end_with_colon, false);
+        assert_eq!(rules.quote_start_with_letter, true);
+        assert_eq!(rules.needs_punctuation_end, false);
+        assert_eq!(rules.needs_uppercase_start, false);
+        assert_eq!(rules.needs_letter_start, true);
+        assert_eq!(rules.allowed_symbols_regex, String::from(""));
+        assert_eq!(rules.disallowed_symbols, vec![]);
+        assert_eq!(rules.disallowed_words, HashSet::new());
+        assert_eq!(rules.broken_whitespace, vec![]);
+        assert_eq!(rules.abbreviation_patterns, vec![]);
+        assert_eq!(rules.other_patterns, vec![]);
+        assert_eq!(rules.replacements, vec![]);
+        assert_eq!(rules.even_symbols, vec![]);
+        assert_eq!(rules.matching_symbols, vec![]);
+    }
+}
