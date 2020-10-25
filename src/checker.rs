@@ -543,5 +543,6 @@ mod test {
         assert_eq!(check(&rules, &String::from("A BL-ben ötször játszhatott.")), false);
         assert_eq!(check(&rules, &String::from("A B-döntőt hat résztvevővel rendezték.")), false);
         assert_eq!(check(&rules, &String::from("A -ház egyik legkiválóbb uralkodójaként tartják számon.")), false);
+        assert_eq!(check(&rules, &String::from("A egyik legkiválóbb uralkodójaként tartják számon.")), true);
     }
 }
