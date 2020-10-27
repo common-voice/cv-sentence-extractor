@@ -38,8 +38,8 @@ where
         .subcommand(
             SubCommand::with_name("extract")
                 .about("Extract sentences from Wikipedia dump extracts using WikiExtractor")
-                .arg(language_argument)
-                .arg(directory_argument)
+                .arg(&language_argument)
+                .arg(&directory_argument)
         )
         .get_matches_from(itr)
 }
