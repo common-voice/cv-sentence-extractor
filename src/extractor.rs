@@ -84,7 +84,7 @@ fn pick_sentences(
 ) -> Vec<String> {
     let total_in_pool = sentences_pool.len();
 
-    if total_in_pool < amount {
+    if total_in_pool < amount && amount != std::usize::MAX {
         return vec![];
     }
 
