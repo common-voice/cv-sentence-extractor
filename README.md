@@ -5,6 +5,7 @@
 Right now this tool supports extractions from the following sources:
 
 * Wikipedia - max 3 sentences per articles
+* Simple files with a sentence per file
 
 For a source to be added, the dataset needs to be vetted by Mozilla to check license compatibility. If you know about a good source, please start a topic on [Discourse](https://discourse.mozilla.org/c/voice/). Once it's been verified that a source can be used, check the "Adding another scrape target" further below.
 
@@ -200,6 +201,7 @@ If you find a new open data source that provides a lot of sentences ([Example](h
 * In `app.rs`, add a new extraction command - same arguments as the `extract` task, but with a better - more descriptive - name identifying your data source
 * In `app.rs` add a new `if` in the `start` function to instantiate your extractor and start the extraction, passing your own custom extractor you wrote
 * Add a new section in this README documenting the usage and purpose of your new target
+* Add your new target to the list at the top of the README
 
 You can find an example in the [File Loader Commit](https://github.com/Common-Voice/cv-sentence-extractor/commit/c0f3c81f021b7c7bc96bc01302af54422d69c193). Note that code might have slightly changed, but the concept is the same.
 
