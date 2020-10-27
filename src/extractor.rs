@@ -4,8 +4,7 @@ use crate::checker;
 use crate::loader::load_file_names;
 use crate::rules::{load_rules, Rules};
 use punkt::params::Standard;
-use punkt::SentenceTokenizer;
-use punkt::TrainingData;
+use punkt::{SentenceTokenizer, TrainingData};
 use rand::Rng;
 use rand::rngs::ThreadRng;
 use std::collections::HashSet;
@@ -28,7 +27,7 @@ pub fn extract(config:  Config, mut loader: impl FnMut(&PathBuf) -> Result<Vec<S
                 &text,
                 &existing_sentences,
                 &training_data,
-                iteration_config,
+                &iteration_config,
                 checker::check,
                 replacer::replace_strings,
             );
@@ -51,7 +50,7 @@ fn choose(
     text: &str,
     existing_sentences: &HashSet<String>,
     training_data: &TrainingData,
-    config: Config,
+    config: &Config,
     predicate: impl FnMut(&Rules, &str) -> bool,
     mut replacer: impl FnMut(&Rules, &str) -> String,
 ) -> Vec<String> {
