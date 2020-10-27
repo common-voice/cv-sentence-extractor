@@ -190,7 +190,7 @@ If you find a new open data source that provides a lot of sentences ([Example](h
 * In `loaders` add your own loader file and write your own code according to the given data structure of your target - the data structure should be fairly simple, you might need to consider writing a separate script to fetch and prepare the sentences first (as we do with the WikiExtractor for Wikipedia). Note that you'll need to implement the `Loader` trait.
 * In `loaders/mod.rs` expose your new file
 * In `app.rs`, add a new extraction command - same arguments as the `extract` task, but with a better - more descriptive - name identifying your data source
-* In `app.rs` add a new `else if` in the `start` function to instantiate your extractor and start the extraction, passing your own custom extractor you wrote
+* In `app.rs` add a new `if` in the `start` function to instantiate your extractor and start the extraction, passing your own custom extractor you wrote
 * Add a new section in this README documenting the usage and purpose of your new target
 
 ## Automatic extraction

@@ -62,9 +62,9 @@ fn start(all_matches: ArgMatches) -> Result<(), String> {
         let directory = String::from(matches.value_of("dir").unwrap_or_default());
 
         let wikipedia_loader = Wikipedia::new(language, directory);
-        extract(wikipedia_loader, no_check)
-    } else {
-        println!("{}", all_matches.usage());
-        Err(String::from("Did you forget to add a subcommand?"))
+        return extract(wikipedia_loader, no_check);
     }
+
+    println!("{}", all_matches.usage());
+    Err(String::from("Did you forget to add a subcommand?"))
 }
