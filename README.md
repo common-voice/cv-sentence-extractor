@@ -62,6 +62,16 @@ cargo run -- extract -l en -d ../wikiextractor/text/ >> wiki.en.txt
 
 *Tip: You don't need this last process to finish to start observing the output, wiki.en.txt should get a few thousands sentences in just a few minutes, and you can use that as a way to estimate the quality of the output early on and stop the process if you are not happy.*
 
+### Extract from line break separated files
+
+If you have one or multiple files with one sentence per line, you can use this extractor to extract sentences from these files applying the defined language rules. This can be useful if you have a large list of sentences and you want to only have sentences which match the rules.
+
+By default you can extract 10000 sentences per file.
+
+```
+cargo run -- extract-file -l en -d ../texts/ >> file.en.txt
+```
+
 ## Using language rules
 
 The following rules can be configured per language. Add a `<language>.toml` file in the `rules` directory to enable a new locale.

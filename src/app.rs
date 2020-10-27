@@ -2,7 +2,7 @@ use clap::{App, Arg, ArgMatches, SubCommand};
 use std::ffi::OsString;
 
 use crate::extractor::extract;
-use crate::loaders::{Wikipedia};
+use crate::loaders::{File, Wikipedia};
 
 const VERSION: &str = env!("CARGO_PKG_VERSION");
 
@@ -41,6 +41,12 @@ where
                 .arg(&language_argument)
                 .arg(&directory_argument)
         )
+        .subcommand(
+            SubCommand::with_name("extract-file")
+                .about("Extract sentences from files which have one sentence per line")
+                .arg(&language_argument)
+                .arg(&directory_argument)
+        )
         .get_matches_from(itr)
 }
 
@@ -63,6 +69,15 @@ fn start(all_matches: ArgMatches) -> Result<(), String> {
 
         let wikipedia_loader = Wikipedia::new(language, directory);
         return extract(wikipedia_loader, no_check);
+    }
+
+    // File
+    if let Some(matches) = all_matches.subcommand_matches("extract-file") {
+        let language = String::from(matches.value_of("language").unwrap_or("en"));
+        let directory = String::from(matches.value_of("dir").unwrap_or_default());
+
+        let file_loader = File::new(language, directory);
+        return extract(file_loader, no_check);
     }
 
     println!("{}", all_matches.usage());
