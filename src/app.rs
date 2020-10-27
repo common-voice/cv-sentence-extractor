@@ -12,7 +12,7 @@ where
     I: IntoIterator<Item = T>,
     T: Into<OsString> + Clone,
 {
-    App::new("common-voice-yotp")
+    App::new("common_voice_sentence_collector")
         .about("Common Voice Sentence Extraction Helper")
         .version(VERSION)
         .author("Florian Merz <flomerz@gmail.com>")
