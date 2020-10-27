@@ -55,16 +55,19 @@ fn choose(
     predicate: impl FnMut(&Rules, &str) -> bool,
     mut replacer: impl FnMut(&Rules, &str) -> String,
 ) -> Vec<String> {
-    let sentences_replaced_abbreviations: Vec<String> = SentenceTokenizer::<Standard>::new(text, training_data)
-        .map(|item| { replacer(rules, item) })
-        .collect();
-
+    let replaced_text = replacer(rules, text);
+    let mut sentences: Vec<String> = vec![];
+    let tokenizer = SentenceTokenizer::<Standard>::new(&replaced_text, training_data);
+    for sentence in tokenizer {
+        sentences.push(String::from(sentence));
+    }
+    
     if config.no_check {
-        sentences_replaced_abbreviations
+        sentences
     } else {
         pick_sentences(
             rules,
-            sentences_replaced_abbreviations,
+            sentences,
             existing_sentences,
             config.max_sentences_per_text,
             predicate,

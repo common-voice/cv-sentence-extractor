@@ -1,0 +1,21 @@
+min_trimmed_length = 3
+min_word_count = 5
+max_word_count = 25
+min_characters = 0
+may_end_with_colon = false
+quote_start_with_letter = false
+needs_punctuation_end = false
+needs_letter_start = false
+needs_uppercase_start = false
+replacements = [
+  ["।", "."]
+]
+disallowed_symbols = [
+  'a', 'e', 'i', 'o', 'u',
+  '<', '>', '+', '*', '\', '#', '@', '^', '[', ']', '(', ')', '/',
+  'é', 'è', 'à', 'ç', 'Å',
+  'α', 'β', 'Γ', 'γ', 'Δ', 'δ', 'ε', 'ζ', 'η', 'Θ', 'θ', 'ι', 'κ',
+  'Λ', 'λ', 'μ', 'ν', 'Ξ', 'ξ', 'Π', 'π', 'ρ', 'Σ', 'σ', 'ς', 'τ',
+  'υ', 'Φ', 'φ', 'χ', 'Ψ', 'ψ', 'Ω', 'ω',
+]
+abbreviation_patterns = ["[A-Z]+\\.*[A-Z]"]
