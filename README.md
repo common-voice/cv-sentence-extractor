@@ -66,8 +66,6 @@ cargo run -- extract -l en -d ../wikiextractor/text/ >> wiki.en.txt
 
 If you have one or multiple files with one sentence per line, you can use this extractor to extract sentences from these files applying the defined language rules. This can be useful if you have a large list of sentences and you want to only have sentences which match the rules.
 
-By default you can extract 10000 sentences per file.
-
 ```
 cargo run -- extract-file -l en -d ../texts/ >> file.en.txt
 ```
