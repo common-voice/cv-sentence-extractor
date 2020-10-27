@@ -201,6 +201,8 @@ If you find a new open data source that provides a lot of sentences ([Example](h
 * In `app.rs` add a new `if` in the `start` function to instantiate your extractor and start the extraction, passing your own custom extractor you wrote
 * Add a new section in this README documenting the usage and purpose of your new target
 
+You can find an example in the [File Loader Commit](https://github.com/Common-Voice/cv-sentence-extractor/commit/c0f3c81f021b7c7bc96bc01302af54422d69c193). Note that code might have slightly changed, but the concept is the same.
+
 ## Automatic extraction
 
 Currently the following data sources are available for automatic extraction:
