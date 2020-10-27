@@ -11,6 +11,6 @@ pub mod app;
 mod extractor;
 mod checker;
 mod replacer;
-mod loader;
 mod rules;
 mod config;
+mod loaders;

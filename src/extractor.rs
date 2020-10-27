@@ -1,35 +1,38 @@
 use crate::config::Config;
 use crate::replacer;
 use crate::checker;
-use crate::loader::load_file_names;
+use crate::loaders::Loader;
 use crate::rules::{load_rules, Rules};
+use glob::glob;
 use punkt::params::Standard;
 use punkt::{SentenceTokenizer, TrainingData};
 use rand::Rng;
 use rand::rngs::ThreadRng;
 use std::collections::HashSet;
+use std::path::Path;
 use std::path::PathBuf;
 
-pub fn extract(config:  Config, mut loader: impl FnMut(&PathBuf) -> Result<Vec<String>, String>) -> Result<(), String> {
+pub fn extract(loader: impl Loader, no_check: bool) -> Result<(), String> {
+    let config = loader.get_config();
     let rules = load_rules(&config.language);
-    let training_data = get_training_data(&config.language);
+    let training_data = get_training_data(&loader.get_config().language);
     let mut existing_sentences = HashSet::new();
     let mut char_count = 0;
     let mut sentence_count = 0;
     let file_names = load_file_names(&config.directory, &config.file_prefix).unwrap();
     for file_name in file_names {
         eprintln!("file_name = {:?}", file_name.to_string_lossy());
-        let texts = loader(&file_name)?;
+        let texts = loader.load(&file_name)?;
         for text in texts {
-            let iteration_config = config.clone();
             let sentences = choose(
                 &rules,
                 &text,
                 &existing_sentences,
                 &training_data,
-                &iteration_config,
+                &config,
                 checker::check,
                 replacer::replace_strings,
+                no_check,
             );
 
             for sentence in sentences {
@@ -53,12 +56,13 @@ fn choose(
     config: &Config,
     predicate: impl FnMut(&Rules, &str) -> bool,
     mut replacer: impl FnMut(&Rules, &str) -> String,
+    no_check: bool,
 ) -> Vec<String> {
     let sentences_replaced_abbreviations: Vec<String> = SentenceTokenizer::<Standard>::new(text, training_data)
         .map(|item| { replacer(rules, item) })
         .collect();
 
-    if config.no_check {
+    if no_check {
         sentences_replaced_abbreviations
     } else {
         pick_sentences(
@@ -144,6 +148,15 @@ fn get_training_data(language: &str) -> TrainingData {
         "tr" => TrainingData::turkish(),
         _ => TrainingData::english(),
     }
+}
+
+fn load_file_names(dir_name: &str, prefix: &str) -> Result<Vec<PathBuf>, String> {
+    let chart_path = Path::new(dir_name);
+    let glob_path = format!("{}/**/{}*", chart_path.to_string_lossy(), prefix);
+    glob(&glob_path)
+        .map_err(|e| format!("{}", e))?
+        .map(|p| p.map_err(|e| format!("{}", e)))
+        .collect::<Result<Vec<PathBuf>, String>>()
 }
 
 #[cfg(test)]
