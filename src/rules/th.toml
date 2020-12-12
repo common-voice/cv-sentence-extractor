@@ -33,4 +33,4 @@ disallowed_symbols = [
   'ฯ', 'ๆ', '๏', '๚', '๛',
 ]
 broken_whitespace = ["  ", " ,", " .", " ;"]
-abbreviation_patterns = ["[A-Z]{2,}|[A-Z]+\\.*[A-Z]+|[ก-ฮ]+\\.([ก-ฮ]+\.)+"]
+abbreviation_patterns = ["[A-Z]{2,}|[A-Z]+\\.*[A-Z]+|[ก-ฮ]+\\.([ก-ฮ]+\\.)+"]
