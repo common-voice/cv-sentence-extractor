@@ -521,7 +521,6 @@ agotarse
 agrádabel
 agradación
 agramonteses
-agrarísta
 agregacionista
 agriaban
 agricolamente
@@ -817,7 +816,6 @@ allá
 Allá
 Allbaugh
 Allberici
-Allende
 Alleres
 Allergan
 Alles
@@ -2883,7 +2881,6 @@ Beatals
 beatboxer
 beatboxing
 Beatle
-Beatles
 Bebebés
 bebop
 Beceiro
@@ -3679,7 +3676,6 @@ bride
 Bridei
 Brienio
 Brienne
-Brigantium
 brigos
 Brilaba
 Bring
@@ -9064,7 +9060,10 @@ Espáine
 espaldar
 espallamente
 espallanas
+<<<<<<< Updated upstream
 España
+=======
+>>>>>>> Stashed changes
 Españal
 españoles
 esparcidos
@@ -10862,7 +10861,10 @@ Galegoz
 Galeuzca
 Galiano
 Galica
+<<<<<<< Updated upstream
 Galicia
+=======
+>>>>>>> Stashed changes
 Galícia
 Galiciacom
 Galiciaé
@@ -10878,7 +10880,10 @@ Galinfancia
 Galiñanes
 Galir
 Galitsia
+<<<<<<< Updated upstream
 Galiza
+=======
+>>>>>>> Stashed changes
 Galizas
 Galizinita
 Gallaecia
