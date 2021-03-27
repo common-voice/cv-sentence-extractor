@@ -83,7 +83,7 @@ elif [ $TYPE == "extract" ] && [ -n "$2" ]; then
 elif [ $TYPE == "extract" ]; then
   # Fallback if no language passed
   echo "Commit: $COMMIT_MESSAGE"
-  LANGUAGE_CODE=$(echo $COMMIT_MESSAGE | sed -n 's/^.*full-wiki-extraction=\(\S*\).*$/\1/p' || [[ $? == 1 ]])
+  LANGUAGE_CODE=$(echo $COMMIT_MESSAGE | sed -n 's/".*--full-wiki-extraction=\(\S*\)"$/\1/p' || [[ $? == 1 ]])
   EXTRACTED_SENTENCES_PATH="$OUTPUT_PATH/wiki.txt"
 elif [ $TYPE == "blocklist" ] && [ -n "$2" ]; then
   LANGUAGE_CODE=$2
