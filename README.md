@@ -5,7 +5,7 @@
 Right now this tool supports extractions from the following sources:
 
 * Wikipedia - max 3 sentences per articles
-* Simple files with a sentence per file
+* Simple files with one sentence per line
 
 For a source to be added, the dataset needs to be vetted by Mozilla to check license compatibility. If you know about a good source, please start a topic on [Discourse](https://discourse.mozilla.org/c/voice/). Once it's been verified that a source can be used, check the "Adding another scrape target" further below.
 
