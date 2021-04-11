@@ -34,5 +34,10 @@ replacements = [
   ["e.ə.", "Eramızdan əvvəl"],
   ["e.ə.", "Eramızdan əvvəl"],
   ["E.ə.", "Eramızdan əvvəl"],
-  ["E. ə.", "Eramızdan əvvəl"]
+  ["E. ə.", "Eramızdan əvvəl"],
+  #replace cyrillic charachters with ascii
+  ["а","a"],
+  ["е","e"],
+  ["х","x"],
+  ["ә","ə"]
 ]
