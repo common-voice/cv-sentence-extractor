@@ -7,7 +7,7 @@ quote_start_with_letter = true
 needs_punctuation_end = false
 needs_letter_start = true
 needs_uppercase_start = false
-disallowed_symbols = []
+disallowed_symbols = ['w','W']
 broken_whitespace = ["  ", " ,", " .", " ?", " !", " ;"]
 abbreviation_patterns = [
   "[A-ZİƏÖÜĞÇŞ]+\\.",
@@ -34,7 +34,7 @@ replacements = [
   ["və.b.", "və başqaları"],
   ["və.b.k.", "və bu kimi"],
   ["e.ə.", "Eramızdan əvvəl"],
-  ["e.ə.", "Eramızdan əvvəl"],
+  ["e. ə.", "Eramızdan əvvəl"],
   ["E.ə.", "Eramızdan əvvəl"],
   ["E. ə.", "Eramızdan əvvəl"]
 ]

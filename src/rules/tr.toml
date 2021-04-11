@@ -1,0 +1,25 @@
+min_trimmed_length = 3
+min_word_count = 1
+max_word_count = 14
+min_characters = 1
+may_end_with_colon = false
+quote_start_with_letter = true
+needs_punctuation_end = false
+needs_letter_start = true
+needs_uppercase_start = false
+disallowed_symbols = ['w','W','q','Q']
+broken_whitespace = ["  ", " ,", " .", " ?", " !", " ;"]
+abbreviation_patterns = [
+  "[A-ZİÖÜĞÇŞ]+\\.",
+  "[A-ZİÖÜĞÇŞ]+\\.*[A-ZİÖÜĞÇŞ]",
+  # for ABŞ, BDU and similar
+  "[A-ZİÖÜĞÇŞ]{2,}",
+  # for s., e.ə. and similar
+  "^[a-zıöüğçş]\\.",
+  # coommon abbr
+  "Alm\\.|İng\\.|Mah\\.|Sok\\.|Prof\\.|Dr\\.|Av\\.|Alb\\.|Gen\\.|sf\\.|haz\\.|çev\\.|ed\\.|fiz\\.|kim\\.|No\\.",
+]
+allowed_symbols_regex = "[A-z öüğçşıİƏÖÜĞÇŞ‚’–\\.?!;\"]"
+matching_symbols = [
+  ["\"", "\""],
+]
