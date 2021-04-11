@@ -14,6 +14,8 @@ abbreviation_patterns = [
   "[A-ZİƏÖÜĞÇŞ]+\\.*[A-ZİƏÖÜĞÇŞ]",
   # for ABŞ, BDU and similar
   "[A-ZİƏÖÜĞÇŞ]{2,}",
+  # for s., e.ə. and similar
+  "^[a-zıəöüğçş]\\.",
   # coommon abbr
   "və s\\.|və i.a\\.|və b\\.|və b.k\\.|və.s\\.|və.i.a\\.|və.b\\.|e.ə\\.|e .ə\\.|E.ə\\.|E. ə\\.|ö\\.|m.ə\\.|  akad\\.|prof\\.|səh\\.|küç\\.|şəh\\.|qəs\\.|məs\\.|dok\\.|dos\\.|abrev\\.|adr\\.|km\\.|sm\\.|mm\\.|resp\\.|yun\\.|lat",
 ]
@@ -34,10 +36,5 @@ replacements = [
   ["e.ə.", "Eramızdan əvvəl"],
   ["e.ə.", "Eramızdan əvvəl"],
   ["E.ə.", "Eramızdan əvvəl"],
-  ["E. ə.", "Eramızdan əvvəl"],
-  #replace cyrillic charachters with azerbaijani charachters
-  ["а","a"],
-  ["е","e"],
-  ["х","x"],
-  ["ә","ə"]
+  ["E. ə.", "Eramızdan əvvəl"]
 ]
