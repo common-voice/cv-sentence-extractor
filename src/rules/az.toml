@@ -17,7 +17,7 @@ abbreviation_patterns = [
   # for s., e.ə. and similar
   "^[a-zıəöüğçş]\\.",
   # coommon abbr
-  "və s\\.|və i.a\\.|və b\\.|və b.k\\.|və.s\\.|və.i.a\\.|və.b\\.|e.ə\\.|e .ə\\.|E.ə\\.|E. ə\\.|ö\\.|m.ə\\.|  akad\\.|prof\\.|səh\\.|küç\\.|şəh\\.|qəs\\.|məs\\.|dok\\.|dos\\.|abrev\\.|adr\\.|km\\.|sm\\.|mm\\.|resp\\.|yun\\.|lat",
+  "ö\\.|m.ə\\.|akad\\.|prof\\.|səh\\.|küç\\.|şəh\\.|qəs\\.|məs\\.|dok\\.|dos\\.|abrev\\.|adr\\.|km\\.|sm\\.|mm\\.|resp\\.|yun\\.|lat\\.",
 ]
 allowed_symbols_regex = "[A-z əöüğçşıİƏÖÜĞÇŞ‚’–\\.?!;\"]"
 matching_symbols = [
