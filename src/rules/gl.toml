@@ -1,0 +1,15 @@
+min_trimmed_length = 3
+min_word_count = 2
+max_word_count = 14
+min_characters = 1
+may_end_with_colon = false
+quote_start_with_letter = true
+needs_punctuation_end = false
+needs_letter_start = true
+needs_uppercase_start = true
+allowed_symbols_regex="[AaBbCcDdEeFfGgHhIiLlMmNnOoPpQqRrSsTtUuVvXxZzáéíóúÁÉÍÓÚüñÑ;‚–\\. \"\\?!«»]"
+disallowed_symbols = []
+disallowed_words = ['Jr', 'vs', 'vol', 'Av', 'Blvd', 'aprox', 'Cd', 'Cen', 'Ant', 'etc', 'art', 'Ltd', 'Co', 'esq', 'Corp', 'Dra', 'Prof', 'Urb', 'Bs', 'Mr', 'Mrs', 'subsp', 'p.e','s.s', 'Av', 'Blvd', 'Arq', 'St','Sta' ]
+broken_whitespace = ["  ", " ,", " .", " ?", " !", " ;"]
+abbreviation_patterns = ["[A-Z]+\\.*[A-Z]", "[A-Z]\\.$,"]
+other_patterns = ["ss","mm","pp","tt","bb","gg","tx","lh","nhe","nhi","nho","she","sho","sch","tz","gi","Gi","ge","Ge","oust","th","ph","dst","al-","Al-","lich","oot","eed","ston","field","Vlad","eau","neill","Neill","dh","rn ","nn ","berg ","ford","ff","\"El","\"La","\"Los","earl","micha","ham "," Ham"]

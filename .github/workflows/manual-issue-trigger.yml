@@ -1,4 +1,4 @@
-name: Manual Trigger
+name: Manual Issue Trigger
 
 on:
   issue_comment:
@@ -51,6 +51,7 @@ jobs:
       if: "contains(steps.comment.outputs.action, 'blocklist')"
       run: ./scripts/wiki-extraction.sh ${{ steps.comment.outputs.action }}
     - name: Checkout cvtools
+      if: "contains(steps.comment.outputs.action, 'blocklist')"
       uses: actions/checkout@master
       with:
         repository: dabinat/cvtools
