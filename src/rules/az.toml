@@ -7,7 +7,7 @@ quote_start_with_letter = true
 needs_punctuation_end = false
 needs_letter_start = true
 needs_uppercase_start = false
-disallowed_symbols = ['w','W']
+disallowed_symbols = []
 broken_whitespace = ["  ", " ,", " .", " ?", " !", " ;"]
 abbreviation_patterns = [
   "[A-ZİƏÖÜĞÇŞ]+\\.",
@@ -20,9 +20,7 @@ abbreviation_patterns = [
   "ö\\.|m.ə\\.|akad\\.|prof\\.|səh\\.|küç\\.|şəh\\.|qəs\\.|məs\\.|dok\\.|dos\\.|abrev\\.|adr\\.|km\\.|sm\\.|mm\\.|resp\\.|yun\\.|lat\\.",
 ]
 allowed_symbols_regex = "[A-z əöüğçşıİƏÖÜĞÇŞ‚’–\\.?!;\"]"
-matching_symbols = [
-  ["\"", "\""],
-]
+even_symbols = ['"']
 
 replacements = [
   ["və s.", "və sairə"],
@@ -37,4 +35,10 @@ replacements = [
   ["e. ə.", "Eramızdan əvvəl"],
   ["E.ə.", "Eramızdan əvvəl"],
   ["E. ə.", "Eramızdan əvvəl"]
+]
+#none azeri charachters
+#words without vowels
+other_patterns = [
+  "[wW]",
+  "^[^aAeEiİıIoOuUüÜ]{2,}+$"
 ]
