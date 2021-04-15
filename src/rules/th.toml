@@ -1,36 +1,138 @@
+# "other_patterns" borrowing these patterns:
+# BEGIN_REGEX, END_REGEX, STRUCTURE_REGEX, and ABBREVIATION_REGEX
+# with few adjustments, from:
+# https://github.com/common-voice/sentence-collector/blob/main/server/lib/validation/languages/th.js
+#
+# "replacements" borrowing normalization/cleanup patterns,
+# with some adjustments, from:
+# https://github.com/common-voice/sentence-collector/blob/main/server/lib/cleanup/languages/th.js
+
 min_trimmed_length = 3
+# Currently, without Thai word tokenization,
+# this "word" will work effectively for Thai
+# as "a group of character whitespace/punctuation".
 min_word_count = 1
-max_word_count = 14
-min_characters = 0
+max_word_count = 5
+min_characters = 6
 may_end_with_colon = false
 quote_start_with_letter = true
 needs_punctuation_end = false
 needs_letter_start = true
 needs_uppercase_start = false
-disallowed_symbols = [
-  '«', '»', '”', 'º', '&',
-  '<', '>', '+', '*', '\', '#', '@', '^', '[', ']', '(', ')', '/',
-  'ä', 'ö', 'ü', 'ß','ð','ð',
-  'À','Á','Â','Ã','Ä','Å','Æ','Ç','È','É','Ê','Ë','Ì','Í','İ','Î','Ï','Ð','Ñ','Ò','Ó','Ô','Õ','Ö','Ø','Ù','Ú','Û','Û','Ü','Ý','Ž',
-  'à','á','â','ã','å','æ','ç','è','é','ê','ë','ì','í','î','ï','ð','ñ','ò','ó','ô','õ',
-  'ø','ù','ú','û','ý','þ','ÿ',
-  'ā','ă','ą','ć','ċ','č','ď','đ','ē','ĕ','ė','ę','ě','ğ','ġ','ģ','ħ','ĩ','ī','ĭ','į','ı','ķ','ĸ','ĺ','ļ',
-  'ľ','ŀ','ł','ń','ņ','ņ','ṫ','š','Ў',
-  'ḃ','ḋ','ḟ','ṁ','ṗ','ṡ','ẁ','ẃ','ẅ','ẛ','ỳ',
-  'α', 'β', 'Γ', 'γ', 'Δ', 'δ', 'ε', 'ζ', 'η', 'Θ', 'θ', 'ι', 'κ',
-  'Λ', 'λ', 'μ', 'ν', 'Ξ', 'ξ', 'Π', 'π', 'ρ', 'Σ', 'σ', 'ς', 'τ',
-  'υ', 'Φ', 'φ', 'χ', 'Ψ', 'ψ', 'Ω', 'ω',
-  'っ','ł', '≤','蘇','ा','≥','ि','җ','پ','국','ी','ň','ก','ō','े',
-  'ŏ','×','ő','œ','銭','्','旗','а','瓊','б','名','ҫ','в','ř','飛','어','г','д','ǔ',
-  'ś','厘','е','♆','ж','建','†','з','●','∅','и','ş','•','｜','福','й','海',
-  'к','∈','л','⊂','м','н','…','→','日','ť','о','п','ə','พ','ℝ','р','៛','с','龍','ū','т',
-  'у','ㇺ','ф','ů','₫','わ','ч','ű','ш','щ','ک','ъ','ы','ь','脂','龙','凍','ю','∞','ӈ',
-  'я','ط','ط','来','゚','ა','₷','ż','ع','脈','є','ž','=','ă','დ','吴','і','ე','ї',
-  'ვ','∩','თ','♭','粉','ი','∪','კ','玉','赤','ლ','�','č','პ','ә','孙','曽','რ','ḥ','3','ن','ه','卍',
-  'و','უ','א','ي','ב','ქ','明','⟨','ה','ו','백','ט','发','י','ی','क','한','כ','ө','有','§',
-  'ե','温','ª','키','_','白','ș','°','ड','ț','ק','ר','ツ','ת','द','口','石','泉','·','न','紫',
-  'प','山','ề','藻','य','վ','す','騨','ệ','木','व','记','天','青','{','ह','|','安','위','}','竜','~',
-  'ฯ', 'ๆ', '๏', '๚', '๛',
+allowed_symbols_regex = "[0-9\u200b\u200c\u0e01-\u0e2e\u0e30-\u0e39\u0e40-\u0e45\u0e47-\u0e4c‘’‚;:“”\u0020\u0022\u0027\u0060\\-\\.]"
+even_symbols = [
+  "\u0022",  # Quotation mark
+  "\u0027"   # Apostrophe
+]
+matching_symbols = [
+  ["‘", "’"],
+  ["“", "”"]
 ]
 broken_whitespace = ["  ", " ,", " .", " ;"]
-abbreviation_patterns = ["[A-Z]{2,}|[A-Z]+\\.*[A-Z]+|[ก-ฮ]+\\.([ก-ฮ]+\\.)+"]
+
+abbreviation_patterns = [
+  "[A-Z]{2,}",
+  "[A-Z]+\\.*[A-Z]+",
+  "[ก-ฮ]{1,3}\\.([ก-ฮ]{1,3}\\.)+"
+]
+
+# Other patterns
+# - No sentences end with period, comma, colon, semicolon, dash
+# - No characters immediately after comma, colon, semicolon
+# - Missing whitespace after comma, semicolon, etc.
+#
+# MAX_LENGTH:
+# - Sentence longer than 80 characters
+#
+# BEGIN_REGEX:
+# These Thai chars cannot start the word:
+# - All vowels except lead vowels
+# - Tone marks
+# - Phinthu, Thanthakhat, Nikhahit, Yamakkan
+#
+# END_REGEX:
+# These Thai chars cannot end the word:
+# - Lead vowels
+#
+# STRUCTURE_REGEX:
+# - 50 running characters or more without space (difficult to read)
+# - Very short word following by a space at the beginning of sentence (maybe orphan)
+#
+# These classes of Thai characters are not allowed to be immediately repeated:
+# - Lead vowels: \u0e40\u0e41\u0e42\u0e43\u0e44
+# - Follow vowels: \u0e30\u0e32\u0e33\u0e45
+# - Above vowels: \u0e31\u0e34\u0e35\u0e36\u0e37\u0e4d\u0e47
+# - Below vowels: \u0e38\u0e39
+# - Tone marks: \u0e48\u0e49\u0e4a\u0e4b
+# - Phinthu: \u0e3a
+# - Thanthakhat: \u0e4c
+# - Nikhahit: \u0e4d
+# - Yamakkan: \u0e4e
+#
+# These classes of Thai characters have a specific legitimate order:
+# - Tone marks/Pinthu/Thanthakat/Nikhahit/Yamakkan can't immediately come after lead and follow vowels
+# - Tone marks/Pinthu/Thanthakat/Nikhahit/Yamakkan can't immediately come before above and below vowels
+other_patterns = [
+  "[\\.,:;-]$",
+  "[,:;]\\S",
+  "[\\.|\\?|!].+$",
+  "^.{81,}$",  # MAX_LENGTH
+  "(^|\\s+)[\u0e30\u0e32\u0e33\u0e45\u0e31\u0e34\u0e35\u0e36\u0e37\u0e4d\u0e47\u0e38\u0e39\u0e48\u0e49\u0e4a\u0e4b\u0e3a\u0e4c\u0e4d\u0e4e]",  # BEGIN_REGEX
+  "[\u0e40\u0e41\u0e42\u0e43\u0e44](\\s+|$)",  # END_REGEX
+  "[\u200b\u200c\u0e01-\u0e2e\u0e30-\u0e39\u0e40-\u0e4c‘’‚;:“”\u0022\u0027\u0060\\-\\?\\.!]{55,}",
+  "^[^ณ]\\s",
+  "^[บ้าง|ก่อน|เลย|แล้ว|หรือไม่|ไหม|ล่ะ|และ|หรือ|กับ|ก็]\\s",  # orphan
+  "^\\S{2,3}\\s",
+  "\\s\\S{1,3}$",
+  "[\u0e40\u0e41\u0e42\u0e43\u0e44]{2,}",
+  "[\u0e30\u0e32\u0e33\u0e45]{2,}",
+  "[\u0e31\u0e34\u0e35\u0e36\u0e37\u0e4d\u0e47]{2,}",
+  "[\u0e38\u0e39]{2,}",
+  "[\u0e48\u0e49\u0e4a\u0e4b]{2,}",
+  "\u0e3A{2,}",
+  "\u0e4C{2,}",
+  "\u0e4D{2,}",
+  "\u0e4E{2,}",
+  "[\u0e40\u0e41\u0e42\u0e43\u0e44\u0e30\u0e32\u0e33\u0e45][\u0e48\u0e49\u0e4a\u0e4b\u0e3a\u0e4c\u0e4d\u0e4e]",
+  "[\u0e48\u0e49\u0e4a\u0e4b\u0e3a\u0e4c\u0e4d\u0e4e][\u0e31\u0e34\u0e35\u0e36\u0e37\u0e4d\u0e47\u0e38\u0e39]",
+]
+
+# Replacements
+# - Remove zero-width characters
+# - Expand abbreviations
+# - Remove punctuations
+# - Normalize character orders
+replacements = [
+  ["\u200b", ""],  # remove zero-width space
+  ["\u200c", ""],  # remove zero-width non-joiner
+  [" พ.ร.บ.", " พระราชบัญญัติ"],
+  [" พ.ร.ก.", " พระราชกำหนด"],
+  [" พ.ศ. ", " พุทธศักราช "],
+  [" ค.ศ. ", " คริสต์ศักราช "],
+  [" ม.ร.ว.", " หม่อมราชวงศ์"],
+  [" .", "."],
+  [" ,", " "],
+  [" :", ":"],
+  [" ;", ";"],
+  [" !", "!"],
+  [" ?", "?"],
+  [":", ": "],
+  ["?", "? "],
+  ["!", "! "],  
+  [",", " "],
+  ["..", " "],
+  ["...", " "],
+  ["....", " "],
+  [" .", "."],
+  ["    ", " "],
+  ["   ", " "],
+  ["  ", " "],
+  ["\u0e40\u0e40", "\u0e41"],  # Sara E + Sara E -> Sara Ae
+  ["\u0e4d\u0e32", "\u0e33"],  # Nikhahit + Sara Aa -> Sara Am
+  ["\u0e4d\u0e48\u0e32", "\u0e48\u0e33"],  # Nikhahit + Mai Ek + Sara Aa -> Sara Am
+  ["\u0e4d\u0e49\u0e32", "\u0e49\u0e33"],  # Nikhahit + Mai Tho + Sara Aa -> Sara Am
+  ["\u0e4d\u0e4A\u0e32", "\u0e4A\u0e33"],  # Nikhahit + Mai Tri + Sara Aa -> Sara Am
+  ["\u0e4d\u0e4B\u0e32", "\u0e4B\u0e33"],  # Nikhahit + Mai Chattawa + Sara Aa -> Sara Am
+  ["\u0e24\u0e32", "\u0e24\u0e45"],  # Ru + Sara Aa -> Ru + Lakkhangyao
+  ["\u0e26\u0e32", "\u0e26\u0e45"],  # Lu + Sara Aa -> Lu + Lakkhangyao
+]
