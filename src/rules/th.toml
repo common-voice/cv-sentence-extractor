@@ -57,6 +57,7 @@ abbreviation_patterns = [
 # STRUCTURE_REGEX:
 # - 50 running characters or more without space (difficult to read)
 # - Very short word following by a space at the beginning of sentence (maybe orphan)
+# - Avoid orphan words at the beginning and end of sentence
 #
 # These classes of Thai characters are not allowed to be immediately repeated:
 # - Lead vowels: \u0e40\u0e41\u0e42\u0e43\u0e44
@@ -81,9 +82,10 @@ other_patterns = [
   "[\u0e40\u0e41\u0e42\u0e43\u0e44](\\s+|$)",  # END_REGEX
   "[\u200b\u200c\u0e01-\u0e2e\u0e30-\u0e39\u0e40-\u0e4c‘’‚;:“”\u0022\u0027\u0060\\-\\?\\.!]{55,}",
   "^[^ณ]\\s",
-  "^[บ้าง|ก่อน|เลย|แล้ว|หรือไม่|ไหม|ล่ะ|และ|หรือ|กับ|ก็]\\s",  # orphan
+  "^[บ้าง|ก่อน|เลย|แล้ว|หรือไม่|ไหม|ล่ะ|ด้วย|อีก|และ|หรือ|กับ|ก็]\\s",  # orphan
   "^\\S{2,3}\\s",
   "\\s\\S{1,3}$",
+  "\\s[และ|หรือ|กับ|เช่น]$",  # orphan
   "[\u0e40\u0e41\u0e42\u0e43\u0e44]{2,}",
   "[\u0e30\u0e32\u0e33\u0e45]{2,}",
   "[\u0e31\u0e34\u0e35\u0e36\u0e37\u0e4d\u0e47]{2,}",
