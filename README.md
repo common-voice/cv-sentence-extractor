@@ -94,7 +94,7 @@ The following rules can be configured per language. Add a `<language>.toml` file
 | needs_uppercase_start |  If a sentence needs to start with an uppercase | boolean | false
 | other_patterns |  Rust regex to disallow anything else | Rust Regex Array | all other patterns allowed
 | quote_start_with_letter |  If a quote needs to start with a letter | boolean | true
-| replacements |  Replaces abbreviations or other words according to configuration | Array of replacement configurations: each configuration is an Array of two values: `["search", "replacement"]`. See example below. | nothing gets replaced
+| replacements |  Replaces abbreviations or other words according to configuration. This runs before any other rules. | Array of replacement configurations: each configuration is an Array of two values: `["search", "replacement"]`. See example below. | nothing gets replaced
 
 ### Example for `matching_symbols`
 
