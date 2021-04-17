@@ -84,12 +84,11 @@ fn pick_sentences(
 ) -> Vec<String> {
     let total_in_pool = sentences_pool.len();
 
-    if total_in_pool < amount && amount != std::usize::MAX {
+    // We do not extract if the total is below the max amount.
+    // This makes sure that we handle legal requirements correctly
+    // such as not using the full corpus of a source.
+    if total_in_pool <= amount && amount != std::usize::MAX {
         return vec![];
-    }
-
-    if total_in_pool == 1 {
-        return sentences_pool;
     }
 
     let mut iteration = 0;
@@ -193,18 +192,6 @@ mod test {
     }
 
     #[test]
-    fn test_pick_sentences_pool_one() {
-        let rules : Rules = Rules {
-            ..Default::default()
-        };
-        let existing_sentences = HashSet::new();
-        let sentences = vec![String::from("Test")];
-        let amount = 1;
-
-        assert_eq!(pick_sentences(&rules, sentences, &existing_sentences, amount, check_true)[0], "Test");
-    }
-
-    #[test]
     fn test_pick_sentences_none_valid() {
         let rules : Rules = Rules {
             ..Default::default()
@@ -236,6 +223,36 @@ mod test {
         let amount = 3;
 
         assert_eq!(pick_sentences(&rules, sentences, &existing_sentences, amount, check_true).len(), 3);
+    }
+
+    #[test]
+    fn test_pick_sentences_all_if_max_amount() {
+        let rules : Rules = Rules {
+            ..Default::default()
+        };
+        let existing_sentences = HashSet::new();
+        let sentences = vec![
+            String::from("Test"),
+            String::from("Test2"),
+            String::from("Test3"),
+            String::from("Test4"),
+            String::from("Test5"),
+        ];
+        let amount = std::usize::MAX;
+
+        assert_eq!(pick_sentences(&rules, sentences, &existing_sentences, amount, check_true).len(), 5);
+    }
+
+    #[test]
+    fn test_pick_sentences_never_all_from_pool_if_not_max() {
+        let rules : Rules = Rules {
+            ..Default::default()
+        };
+        let existing_sentences = HashSet::new();
+        let sentences = vec![String::from("Test")];
+        let amount = 1;
+
+        assert_eq!(pick_sentences(&rules, sentences, &existing_sentences, amount, check_true).len(), 0);
     }
 
     #[test]
@@ -304,21 +321,6 @@ mod test {
             String::from("Me too!"),
         ];
         let amount = 3;
-
-        assert_eq!(pick_sentences(&rules, sentences, &existing_sentences, amount, check_true).len(), 2);
-    }
-
-    #[test]
-    fn test_pick_sentences_two_out_of_two() {
-        let rules : Rules = Rules {
-            ..Default::default()
-        };
-        let existing_sentences = HashSet::new();
-        let sentences = vec![
-            String::from("Test"),
-            String::from("Test2"),
-        ];
-        let amount = 2;
 
         assert_eq!(pick_sentences(&rules, sentences, &existing_sentences, amount, check_true).len(), 2);
     }
