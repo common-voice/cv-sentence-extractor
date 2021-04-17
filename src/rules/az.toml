@@ -11,13 +11,12 @@ disallowed_symbols = []
 broken_whitespace = ["  ", " ,", " .", " ?", " !", " ;"]
 abbreviation_patterns = [
   "[A-ZİƏÖÜĞÇŞ]+\\.",
-  "[A-ZİƏÖÜĞÇŞ]+\\.*[A-ZİƏÖÜĞÇŞ]",
   # for ABŞ, BDU and similar
   "[A-ZİƏÖÜĞÇŞ]{2,}",
   # for s., e.ə. and similar
   "^[a-zıəöüğçş]\\.",
   "\\.[A-z]",
-  # coommon abbr
+  # common abbr
   "Resp\\.|Hz\\.|ö\\.|m.ə\\.|akad\\.|prof\\.|səh\\.|küç\\.|şəh\\.|qəs\\.|məs\\.|dok\\.|dos\\.|abrev\\.|adr\\.|km\\.|sm\\.|mm\\.|resp\\.|yun\\.|lat\\.",
 ]
 allowed_symbols_regex = "[A-z əöüğçşıİƏÖÜĞÇŞ‚’–\\.?!;\"]"
