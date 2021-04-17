@@ -91,6 +91,17 @@ fn pick_sentences(
         return vec![];
     }
 
+    // If we're allowed to pick all sentences, we do not need to
+    // select randomly
+    if amount == std::usize::MAX {
+        return sentences_pool.iter().filter(|&sentence| {
+            let not_already_chosen = !existing_sentences.contains(sentence);
+            predicate(rules, sentence) && not_already_chosen
+        }).map(|sentence| {
+            sentence.trim().to_string()
+        }).collect::<Vec<_>>();
+    }
+
     let mut iteration = 0;
     let mut chosen_sentences = vec![];
     let mut used_indexes = vec![];
