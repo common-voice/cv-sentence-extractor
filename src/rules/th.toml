@@ -19,7 +19,7 @@ quote_start_with_letter = true
 needs_punctuation_end = false
 needs_letter_start = true
 needs_uppercase_start = false
-allowed_symbols_regex = "[0-9\u200b\u200c\u0e01-\u0e2e\u0e30-\u0e39\u0e40-\u0e45\u0e47-\u0e4c‘’‚;:“”\u0020\u0022\u0027\u0060\\-\\.]"
+allowed_symbols_regex = "[0-9\u0020\u200b\u200c\u0e01-\u0e2e\u0e30-\u0e39\u0e40-\u0e45\u0e47-\u0e4c\\-\\.‚;:!\\?“”‘’\u0022\u0027\u0060]"
 even_symbols = [
   "\u0022",  # Quotation mark
   "\u0027"   # Apostrophe
