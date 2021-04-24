@@ -213,7 +213,7 @@ Currently the following data sources are available for automatic extraction:
 
 ### On every Pull Request
 
-On every PR we will [trigger a sample sentence extraction](https://discourse.mozilla.org/t/scraper-automatic-sample-sentences-extracted-in-pull-request/55217/3) which can be used for verification.
+On every PR we will [trigger a sample sentence extraction](https://discourse.mozilla.org/t/scraper-automatic-sample-sentences-extracted-in-pull-request/55217/3) which can be used for verification. Note that [GitHub does not automatically run](https://github.blog/2021-04-22-github-actions-update-helping-maintainers-combat-bad-actors/) the pipeline if you are a first time contributor. If your sample extraction doesn't get approved within a day, please reach out to us on [Matrix](https://matrix.to/#/#common-voice-sentence-extractor:mozilla.org?web-instance[element.io]=chat.mozilla.org).
 
 ### On pushes to master
 
