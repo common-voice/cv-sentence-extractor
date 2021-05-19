@@ -1,0 +1,38 @@
+name: Manual Dispatch - Wikipedia Extraction
+
+on:
+  workflow_dispatch:
+    inputs:
+      language:
+        description: 'Language Code'
+        required: true
+        default: ''
+
+jobs:
+  extract:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest]
+        rust: [nightly]
+
+    steps:
+    - uses: hecrj/setup-rust-action@e0938bab41405f7485391869b453779c5290099d
+      with:
+        rust-version: ${{ matrix.rust }}
+    - uses: actions/checkout@master
+
+    - name: Full Wikipedia Extraction - ${{ github.event.inputs.language }}
+      run: ./scripts/wiki-extraction.sh extract ${{ github.event.inputs.language }}
+    - name: Deduplicate Wikipedia Extraction
+      run: ./scripts/dedupe.sh wiki.txt
+
+    - uses: actions/upload-artifact@v2
+      with:
+        name: extraction
+        path: output/*
+
+    - uses: actions/upload-artifact@v2
+      with:
+        name: wikiextractor-output
+        path: text/*

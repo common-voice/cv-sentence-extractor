@@ -11,14 +11,14 @@ jobs:
         rust: [nightly]
 
     steps:
-    - uses: hecrj/setup-rust-action@e0938ba
+    - uses: hecrj/setup-rust-action@e0938bab41405f7485391869b453779c5290099d
       with:
         rust-version: ${{ matrix.rust }}
     - uses: actions/checkout@master
     - name: Get Commit Message
-      run: echo ::set-env name=COMMIT_MESSAGE::$(git log --format=%B -n 1 ${{ github.event.after }})
+      run: echo "COMMIT_MESSAGE=\"$(git log --format=%B -n 1 ${{ github.event.after }})\"" >> $GITHUB_ENV
 
-    - uses: futuratrepadeira/changed-files@b4ef6fe
+    - uses: futuratrepadeira/changed-files@b4ef6fe532b9b5022be2489df114ba28146aea14
       if: "contains( github.ref , 'pull' )"
       id: files
       with:
@@ -26,7 +26,7 @@ jobs:
 
     - name: Full Wikipedia Extraction
       if: "contains( env.COMMIT_MESSAGE , '--full-wiki-extraction' )"
-      run: ./scripts/wiki-extraction.sh full
+      run: ./scripts/wiki-extraction.sh extract
       env:
         FILES_CREATED: ${{ steps.files.outputs.files_created }}
         FILES_UPDATED: ${{ steps.files.outputs.files_updated }}
@@ -42,7 +42,12 @@ jobs:
       if: "contains( env.COMMIT_MESSAGE , '--full-wiki-extraction' )"
       run: ./scripts/dedupe.sh wiki.txt
 
-    - uses: actions/upload-artifact@v1
+    - uses: actions/upload-artifact@v2
       with:
         name: extraction
-        path: output/
+        path: output/*
+
+    - uses: actions/upload-artifact@v2
+      with:
+        name: wikiextractor-output
+        path: text/*

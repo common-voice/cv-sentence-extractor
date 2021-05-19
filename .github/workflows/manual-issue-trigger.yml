@@ -1,0 +1,75 @@
+name: Manual Issue Trigger
+
+on:
+  issue_comment:
+    types: [created]
+
+jobs:
+  run:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest]
+        rust: [nightly]
+
+    steps:
+    - uses: hecrj/setup-rust-action@master
+      with:
+        rust-version: ${{ matrix.rust }}
+    - uses: actions/checkout@master
+
+    - name: Get Comment
+      id: comment
+      run: |
+        ACTION_LINE=$(echo "${{ github.event.comment.body }}" | grep "/action " || echo "no-action")
+        ACTION=${ACTION_LINE/\/action /""}
+        echo "##[set-output name=action;]$ACTION"
+    - name: Output Command
+      run: "echo ${{ steps.comment.outputs.action }}"
+
+    - name: Create comment
+      if: "!contains(steps.comment.outputs.action, 'no-action')"
+      uses: peter-evans/create-or-update-comment@v1
+      with:
+        issue-number: ${{ github.event.issue.number }}
+        body: |
+          Job started: https://github.com/${{ github.repository }}/actions/runs/${{github.run_id}}
+
+    - name: Wikipedia Extraction
+      if: "contains(steps.comment.outputs.action, 'extract')"
+      run: ./scripts/wiki-extraction.sh ${{ steps.comment.outputs.action }}
+    - name: Deduplicate Wikipedia Extraction
+      if: "contains(steps.comment.outputs.action, 'extract')"
+      run: ./scripts/dedupe.sh wiki.txt
+    - uses: actions/upload-artifact@v1
+      if: "contains(steps.comment.outputs.action, 'extract')"
+      with:
+        name: extraction
+        path: output/
+
+    - name: Full Wikipedia Extraction - no checks
+      if: "contains(steps.comment.outputs.action, 'blocklist')"
+      run: ./scripts/wiki-extraction.sh ${{ steps.comment.outputs.action }}
+    - name: Checkout cvtools
+      if: "contains(steps.comment.outputs.action, 'blocklist')"
+      uses: actions/checkout@master
+      with:
+        repository: dabinat/cvtools
+        path: cvtools
+    - name: Generate Blocklist
+      if: "contains(steps.comment.outputs.action, 'blocklist')"
+      run: ./scripts/create-blocklist.sh ${{ steps.comment.outputs.action }}
+    - uses: actions/upload-artifact@v2
+      if: "contains(steps.comment.outputs.action, 'blocklist')"
+      with:
+        name: blocklist
+        path: output/*
+
+    - name: Create final comment
+      if: "!contains(steps.comment.outputs.action, 'no-action')"
+      uses: peter-evans/create-or-update-comment@v1
+      with:
+        issue-number: ${{ github.event.issue.number }}
+        body: |
+          Job finished: https://github.com/${{ github.repository }}/actions/runs/${{github.run_id}}
+          Don't forget to download the artifacts.

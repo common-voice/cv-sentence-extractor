@@ -531,4 +531,18 @@ mod test {
         assert_eq!(check(&rules, &String::from("Abkürzung am Ende hl.")), false);
         assert_eq!(check(&rules, &String::from("Abkürzung am Ende geb.")), false);
     }
+
+    #[test]
+    fn test_hungarian() {
+        let rules : Rules = load_rules("hu");
+
+        assert_eq!(check(&rules, &String::from("A BBC Rádió rádiójátékot készített belőle.")), false);
+        assert_eq!(check(&rules, &String::from("A BD fejlesztései miatt verziószámmal is találkozhatunk.")), false);
+        assert_eq!(check(&rules, &String::from("A BCS-elmélet más fermionok közti kölcsönhatások leírására is alkalmas.")), false);
+        assert_eq!(check(&rules, &String::from("A BKV-nál a kocsik elbontásáról döntöttek.")), false);
+        assert_eq!(check(&rules, &String::from("A BL-ben ötször játszhatott.")), false);
+        assert_eq!(check(&rules, &String::from("A B-döntőt hat résztvevővel rendezték.")), false);
+        assert_eq!(check(&rules, &String::from("A -ház egyik legkiválóbb uralkodójaként tartják számon.")), false);
+        assert_eq!(check(&rules, &String::from("A egyik legkiválóbb uralkodójaként tartják számon.")), true);
+    }
 }

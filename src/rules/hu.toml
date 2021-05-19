@@ -1,0 +1,25 @@
+min_trimmed_length = 3
+min_word_count = 2
+max_word_count = 14
+min_characters = 1
+may_end_with_colon = false
+quote_start_with_letter = true
+needs_punctuation_end = false
+needs_letter_start = true
+needs_uppercase_start = true
+allowed_symbols_regex = "[0-9A-Za-záÁéÉíÍóÓöÖőŐúÚüÜűŰ„“‚‘’\\- –\\.\\?!]"
+disallowed_symbols = []
+broken_whitespace = ["  ", " ,", " .", " ?", " !", " ;"]
+
+matching_symbols = [
+  ["„", "“"]
+]
+
+abbreviation_patterns = [
+  "[AÁBCDEÉFGHIÍJKLMNOÓÖŐPQRSTUÚÜŰVWXYZ]\\.|[AÁBCDEÉFGHIÍJKLMNOÓÖŐPQRSTUÚÜŰVWXYZ]{2,}|Várm\\.|ún\\.|ref\\.|kir\\.|[Rr]\\. kath\\.|róm\\.|vm\\.|stb\\.|ill\\.|pl\\.|Bt\\.|Kft\\.|Kht\\.|vhr\\.|tsz\\.|u\\.|hsz\\.|ifj\\.|gk\\.|jan\\.|feb\\.|márc\\.|máj\\.|ápr\\.|jún\\.|júl\\.|aug\\.|szept\\.|okt\\.|nov\\.|dec\\.|közt\\.|min\\.|max\\.|[Oo]rsz\\.|id\\.|Zrt\\.|Nyrt\\.|Rt\\.|KKT\\.|Mo\\.|Bp\\.|Özv\\.|Korm\\.|Kr\\.|Kr\\. ?e\\.|Kr\\. ?u\\.|[MDCLXVI]+\\.|BSc\\.|MSc\\.|Dr\\.|Phd\\.|ltp\\.|vb\\.|km\\.|nm\\.|dm\\.|mg\\.|KW\\.|W\\.|kb\\.|sz\\." ,
+]
+
+other_patterns = [
+  "[AÁBCDEÉFGHIÍJKLMNOÓÖŐPQRSTUÚÜŰVWXYZ]-",
+  "\\s-",
+]

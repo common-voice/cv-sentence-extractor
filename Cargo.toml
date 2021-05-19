@@ -1,15 +1,15 @@
 [package]
-name = "common_voice_yotp"
-version = "0.2.0"
+name = "common_voice_sentence_collector"
+version = "1.0.0"
 authors = ["Florian Merz <flomerz@gmail.com>"]
 edition = "2018"
 
 [lib]
-name = "common_voice_yotp"
+name = "common_voice_sentence_collector"
 path = "src/lib.rs"
 
 [[bin]]
-name = "common_voice_yotp"
+name = "common_voice_sentence_collector"
 path = "src/main.rs"
 
 [dependencies]
