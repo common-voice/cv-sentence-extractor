@@ -10,5 +10,5 @@ needs_uppercase_start = true
 allowed_symbols_regex="[A-Za-zìàèòùáéíóúÁÉÍÓÚÀÌÒÈ;‚'–\\. \"\\?!]"
 disallowed_symbols = []
 broken_whitespace = ["  ", " ,", " .", " ?", " !", " ;", " :"]
-disallowed_words = ['vs', 'vol', 'blvd', 'ltd', 'aprox', 'ecc', 'art', 'Co', 'Urb', 'Inc', 'subsp', 'p.e', 's.s', 'SS', 'H.', 'St', 'S.', 'Sr.', 'I.', 'II.', 'III.', 'IV.', 'V.', 'VI.', 'VII.', 'VIII.', 'IX.', 'X.', 'XI.', 'XII.', 'XIII.', 'XIV.', 'XV.', 'XVI.', 'XVII.', 'XVIII.', 'XIX.', 'XX.', "Mr.", "Mr", "Mrs.", "Mrs", "Dr.", "Dr", "Jr.", "Jr" ]
+disallowed_words = ['vs', 'vol', 'blvd', 'ltd', 'aprox', 'ecc', 'art', 'Co', 'Urb', 'Inc', 'subsp', 'p.e', "secc", "sec", 'ss', 'SS', 'H.', 'St', 'S.', 'Sr.', 'I.', 'II.', 'III.', 'IV.', 'V.', 'VI.', 'VII.', 'VIII.', 'IX.', 'X.', 'XI.', 'XII.', 'XIII.', 'XIV.', 'XV.', 'XVI.', 'XVII.', 'XVIII.', 'XIX.', 'XX.', "Mr.", "Mr", "Mrs.", "Mrs", "Dr.", "Dr", "Jr.", "Jr" ]
 abbreviation_patterns = ["[A-Z]+\\.*[A-Z]", "[A-Z]\\.$", "[A-Za-z]+\\.+[A-Za-z]+\\.*", "\"\""]
