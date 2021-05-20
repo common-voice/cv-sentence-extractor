@@ -10,5 +10,5 @@ needs_uppercase_start = true
 allowed_symbols_regex="[A-Za-zìàèòùáéíóúÁÉÍÓÚÀÌÒÈ;‚'–\\. \"\\?!]"
 disallowed_symbols = []
 broken_whitespace = ["  ", " ,", " .", " ?", " !", " ;", " :"]
-disallowed_words = ['Jr', 'vs', 'vol', 'Av', 'Blvd', 'aprox', 'Cd', 'Cen', 'Ant', 'etc', 'art', 'Ltd', 'Co', 'esq', 'Corp', 'Dra', 'Prof', 'Urb', 'Bs', 'Mr', 'Mrs', 'subsp', 'p.e','s.s', 'Av', 'Blvd', 'Arq', 'St','Sta', 'S.' ]
+disallowed_words = ['Jr', 'vs', 'vol', 'Av', 'Blvd', 'aprox', 'Cd', 'Cen', 'Ant', 'etc', 'art', 'Ltd', 'Co', 'esq', 'Corp', 'Dra', 'Prof', 'Urb', 'Bs', 'Mr', 'Mrs', 'subsp', 'p.e','s.s', 'Av', 'Blvd', 'Arq', 'St','Sta', 'S.', 'Sr.', 'Dr.' ]
 abbreviation_patterns = ["[A-Z]+\\.*[A-Z]", "[A-Z]\\.$", "[A-Za-z]+\\.+[A-Za-z]+\\.*", "\"\""]
