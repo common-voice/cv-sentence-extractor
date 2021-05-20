@@ -1,6 +1,6 @@
 min_trimmed_length = 3
 min_word_count = 2
-max_word_count = 16
+max_word_count = 14
 min_characters = 2
 may_end_with_colon = false
 quote_start_with_letter = true
@@ -10,5 +10,5 @@ needs_uppercase_start = true
 allowed_symbols_regex="[A-Za-zìàèòùáéíóúÁÉÍÓÚÀÌÒÈ;‚'–\\. \"\\?!]"
 disallowed_symbols = []
 broken_whitespace = ["  ", " ,", " .", " ?", " !", " ;", " :"]
-disallowed_words = ['vs', 'vol', 'aprox', 'ecc', 'art', 'Co', 'Urb', 'Mr', 'subsp', 'p.e', 's.s', 'S.', 'Sr.', 'Dr', 'I.', 'II.', 'III.', 'IV.', 'V.', 'VI.', 'VII.', 'VIII.', 'IX.', 'X.', 'XI.', 'XII.', 'XIII.', 'XIV.', 'XV.', 'XVI.', 'XVII.', 'XVIII.', 'XIX.', 'XX.' ]
+disallowed_words = ['vs', 'vol', 'blvd', 'ltd', 'aprox', 'ecc', 'art', 'Co', 'Urb', 'Mr', 'subsp', 'p.e', 's.s', 'SS', 'H.', 'St', 'S.', 'Sr.', 'Dr', 'I.', 'II.', 'III.', 'IV.', 'V.', 'VI.', 'VII.', 'VIII.', 'IX.', 'X.', 'XI.', 'XII.', 'XIII.', 'XIV.', 'XV.', 'XVI.', 'XVII.', 'XVIII.', 'XIX.', 'XX.' ]
 abbreviation_patterns = ["[A-Z]+\\.*[A-Z]", "[A-Z]\\.$", "[A-Za-z]+\\.+[A-Za-z]+\\.*", "\"\""]
