@@ -1,5 +1,5 @@
 min_trimmed_length = 3
-min_word_count = 3
+min_word_count = 5
 max_word_count = 14
 min_characters = 1
 may_end_with_colon = false
@@ -7,7 +7,8 @@ quote_start_with_letter = true
 needs_punctuation_end = true
 needs_letter_start = true
 needs_uppercase_start = true
-allowed_symbols_regex = "[А-ЗЙ-ШЫ-ЯЁІЎа-зй-шы-яёіў\\s:,.\\-‑?;!—­‐–'·=’―−‘«»]"
+# allow letters, apostrophe, spaces, ",.!?" and different variants of dashes "-"
+allowed_symbols_regex = "[А-ЗЙ-ШЫ-ЯЁІЎа-зй-шы-яёіў'\\s,.\\-‑?!—­‐–―−]"
 disallowed_symbols = []
 broken_whitespace = ["  ", " ,", " .", " ?", " !", " ;", " \""]
 matching_symbols = [
@@ -29,6 +30,7 @@ replacements = [
   [" - ", " — "], # hyphen => U+2014, when between whitespaces
 ]
 
+# выдаляем сказы з наступнымі абрэвіятурамі:
 abbreviation_patterns = [
   # Я. Колас
   "[А-ЗЙ-ШЫ-ЯЁІЎ]\\.",
@@ -48,13 +50,22 @@ abbreviation_patterns = [
   "[а-зй-шы-яёіў]{1,3}\\.-[а-зй-шы-яёіў]{1,4}\\.",
   # напр.,
   "\\.,",
-  # сімвал «-»
+  # з радкамі: "«-»", "«:»", "«'»"
   "«[-:']»",
   # Frequent sentence-final abbreviations
   "[^А-ЗЙ-ШЫ-ЯЁІЎа-зй-шы-яёіў](—|а|аа|аг|адз|анг|англ|апубл|арт|арх|б|балг|бел|бл|в|вобл|вул|выд|вял|г|гадз|гв|гг|гл|гр|грэч|д|дал|дзес|др|е|еп|ж|жых|з|зав|заг|зах|зб|зв|зн|і|імп|інш|ісп|італ|к|кав|кам|кар|кв|кг|км|кн|кс|л|лац|м|Матф|мкм|мл|млн|млрд|мм|мн|мяст|мясц|н|напр|нар|нац|нм|ням|п|пав|пад|палк|пам|пар|паст|пач|пд|пл|пн|пр|праф|прп|псеўд|р|рас|рт|рус|рэд|с|сав|сапр|св|свв|скар|сл|см|сп|ст|стст|суч|сяр|т|тыс|у|ф|фр|х|хв|хім|ц|ч|чыг|ш|шт|э|экз|яп)\\.$",
 ]
 
+# выдаляем сказы, якія задавальняюць іншым правілам:
 other_patterns = [
+  # выдаляем сказы з уласнымі імёнамі (пачынаюцца зь вялікай літары).
+  # пошук вялікіх літараў вядзецца не з пачатку сказу,
+  # бо адрозьніць уласныя імёны на пачатку сказа ад звычайных словаў цяжка.
+  # праз тое што мы карыстаем гэты фільтр для выдаленьня ўласных імёнаў, 
+  # можна прыбраць некаторыя правілы ў сьпісе з абрэвіятурамі, кшталту фільтрацыі "Я. Колас" і падобных абрэвіятураў.
+  # аднак я іх пакіну, каб можна было карыстаць у будучыні пры патрэбе.
+  ".+([А-ЗЙ-ШЫ-ЯЁІЎ])",
+
   # Invalid punctuation at the end of the sentence
   "[^.!?]$",
   # Two or more dots in a row
@@ -64,7 +75,7 @@ other_patterns = [
   # Asymmetric whitespaces around a dash
   "[а-зй-шы-яёіў](—\\s|\\s—)[а-зй-шы-яёіў]",
   # No whitespaces around a dash
-  "[А-ЗЙ-ШЫ-ЯЁІЎ]—[А-ЗЙ-ШЫ-ЯЁІЎ]",
+  "[А-ЗЙ-ШЫ-ЯЁІЎа-зй-шы-яёіў]—[А-ЗЙ-ШЫ-ЯЁІЎа-зй-шы-яёіў]",
   # Very frequent sentence-initial patterns, would skew the sentence distribution if allowed
   "^(Адміністрацыйны цэнтр|Уваходзіць у склад|Сядзіба размешчана ў)\\s",
   # Character patterns that occur in Russian but not Belarusian words
