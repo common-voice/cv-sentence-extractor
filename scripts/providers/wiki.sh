@@ -21,7 +21,7 @@ function _downloadAndDecompressDump {
   curl $DUMP_URL > $WORKSPACE/$ARCHIVE_FILE_NAME
   echo "Extracting dump - $ARCHIVE_FILE_NAME"
   bzip2 -d -k $WORKSPACE/$ARCHIVE_FILE_NAME
-  DUMP_FILE="$WORKSPACE/$FILENAME"
+  DUMP_FILE="$WORKSPACE/$FILE_NAME"
 }
 
 function extract {
@@ -31,7 +31,7 @@ function extract {
   if [ $TYPE == "sample" ]; then
     timeout 30 python $WIKI_EXTRACTOR_PATH --processes 4 --json $DUMP_FILE || true
   elif [ $TYPE == "extract" ] || [ $TYPE == "blocklist" ]; then
-    python $WIKI_EXTRACTOR_PATH --processes 4 --json $DUMP_FILE || true
+    python $WIKI_EXTRACTOR_PATH --processes 4 --json $DUMP_FILE
   fi
 
   echo "Running extraction"
