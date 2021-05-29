@@ -9,7 +9,6 @@ set -o pipefail
 
 TYPE=${1:-sample}
 HERE=$(dirname $0)
-PROJECT_ROOT=$HERE/..
 WORKSPACE=${GITHUB_WORKSPACE:-/tmp}
 EXTRACTED_TEXT_PATH="$WORKSPACE/text"
 EXTRACTED_SENTENCES_PATH="$OUTPUT_PATH/extract.txt"

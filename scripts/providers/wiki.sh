@@ -20,11 +20,9 @@ function run {
 }
 
 function extract {
-  pushd $WORKSPACE
-
   echo "Downloading dump for $LANGUAGE_CODE at $DUMP_URL"
   curl $DUMP_URL > $WORKSPACE/$ARCHIVE_FILE_NAME
-  echo "Extracting dump"
+  echo "Extracting dump - $ARCHIVE_FILE_NAME"
   bzip2 -d -k $WORKSPACE/$ARCHIVE_FILE_NAME
   DUMP_FILE="$WORKSPACE/$FILENAME"
 
@@ -34,18 +32,13 @@ function extract {
   elif [ $TYPE == "extract" ] || [ $TYPE == "blocklist" ]; then
     python $WIKI_EXTRACTOR_PATH --processes 4 --json $DUMP_FILE || true
   fi
-  popd
 
   echo "Running extraction"
-  pushd $PROJECT_ROOT
-
   if [ $TYPE == "blocklist" ]; then
     cargo run -- extract -l $LANGUAGE_CODE -d $EXTRACTED_TEXT_PATH --no_check >> $EXTRACTED_SENTENCES_PATH
   else
     cargo run -- extract -l $LANGUAGE_CODE -d $EXTRACTED_TEXT_PATH >> $EXTRACTED_SENTENCES_PATH
   fi
-
-  popd
 }
 
 function cleanup {
