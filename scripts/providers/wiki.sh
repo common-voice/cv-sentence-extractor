@@ -7,7 +7,6 @@ WIKI_EXTRACTOR_PATH="$WORKSPACE/WikiExtractor.py"
 function setup {
   FILE_NAME="wiki-latest-pages-articles-multistream.xml"
   ARCHIVE_FILE_NAME="${FILE_NAME}.bz2"
-  DUMP_URL="https://dumps.wikimedia.org/${LANGUAGE_CODE}wiki/latest/${ARCHIVE_FILE_NAME}"
 }
 
 function run {
@@ -19,12 +18,17 @@ function run {
   cleanup
 }
 
-function extract {
+function _downloadAndDecompressDump {
+  DUMP_URL="https://dumps.wikimedia.org/${LANGUAGE_CODE}wiki/latest/${ARCHIVE_FILE_NAME}"
   echo "Downloading dump for $LANGUAGE_CODE at $DUMP_URL"
   curl $DUMP_URL > $WORKSPACE/$ARCHIVE_FILE_NAME
   echo "Extracting dump - $ARCHIVE_FILE_NAME"
   bzip2 -d -k $WORKSPACE/$ARCHIVE_FILE_NAME
   DUMP_FILE="$WORKSPACE/$FILENAME"
+}
+
+function extract {
+  _downloadAndDecompressDump
 
   echo "Extracting with WikiExtractor"
   if [ $TYPE == "sample" ]; then
