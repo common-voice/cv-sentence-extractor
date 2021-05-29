@@ -5,39 +5,17 @@ WIKI_EXTRACTOR_URL="https://raw.githubusercontent.com/attardi/wikiextractor/e4ab
 WIKI_EXTRACTOR_PATH="$WORKSPACE/WikiExtractor.py"
 
 function setup {
-  DUMP_BASE_PATH="https://dumps.wikimedia.org/${LANGUAGE_CODE}wiki/latest/"
-}
-
-function _getMatchesFromListing {
-  echo "Downloading Dump Listing..."
-  curl $DUMP_BASE_PATH > $WORKSPACE/listing.html
-  ls -al $WORKSPACE/listing.html
-  
-  echo "Searching for correct files..."
-  ARCHIVE_FILE_NAME_MATCHES="$(grep -o -P -e 'wiki-latest-pages-articles-multistream\d*.xml-.*bz2"' < $WORKSPACE/listing.html)"
-  echo "Found matches:"
-  echo $ARCHIVE_FILE_NAME_MATCHES
-  
-  echo "Removing temporary listings file"
-  rm $WORKSPACE/listing.html
+  ARCHIVE_FILE_NAME="https://dumps.wikimedia.org/${LANGUAGE_CODE}wiki/latest/wiki-latest-pages-articles-multistream.xml.bz2"
 }
 
 function run {
   echo "Getting WikiExtractor"
   curl $WIKI_EXTRACTOR_URL > $WIKI_EXTRACTOR_PATH
 
-  if [ -z "$ARCHIVE_FILE_NAME_MATCHES" ]; then
-    _getMatchesFromListing
-  fi
-  
-  for archive in "${ARCHIVE_FILE_NAME_MATCHES[@]}"
-  do
-      ARCHIVE_FILE_NAME=${archive/%?/}
-      echo "Starting extraction for $ARCHIVE_FILE_NAME"
-      dump $ARCHIVE_FILE_NAME
-      extract
-      cleanup
-  done
+  echo "Starting extraction for $ARCHIVE_FILE_NAME"
+  dump $ARCHIVE_FILE_NAME
+  extract
+  cleanup
 }
 
 function dump {
