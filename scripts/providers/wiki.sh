@@ -9,15 +9,15 @@ function setup {
 
 function _getMatchesFromListing {
   echo "Downloading Dump Listing..."
-  curl $DUMP_BASE_PATH > listing.html
+  curl $DUMP_BASE_PATH > $HERE/listing.html
   
   echo "Searching for correct files..."
-  ARCHIVE_FILE_NAME_MATCHES=($(grep -o -P -e 'wiki-latest-pages-articles-multistream\d*.xml-.*bz2"' < listing.html || [[ $? == 1 ]]))
+  ARCHIVE_FILE_NAME_MATCHES=($(grep -o -P -e 'wiki-latest-pages-articles-multistream\d*.xml-.*bz2"' < $HERE/listing.html || [[ $? == 1 ]]))
   if [ ${#ARCHIVE_FILE_NAME_MATCHES[@]} == 0 ]; then
-    ARCHIVE_FILE_NAME_MATCHES=($(grep -o -P -e 'wiki-latest-pages-articles-multistream.xml.bz2"' < listing.html))
+    ARCHIVE_FILE_NAME_MATCHES=($(grep -o -P -e 'wiki-latest-pages-articles-multistream.xml.bz2"' < $HERE/listing.html))
   fi
   
-  rm listing.html
+  rm $HERE/listing.html
 }
 
 function run {
