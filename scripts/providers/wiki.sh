@@ -1,4 +1,5 @@
 #!/bin/bash
+set -x
 
 WIKI_EXTRACTOR_URL="https://raw.githubusercontent.com/attardi/wikiextractor/e4abb4cbd019b0257824ee47c23dd163919b731b/WikiExtractor.py"
 WIKI_EXTRACTOR_PATH="$WORKSPACE/WikiExtractor.py"
