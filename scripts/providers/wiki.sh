@@ -11,13 +11,16 @@ function setup {
 function _getMatchesFromListing {
   echo "Downloading Dump Listing..."
   curl $DUMP_BASE_PATH > $WORKSPACE/listing.html
+  ls -al $WORKSPACE/listing.html
   
   echo "Searching for correct files..."
-  ARCHIVE_FILE_NAME_MATCHES=($(grep -o -P -e 'wiki-latest-pages-articles-multistream\d*.xml-.*bz2"' < $WORKSPACE/listing.html || [[ $? == 1 ]]))
+  ARCHIVE_FILE_NAME_MATCHES="$(grep -o -P -e 'wiki-latest-pages-articles-multistream\d*.xml-.*bz2"' < $WORKSPACE/listing.html || [[ $? == 1 ]])"
   if [ ${#ARCHIVE_FILE_NAME_MATCHES[@]} == 0 ]; then
-    ARCHIVE_FILE_NAME_MATCHES=($(grep -o -P -e 'wiki-latest-pages-articles-multistream.xml.bz2"' < $WORKSPACE/listing.html))
+    echo "Did not find multiple files, trying to find single xml"
+    ARCHIVE_FILE_NAME_MATCHES="$(grep -o -P -e 'wiki-latest-pages-articles-multistream.xml.bz2"' < $WORKSPACE/listing.html)"
   fi
   
+  echo "Removing temporary listings file"
   rm $WORKSPACE/listing.html
 }
 
