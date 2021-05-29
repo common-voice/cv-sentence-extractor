@@ -16,6 +16,8 @@ OUTPUT_PATH="$WORKSPACE/output"
 
 mkdir -p $OUTPUT_PATH
 
+source $HERE/providers/common.sh
+
 if [ $TYPE == "sample" ]; then
   source $HERE/providers/wiki.sh
   
