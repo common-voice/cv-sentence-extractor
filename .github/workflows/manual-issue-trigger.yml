@@ -40,19 +40,6 @@ jobs:
         body: |
           Job started: https://github.com/${{ github.repository }}/actions/runs/${{github.run_id}}
 
-    # EXTRACTION
-    - name: Extraction - ${{ steps.comment.outputs.action }}
-      if: "startsWith(steps.comment.outputs.action, 'extract')"
-      run: ./scripts/extraction.sh ${{ steps.comment.outputs.action }}
-    - name: Deduplicate Extraction
-      if: "startsWith(steps.comment.outputs.action, 'extract')"
-      run: ./scripts/dedupe.sh extract.txt
-    - uses: actions/upload-artifact@v1
-      if: "startsWith(steps.comment.outputs.action, 'extract')"
-      with:
-        name: extraction
-        path: output/
-
     # BLOCKLIST
     - name: Full Wikipedia Extraction - no checks for blocklist
       if: "contains(steps.comment.outputs.action, 'blocklist')"
