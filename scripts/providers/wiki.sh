@@ -5,7 +5,9 @@ WIKI_EXTRACTOR_URL="https://raw.githubusercontent.com/attardi/wikiextractor/e4ab
 WIKI_EXTRACTOR_PATH="$WORKSPACE/WikiExtractor.py"
 
 function setup {
-  ARCHIVE_FILE_NAME="https://dumps.wikimedia.org/${LANGUAGE_CODE}wiki/latest/wiki-latest-pages-articles-multistream.xml.bz2"
+  FILE_NAME="wiki-latest-pages-articles-multistream.xml"
+  ARCHIVE_FILE_NAME="${FILE_NAME}.bz2"
+  DUMP_URL="https://dumps.wikimedia.org/${LANGUAGE_CODE}wiki/latest/${ARCHIVE_FILE_NAME}"
 }
 
 function run {
@@ -13,31 +15,24 @@ function run {
   curl $WIKI_EXTRACTOR_URL > $WIKI_EXTRACTOR_PATH
 
   echo "Starting extraction for $ARCHIVE_FILE_NAME"
-  dump $ARCHIVE_FILE_NAME
   extract
   cleanup
 }
 
-function dump {
-  DUMP_URL="${DUMP_BASE_PATH}${LANGUAGE_CODE}$1"
-  FILENAME=${1/.bz2/""}
-  DUMP_PATH="$WORKSPACE/$1"
-  EXTRACTED_DUMP_PATH="$WORKSPACE/$FILENAME"
-
-  echo "Downloading dump for $LANGUAGE_CODE at $DUMP_URL"
-  curl $DUMP_URL > $DUMP_PATH
-}
-
 function extract {
   pushd $WORKSPACE
+
+  echo "Downloading dump for $LANGUAGE_CODE at $DUMP_URL"
+  curl $DUMP_URL > $WORKSPACE/$ARCHIVE_FILE_NAME
   echo "Extracting dump"
-  bzip2 -d -k $DUMP_PATH
+  bzip2 -d -k $WORKSPACE/$ARCHIVE_FILE_NAME
+  DUMP_FILE="$WORKSPACE/$FILENAME"
 
   echo "Extracting with WikiExtractor"
   if [ $TYPE == "sample" ]; then
-    timeout 30 python $WIKI_EXTRACTOR_PATH --processes 4 --json $EXTRACTED_DUMP_PATH || true
+    timeout 30 python $WIKI_EXTRACTOR_PATH --processes 4 --json $DUMP_FILE || true
   elif [ $TYPE == "extract" ] || [ $TYPE == "blocklist" ]; then
-    python $WIKI_EXTRACTOR_PATH --processes 4 --json $EXTRACTED_DUMP_PATH || true
+    python $WIKI_EXTRACTOR_PATH --processes 4 --json $DUMP_FILE || true
   fi
   popd
 
