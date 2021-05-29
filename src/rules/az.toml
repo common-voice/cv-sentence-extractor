@@ -1,4 +1,4 @@
-min_trimmed_length = 3
+min_trimmed_length = 1
 min_word_count = 1
 max_word_count = 14
 min_characters = 1
