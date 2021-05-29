@@ -1,19 +1,15 @@
 min_trimmed_length = 3
 min_word_count = 2
-max_word_count = 16
+max_word_count = 14
 min_characters = 2
 may_end_with_colon = false
 quote_start_with_letter = true
-needs_punctuation_end = false
+needs_punctuation_end = true
 needs_letter_start = true
 needs_uppercase_start = true
-disallowed_symbols = [
-  '<', '>', '+', '*', '\', '#', '@', '^', '[', ']', '(', ')', '/', '»', '«',
-  'â', 'ă', 'ș', 'ç', 'Å', 'ý', 'ö', 'ü', 'ā', 'ö', '%', '&',
-  'α', 'β', 'Γ', 'γ', 'Δ', 'δ', 'ε', 'ζ', 'η', 'Θ', 'θ', 'ι', 'κ',
-  'Λ', 'λ', 'μ', 'ν', 'Ξ', 'ξ', 'Π', 'π', 'ρ', 'Σ', 'σ', 'ς', 'τ',
-  'υ', 'Φ', 'φ', 'χ', 'Ψ', 'ψ', 'Ω', 'ω', '©'
-]
+allowed_symbols_regex="[A-Za-zìàèéìòùAÈÉÌÒÙ;‚'–\\. \"\\?!]"
+disallowed_symbols = []
 broken_whitespace = ["  ", " ,", " .", " ?", " !", " ;", " :"]
-disallowed_words = []
+disallowed_words = ['vs', 'vol', 'blvd', 'ltd', 'aprox', 'ecc', 'art', 'Co', 'Urb', 'Inc', 'subsp', 'p.e', "secc", "sec", 'ss', 'SS', 'H.', 'St', 'S.', 'Sr.', 'I.', 'II.', 'III.', 'IV.', 'V.', 'VI.', 'VII.', 'VIII.', 'IX.', 'X.', 'XI.', 'XII.', 'XIII.', 'XIV.', 'XV.', 'XVI.', 'XVII.', 'XVIII.', 'XIX.', 'XX.', "Mr.", "Mr", "Mrs.", "Mrs", "Dr.", "Dr", "Jr.", "Jr" ]
 abbreviation_patterns = ["[A-Z]+\\.*[A-Z]", "[A-Z]\\.$", "[A-Za-z]+\\.+[A-Za-z]+\\.*", "\"\""]
+even_symbols = ["\""] 
