@@ -215,12 +215,13 @@ Currently the following data sources are available for automatic extraction:
 
 On every PR we will [trigger a sample sentence extraction](https://discourse.mozilla.org/t/scraper-automatic-sample-sentences-extracted-in-pull-request/55217/3) which can be used for verification. Note that [GitHub does not automatically run](https://github.blog/2021-04-22-github-actions-update-helping-maintainers-combat-bad-actors/) the pipeline if you are a first time contributor. If your sample extraction doesn't get approved within a day, please reach out to us on [Matrix](https://matrix.to/#/#common-voice-sentence-extractor:mozilla.org?web-instance[element.io]=chat.mozilla.org).
 
-### On pushes to master
-
-On every push to master, we will run a full sentence extraction on the specified language if the commit message includes `--full-wiki-extraction=<language>` at the end of the message.
-
 ## Manual trigger
 
+### Through the manual workflow
+
+Once a language rule file has been merged, the creation of the extract will be triggered through the manual workflow. PR authors do not need to do that themselves, this is the responsibility of the reviewer.
+
+### Through comments
 Jobs can be triggered manually by adding a comment to an issue or Pull Request.
 
 ```
@@ -233,13 +234,13 @@ Jobs can be triggered manually by adding a comment to an issue or Pull Request.
 
 The job will then add a comment with its URL, so you can check the output and download the files you need.
 
-### Extracting from Wikipedia - English
+#### Extracting from Wikipedia - English
 
 ```
 /action extract en
 ```
 
-### Create a blocklist for English - 80 occurrences threshold
+#### Create a blocklist for English - 80 occurrences threshold
 
 ```
 /action blocklist en 80

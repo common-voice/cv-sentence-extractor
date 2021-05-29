@@ -1,3 +1,8 @@
+# Manually starting a Wikipedia Extraction for a given language
+# This is the main way to trigger an extraction after merging
+# a PR with rule file additions. This can also be used to re-trigger
+# extracts to validate changes in rule files.
+
 name: Manual Dispatch - Wikipedia Extraction
 
 on:
@@ -17,21 +22,24 @@ jobs:
         rust: [nightly]
 
     steps:
+    
+    # SETUP
     - uses: hecrj/setup-rust-action@e0938bab41405f7485391869b453779c5290099d
       with:
         rust-version: ${{ matrix.rust }}
     - uses: actions/checkout@master
 
+    # EXTRACTION
     - name: Full Wikipedia Extraction - ${{ github.event.inputs.language }}
-      run: ./scripts/wiki-extraction.sh extract ${{ github.event.inputs.language }}
+      run: ./scripts/extraction.sh extract ${{ github.event.inputs.language }}
     - name: Deduplicate Wikipedia Extraction
-      run: ./scripts/dedupe.sh wiki.txt
+      run: ./scripts/dedupe.sh extract.txt
 
+    # UPLOAD
     - uses: actions/upload-artifact@v2
       with:
         name: extraction
         path: output/*
-
     - uses: actions/upload-artifact@v2
       with:
         name: wikiextractor-output

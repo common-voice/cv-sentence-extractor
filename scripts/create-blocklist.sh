@@ -3,6 +3,7 @@ set -e
 set -o pipefail
 set +x
 
+# The first argument is ignored as it's the "blocklist" command
 LANGUAGE_CODE=$2
 FREQUENCY=$3
 WORKSPACE=${GITHUB_WORKSPACE:-/tmp}
