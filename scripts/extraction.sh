@@ -18,14 +18,14 @@ OUTPUT_PATH="$WORKSPACE/output"
 mkdir -p $OUTPUT_PATH
 
 if [ $TYPE == "sample" ]; then
-  source providers/wiki.sh
+  source $HERE/providers/wiki.sh
   setup
   
   setLanguageCodeFromChangedFiles
   
   echo "Running Wikipedia sample extraction for $LANGUAGE_CODE"
 elif [ $TYPE == "blocklist" ] && [ -n "$2" ]; then
-  source providers/wiki.sh
+  source $HERE/providers/wiki.sh
   setup
 
   LANGUAGE_CODE=$2
@@ -34,7 +34,7 @@ elif [ $TYPE == "blocklist" ] && [ -n "$2" ]; then
   
   echo "Running Wiki extraction to create blacklist for $LANGUAGE_CODE"
 elif [ $TYPE == "extract" ] && [ -n "$2" ]; then
-  source providers/wiki.sh
+  source $HERE/providers/wiki.sh
   setup
   
   LANGUAGE_CODE=$2
