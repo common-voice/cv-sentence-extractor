@@ -33,7 +33,6 @@ elif [ $TYPE == "blocklist" ] && [ -n "$2" ]; then
   touch $WORKSPACE/src/rules/$LANGUAGE_CODE.toml
   
   echo "Running Wiki extraction to create blacklist for $LANGUAGE_CODE"
-fi
 elif [ $TYPE == "extract" ] && [ -n "$2" ]; then
   source providers/wiki.sh
   setup
