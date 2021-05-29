@@ -4,11 +4,6 @@ set -x
 WIKI_EXTRACTOR_URL="https://raw.githubusercontent.com/attardi/wikiextractor/e4abb4cbd019b0257824ee47c23dd163919b731b/WikiExtractor.py"
 WIKI_EXTRACTOR_PATH="$WORKSPACE/WikiExtractor.py"
 
-function setup {
-  FILE_NAME="wiki-latest-pages-articles-multistream.xml"
-  ARCHIVE_FILE_NAME="${FILE_NAME}.bz2"
-}
-
 function run {
   echo "Getting WikiExtractor"
   curl $WIKI_EXTRACTOR_URL > $WIKI_EXTRACTOR_PATH
@@ -19,6 +14,8 @@ function run {
 }
 
 function _downloadAndDecompressDump {
+  FILE_NAME="${LANGUAGE_CODE}wiki-latest-pages-articles-multistream.xml"
+  ARCHIVE_FILE_NAME="${FILE_NAME}.bz2"
   DUMP_URL="https://dumps.wikimedia.org/${LANGUAGE_CODE}wiki/latest/${ARCHIVE_FILE_NAME}"
   echo "Downloading dump for $LANGUAGE_CODE at $DUMP_URL"
   curl $DUMP_URL > $WORKSPACE/$ARCHIVE_FILE_NAME
