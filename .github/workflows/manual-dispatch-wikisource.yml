@@ -1,11 +1,17 @@
-# Runs on every change on a PR, this can be used to validate
-# the rule file changes using an extracted sample.
+# Manually starting a Wikisource Extraction for a given language
+# This is the main way to trigger an extraction after merging
+# a PR with rule file additions. This can also be used to re-trigger
+# extracts to validate changes in rule files.
 
-name: Pull Request Changes
+name: Manual Dispatch - Wikisource Extraction
 
 on:
-  pull_request:
-    types: [opened, synchronize, edited, reopened]
+  workflow_dispatch:
+    inputs:
+      language:
+        description: 'Language Code'
+        required: true
+        default: ''
 
 jobs:
   extract:
@@ -30,25 +36,14 @@ jobs:
       with:
         rust-version: ${{ matrix.rust }}
     - uses: actions/checkout@master
-    
-    # GET CHANGED FILES TO DETERMINE LANGUAGE
-    - name: Get Commit Message
-      run: echo "COMMIT_MESSAGE=\"$(git log --format=%B -n 1 ${{ github.event.after }})\"" >> $GITHUB_ENV
-    - uses: futuratrepadeira/changed-files@b4ef6fe532b9b5022be2489df114ba28146aea14
-      id: files
-      with:
-        repo-token: ${{ secrets.GITHUB_TOKEN }}
 
     # EXTRACTION
-    - name: Sample Wikipedia Extraction
-      run: ./scripts/extraction.sh
-      env:
-        FILES_CREATED: ${{ steps.files.outputs.files_created }}
-        FILES_UPDATED: ${{ steps.files.outputs.files_updated }}
+    - name: Full Wikisource Extraction - ${{ github.event.inputs.language }}
+      run: ./scripts/extraction.sh extract-wikisource ${{ github.event.inputs.language }}
     - name: Deduplicate Wikipedia Extraction
-      run: ./scripts/dedupe.sh sample.txt
+      run: ./scripts/dedupe.sh extract-wikisource.txt
 
-    # UPLOAD  
+    # UPLOAD
     - uses: actions/upload-artifact@v2
       with:
         name: extraction

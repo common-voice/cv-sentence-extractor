@@ -12,7 +12,7 @@ HERE=$(dirname $0)
 WORKSPACE=${GITHUB_WORKSPACE:-/tmp}
 EXTRACTED_TEXT_PATH="$WORKSPACE/text"
 OUTPUT_PATH="$WORKSPACE/output"
-EXTRACTED_SENTENCES_PATH="$OUTPUT_PATH/extract.txt"
+EXTRACTED_SENTENCES_PATH="$OUTPUT_PATH/$TYPE.txt"
 
 mkdir -p $OUTPUT_PATH
 
@@ -38,6 +38,12 @@ elif [ $TYPE == "extract" ] && [ -n "$2" ]; then
   LANGUAGE_CODE=$2
   
   echo "Running Wiki extraction for $LANGUAGE_CODE"
+elif [ $TYPE == "extract-wikisource" ] && [ -n "$2" ]; then
+  source $HERE/providers/wiki-source.sh
+  
+  LANGUAGE_CODE=$2
+  
+  echo "Running WikiSource extraction for $LANGUAGE_CODE"
 fi
 
 run
