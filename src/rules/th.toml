@@ -22,7 +22,6 @@ needs_uppercase_start = false
 allowed_symbols_regex = "[0-9\u0020\u0e01-\u0e2e\u0e30-\u0e39\u0e40-\u0e45\u0e47-\u0e4c\\-\\.‚;:!\\?“”‘’\u0022\u0027\u0060]"
 even_symbols = [
   "\u0022",  # Quotation mark
-  "\u0027"   # Apostrophe
 ]
 matching_symbols = [
   ["‘", "’"],
@@ -77,12 +76,14 @@ other_patterns = [
   "[\\.,:;-]$",
   "[,:;]\\S",
   "[\\.|\\?|!].+$",
-  "^.{81,}$",  # MAX_LENGTH
-  "(^|\\s+)[\u0e30\u0e32\u0e33\u0e45\u0e31\u0e34\u0e35\u0e36\u0e37\u0e4d\u0e47\u0e38\u0e39\u0e48\u0e49\u0e4a\u0e4b\u0e3a\u0e4c\u0e4d\u0e4e]",  # BEGIN_REGEX
-  "[\u0e40\u0e41\u0e42\u0e43\u0e44](\\s+|$)",  # END_REGEX
-  "[\u200b\u200c\u0e01-\u0e2e\u0e30-\u0e39\u0e40-\u0e4c‘’‚;:“”\u0022\u0027\u0060\\-\\?\\.!]{55,}",
-  "^[^ณ]\\s",
-  "^[บ้าง|ก่อน|เลย|แล้ว|หรือไม่|ไหม|ล่ะ|ด้วย|อีก|และ|หรือ|กับ|ก็]\\s",  # orphan starting
+  "^.{101,}$",  # MAX_LENGTH = 100
+  "(^|\\s+)[\u0e30\u0e32\u0e33\u0e45\u0e31\u0e34\u0e35\u0e36\u0e37\u0e4d\u0e47\u0e38\u0e39\u0e48\u0e49\u0e4a\u0e4b\u0e3a\u0e4c\u0e4d\u0e4e]",  # invalid char to start word/sentence
+  "[\u0e40\u0e41\u0e42\u0e43\u0e44](\\s+|$)",  # invalid char to end word/sentence
+  "[\u0e01-\u0e2e\u0e30-\u0e39\u0e40-\u0e4c‘’‚;:“”\u0022\u0027\u0060\\-\\?\\.!]{81,}",  # more than 80 chars running without a space
+  "[\u0e01-\u0e4e]{71,}",  # more than Thai 70 consonants and vowels running without a space
+  "[ก-ฮ]{31,}",  # more than 30 consonants running without a space
+  "^[^ณ]\\s",  # lone character at the beginning of a sentence (except No Nen)
+  "^[บ้าง|ก่อน|เลย|แล้ว|หรือไม่|ไหม|ล่ะ|ด้วย|อีก|และ|หรือ|กับ|ก็]\\s",  # words that indicate orphan starting
   "^\\S{2,3}\\s",  # orphan starting
   "\\s\\S{1,3}$",  # orphan ending
   "\\s[และ|หรือ|กับ|เช่น]$",  # orphan ending
@@ -120,8 +121,6 @@ replacements = [
   [" !", "!"],
   [" ?", "?"],
   [":", ": "],
-  ["?", "? "],
-  ["!", "! "],  
   [",", " "],
   ["..", " "],
   ["...", " "],
