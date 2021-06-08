@@ -5,6 +5,7 @@
 Right now this tool supports extractions from the following sources:
 
 * Wikipedia - max 3 sentences per articles
+* Wikisource - max 3 sentences per articles
 * Simple files with one sentence per line
 
 For a source to be added, the dataset needs to be vetted by Mozilla to check license compatibility. If you know about a good source, please start a topic on [Discourse](https://discourse.mozilla.org/c/voice/). Once it's been verified that a source can be used, check the "Adding another scrape target" further below.
@@ -59,6 +60,38 @@ python WikiExtractor.py --json ../enwiki-latest-pages-articles-multistream.xml
 ```bash
 cd ../cv-sentence-extractor
 cargo run -- extract -l en -d ../wikiextractor/text/ >> wiki.en.txt
+```
+
+*Tip: You don't need this last process to finish to start observing the output, wiki.en.txt should get a few thousands sentences in just a few minutes, and you can use that as a way to estimate the quality of the output early on and stop the process if you are not happy.*
+
+### Extract WikiSource
+
+This process is very similar to the Wikipedia process above. We can only extract at most 3 sentences per article.
+
+1. Download the latest Wikisource dataset [backup dump from Wikimedia](https://dumps.wikimedia.org/backup-index-bydb.html), select the one with `pages-articles` in its name.
+
+Example (you can change "en" to your locale code)
+
+```bash
+wget https://dumps.wikimedia.org/enwikisource/latest//enwikisource-latest-pages-articles.xml.bz2 
+bzip2 -d enwikisource-latest-pages-articles.xml.bz2
+```
+
+2. Use WikiExtractor to extract a dump (this might take a few hours)
+
+```bash
+cd wikiextractor
+git checkout e4abb4cbd019b0257824ee47c23dd163919b731b
+python WikiExtractor.py --json ../enwikisource-latest-pages-articles.xml
+```
+
+*Important note: Please check the section about [creating a rules file](#using-language-rules) and [a blocklist](#create-a-blocklist-based-on-less-common-words) at this point, you might want to consider creating them and that process should happen before step 3.*
+
+3. Scrape the sentences into a new file from the WikiExtractor output dir (this might take more than 6h to finish)
+
+```bash
+cd ../cv-sentence-extractor
+cargo run -- extract-wikisource -l en -d ../wikiextractor/text/ >> wiki.en.txt
 ```
 
 *Tip: You don't need this last process to finish to start observing the output, wiki.en.txt should get a few thousands sentences in just a few minutes, and you can use that as a way to estimate the quality of the output early on and stop the process if you are not happy.*
@@ -215,31 +248,28 @@ Currently the following data sources are available for automatic extraction:
 
 On every PR we will [trigger a sample sentence extraction](https://discourse.mozilla.org/t/scraper-automatic-sample-sentences-extracted-in-pull-request/55217/3) which can be used for verification. Note that [GitHub does not automatically run](https://github.blog/2021-04-22-github-actions-update-helping-maintainers-combat-bad-actors/) the pipeline if you are a first time contributor. If your sample extraction doesn't get approved within a day, please reach out to us on [Matrix](https://matrix.to/#/#common-voice-sentence-extractor:mozilla.org?web-instance[element.io]=chat.mozilla.org).
 
-### On pushes to master
-
-On every push to master, we will run a full sentence extraction on the specified language if the commit message includes `--full-wiki-extraction=<language>` at the end of the message.
-
 ## Manual trigger
 
-Jobs can be triggered manually by adding a comment to an issue or Pull Request.
+### Through the manual workflow
+
+Once a language rule file has been merged, the creation of the extract will be triggered through the manual workflow. PR authors do not need to do that themselves, this is the responsibility of the reviewer.
+
+There are manual workflows for both Wikipedia and WikiSource.
+
+### Through comments
+Jobs can be triggered manually by adding a comment to an issue or Pull Request. Note that the blocklist uses the Wikipedia scrape target behind the scene.
 
 ```
 /action [job] [language] [otherParams]
 ```
 
-* job: name of the job to run, this can be any of: extract, blocklist, and whatever new sources will use as "subcommand"
+* job: name of the job to run, this can be any of: blocklist
 * language: language code to process for: en, de, ...
 * otherParams: any other params needed depending on the job
 
 The job will then add a comment with its URL, so you can check the output and download the files you need.
 
-### Extracting from Wikipedia - English
-
-```
-/action extract en
-```
-
-### Create a blocklist for English - 80 occurrences threshold
+*Example:* Create a blocklist for English - 80 occurrences threshold
 
 ```
 /action blocklist en 80

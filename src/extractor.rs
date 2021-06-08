@@ -127,10 +127,10 @@ fn pick_sentences(
 }
 
 fn get_not_yet_used_index(mut rng: ThreadRng, max_index: usize, used_indexes: &[usize]) -> usize {
-    let mut index = rng.gen_range(0, max_index + 1);
+    let mut index = rng.gen_range(0..=max_index);
     let mut already_used = used_indexes.contains(&index);
     while already_used {
-        index = rng.gen_range(0, max_index + 1);
+        index = rng.gen_range(0..=max_index);
         already_used = used_indexes.contains(&index);
     }
 

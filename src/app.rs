@@ -42,6 +42,12 @@ where
                 .arg(&directory_argument)
         )
         .subcommand(
+            SubCommand::with_name("extract-wikisource")
+                .about("Extract sentences from Wikisource dump extracts using WikiExtractor")
+                .arg(&language_argument)
+                .arg(&directory_argument)
+        )
+        .subcommand(
             SubCommand::with_name("extract-file")
                 .about("Extract sentences from files which have one sentence per line")
                 .arg(&language_argument)
@@ -64,6 +70,15 @@ fn start(all_matches: ArgMatches) -> Result<(), String> {
 
     // Wikipedia
     if let Some(matches) = all_matches.subcommand_matches("extract") {
+        let language = String::from(matches.value_of("language").unwrap_or("en"));
+        let directory = String::from(matches.value_of("dir").unwrap_or_default());
+
+        let wikipedia_loader = Wikipedia::new(language, directory);
+        return extract(wikipedia_loader, no_check);
+    }
+    
+    // Wikisource
+    if let Some(matches) = all_matches.subcommand_matches("extract-wikisource") {
         let language = String::from(matches.value_of("language").unwrap_or("en"));
         let directory = String::from(matches.value_of("dir").unwrap_or_default());
 

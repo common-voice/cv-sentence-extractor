@@ -1,3 +1,6 @@
+# Used to trigger actions from issue or PR comments.
+# See the README for more information.
+
 name: Manual Issue Trigger
 
 on:
@@ -13,11 +16,22 @@ jobs:
         rust: [nightly]
 
     steps:
+    
+    # SETUP
+    - name: Maximize build space
+      uses: easimon/maximize-build-space@master
+      with:
+        root-reserve-mb: 512
+        swap-size-mb: 1024
+        remove-dotnet: 'true'
+        remove-android: 'true'
+        remove-haskell: 'true'
     - uses: hecrj/setup-rust-action@master
       with:
         rust-version: ${{ matrix.rust }}
     - uses: actions/checkout@master
 
+    # COMMENT
     - name: Get Comment
       id: comment
       run: |
@@ -26,7 +40,6 @@ jobs:
         echo "##[set-output name=action;]$ACTION"
     - name: Output Command
       run: "echo ${{ steps.comment.outputs.action }}"
-
     - name: Create comment
       if: "!contains(steps.comment.outputs.action, 'no-action')"
       uses: peter-evans/create-or-update-comment@v1
@@ -35,21 +48,10 @@ jobs:
         body: |
           Job started: https://github.com/${{ github.repository }}/actions/runs/${{github.run_id}}
 
-    - name: Wikipedia Extraction
-      if: "contains(steps.comment.outputs.action, 'extract')"
-      run: ./scripts/wiki-extraction.sh ${{ steps.comment.outputs.action }}
-    - name: Deduplicate Wikipedia Extraction
-      if: "contains(steps.comment.outputs.action, 'extract')"
-      run: ./scripts/dedupe.sh wiki.txt
-    - uses: actions/upload-artifact@v1
-      if: "contains(steps.comment.outputs.action, 'extract')"
-      with:
-        name: extraction
-        path: output/
-
-    - name: Full Wikipedia Extraction - no checks
+    # BLOCKLIST
+    - name: Full Wikipedia Extraction - no checks for blocklist
       if: "contains(steps.comment.outputs.action, 'blocklist')"
-      run: ./scripts/wiki-extraction.sh ${{ steps.comment.outputs.action }}
+      run: ./scripts/extraction.sh ${{ steps.comment.outputs.action }}
     - name: Checkout cvtools
       if: "contains(steps.comment.outputs.action, 'blocklist')"
       uses: actions/checkout@master
@@ -65,6 +67,7 @@ jobs:
         name: blocklist
         path: output/*
 
+    # CREATE FINAL COMMENT
     - name: Create final comment
       if: "!contains(steps.comment.outputs.action, 'no-action')"
       uses: peter-evans/create-or-update-comment@v1

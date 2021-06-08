@@ -1,0 +1,54 @@
+# Manually starting a Wikisource Extraction for a given language
+# This is the main way to trigger an extraction after merging
+# a PR with rule file additions. This can also be used to re-trigger
+# extracts to validate changes in rule files.
+
+name: Manual Dispatch - Wikisource Extraction
+
+on:
+  workflow_dispatch:
+    inputs:
+      language:
+        description: 'Language Code'
+        required: true
+        default: ''
+
+jobs:
+  extract:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest]
+        rust: [nightly]
+
+    steps:
+    
+    # SETUP
+    - name: Maximize build space
+      uses: easimon/maximize-build-space@master
+      with:
+        root-reserve-mb: 512
+        swap-size-mb: 1024
+        remove-dotnet: 'true'
+        remove-android: 'true'
+        remove-haskell: 'true'
+    - uses: hecrj/setup-rust-action@e0938bab41405f7485391869b453779c5290099d
+      with:
+        rust-version: ${{ matrix.rust }}
+    - uses: actions/checkout@master
+
+    # EXTRACTION
+    - name: Full Wikisource Extraction - ${{ github.event.inputs.language }}
+      run: ./scripts/extraction.sh extract-wikisource ${{ github.event.inputs.language }}
+    - name: Deduplicate Wikipedia Extraction
+      run: ./scripts/dedupe.sh extract-wikisource.txt
+
+    # UPLOAD
+    - uses: actions/upload-artifact@v2
+      with:
+        name: extraction
+        path: output/*
+    - uses: actions/upload-artifact@v2
+      with:
+        name: wikiextractor-output
+        path: text/*

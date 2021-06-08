@@ -1,0 +1,46 @@
+min_trimmed_length = 3
+min_word_count = 1
+max_word_count = 14
+min_characters = 1
+may_end_with_colon = false
+quote_start_with_letter = true
+needs_punctuation_end = true
+needs_letter_start = true
+needs_uppercase_start = true
+disallowed_symbols = []
+broken_whitespace = ["  ", " ,", " .", " ?", " !", " ;"]
+abbreviation_patterns = [
+  "[A-ZİƏÖÜĞÇŞ]+\\.",
+  # for ABŞ, BDU and similar
+  "[A-ZİƏÖÜĞÇŞ]{2,}",
+  # for s., e.ə. and similar
+  "^[a-zıəöüğçş]\\.",
+  "\\.[A-z]",
+  # common abbr
+  "Resp\\.|Hz\\.|ö\\.|m.ə\\.|akad\\.|prof\\.|səh\\.|küç\\.|şəh\\.|qəs\\.|məs\\.|dok\\.|dos\\.|abrev\\.|adr\\.|km\\.|sm\\.|mm\\.|resp\\.|yun\\.|lat\\.",
+]
+allowed_symbols_regex = "[A-z əöüğçşıİƏÖÜĞÇŞ‚’–\\.?!;\"]"
+even_symbols = ['"']
+
+replacements = [
+  ["və s.", "və sairə"],
+  ["və i.a.", "və ilaxır"],
+  ["və b.", "və başqaları"],
+  ["və b.k.", "və bu kimi"],
+  ["və.s.", "və sairə"],
+  ["və.i.a.", "və ilaxır"],
+  ["və.b.", "və başqaları"],
+  ["və.b.k.", "və bu kimi"],
+  ["e.ə.", "Eramızdan əvvəl"],
+  ["e. ə.", "Eramızdan əvvəl"],
+  ["E.ə.", "Eramızdan əvvəl"],
+  ["E. ə.", "Eramızdan əvvəl"],
+  ["\"\"",""]
+]
+
+#none azerbaijan language charachters
+#roman numbering like "I cild. X əsr"
+other_patterns = [
+  "[wW]",
+  "[MCLXVI]\\s"
+]

@@ -13,13 +13,13 @@ name = "common_voice_sentence_collector"
 path = "src/main.rs"
 
 [dependencies]
-serde_json = "1.0"
-glob = "0.3"
-clap = "2.33"
-lazy_static = "1"
-itertools = "0.8"
-regex = "1"
+serde_json = "1.0.64"
+glob = "0.3.0"
+clap = "2.33.3"
+lazy_static = "1.4.0"
+itertools = "0.10.0"
+regex = "1.5.4"
 punkt = "1.0.5"
-rand = "0.6"
-toml = "0.5"
-serde = { version = "1.0", features = ["derive"] }
+rand = "0.8.3"
+toml = "0.5.8"
+serde = { version = "1.0.126", features = ["derive"] }

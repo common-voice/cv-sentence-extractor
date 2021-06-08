@@ -6,7 +6,7 @@ FILE_NAME=$1
 WORKSPACE=${GITHUB_WORKSPACE:-/tmp}
 OUTPUT_PATH="$WORKSPACE/output"
 FILE_PATH="$OUTPUT_PATH/$FILE_NAME"
-OUTPUT_FILE="$OUTPUT_PATH/wiki-sorted-unique.txt"
+OUTPUT_FILE="$OUTPUT_PATH/sorted-unique.txt"
 
 if [[ -f "$FILE_PATH" ]]; then
   echo "Sorting and deduplicating $FILE_PATH"
