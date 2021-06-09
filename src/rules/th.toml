@@ -109,11 +109,36 @@ replacements = [
   ["\u200b", ""],  # remove zero-width space
   ["\u200c", ""],  # remove zero-width non-joiner
   ["\u2063", ""],  # remove invisible separator
-  [" พ.ร.บ.", " พระราชบัญญัติ"],
-  [" พ.ร.ก.", " พระราชกำหนด"],
-  [" พ.ศ. ", " พุทธศักราช "],
-  [" ค.ศ. ", " คริสต์ศักราช "],
-  [" ม.ร.ว.", " หม่อมราชวงศ์"],
+  ["\u0e30\u0e30", "\u0e30"],  # double vowel
+  ["\u0e31\u0e31", "\u0e31"],  # double vowel
+  ["\u0e32\u0e32", "\u0e32"],  # double vowel
+  ["\u0e33\u0e33", "\u0e33"],  # double vowel
+  ["\u0e34\u0e34", "\u0e34"],  # double vowel
+  ["\u0e35\u0e35", "\u0e35"],  # double vowel
+  ["\u0e36\u0e36", "\u0e36"],  # double vowel
+  ["\u0e37\u0e37", "\u0e37"],  # double vowel
+  ["\u0e38\u0e38", "\u0e38"],  # double vowel
+  ["\u0e39\u0e39", "\u0e39"],  # double vowel
+  ["\u0e3a\u0e3a", "\u0e3a"],  # double vowel
+  ["\u0e41\u0e41", "\u0e41"],  # double vowel
+  ["\u0e42\u0e42", "\u0e42"],  # double vowel
+  ["\u0e43\u0e43", "\u0e43"],  # double vowel
+  ["\u0e44\u0e44", "\u0e44"],  # double vowel
+  ["\u0e45\u0e45", "\u0e45"],  # double vowel
+  ["\u0e46\u0e46", "\u0e46"],  # double Maiyamok
+  ["\u0e47\u0e47", "\u0e47"],  # double vowel
+  ["\u0e48\u0e48", "\u0e48"],  # double tone mark
+  ["\u0e49\u0e49", "\u0e49"],  # double tone mark
+  ["\u0e4a\u0e4a", "\u0e4a"],  # double tone mark
+  ["\u0e4b\u0e4b", "\u0e4b"],  # double tone mark
+  ["\u0e4c\u0e4c", "\u0e4c"],  # double symbol
+  ["\u0e4d\u0e4d", "\u0e4d"],  # double symbol
+  ["\u0e4e\u0e4e", "\u0e4e"],  # double symbol
+  [" พ.ร.บ.", " พระราชบัญญัติ"],  # abbreviation
+  [" พ.ร.ก.", " พระราชกำหนด"],  # abbreviation
+  [" พ.ศ. ", " พุทธศักราช "],  # abbreviation
+  [" ค.ศ. ", " คริสต์ศักราช "],  # abbreviation
+  [" ม.ร.ว.", " หม่อมราชวงศ์"],  # abbreviation
   [" .", "."],
   [" ,", " "],
   [" :", ":"],
