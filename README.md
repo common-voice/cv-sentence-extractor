@@ -104,6 +104,12 @@ If you have one or multiple files with one sentence per line, you can use this e
 cargo run -- extract-file -l en -d ../texts/ >> file.en.txt
 ```
 
+If the performance is poor, try release build:
+
+```
+cargo run --release -- extract-file -l en -d ../texts/ >> file.en.txt
+```
+
 ## Using language rules
 
 The following rules can be configured per language. Add a `<language>.toml` file in the `rules` directory to enable a new locale. Note that the `replacements` get applied before any other rules are checked.
