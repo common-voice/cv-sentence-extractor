@@ -7,14 +7,29 @@ function run {
   echo "Getting WikiExtractor"
   curl $WIKI_EXTRACTOR_URL > $WIKI_EXTRACTOR_PATH
 
-  echo "Starting extraction for $ARCHIVE_FILE_NAME"
-  extract
-  cleanup
+  echo "Downloading Dump Listing"
+  DUMP_BASE_PATH="https://dumps.wikimedia.org/${LANGUAGE_CODE}wiki/latest/"
+  curl $DUMP_BASE_PATH > listing.html
+
+  echo "Searching for correct files"
+  ARCHIVE_FILE_NAME_MATCHES=($(grep -o -P -e 'wiki-latest-pages-articles-multistream\d*.xml-.*bz2"' < listing.html || [[ $? == 1 ]]))
+  if [ ${#ARCHIVE_FILE_NAME_MATCHES[@]} == 0 ]; then
+    ARCHIVE_FILE_NAME_MATCHES=($(grep -o -P -e 'wiki-latest-pages-articles-multistream.xml.bz2"' < listing.html))
+  fi
+  rm listing.html
+
+  for archive in "${ARCHIVE_FILE_NAME_MATCHES[@]}"
+  do
+    ARCHIVE_FILE_NAME=${LANGUAGE_CODE}${archive/%?/}
+    echo "Starting extraction for $ARCHIVE_FILE_NAME"
+    _downloadAndDecompressDump
+    extract
+    cleanup
+  done
 }
 
 function _downloadAndDecompressDump {
-  FILE_NAME="${LANGUAGE_CODE}wiki-latest-pages-articles-multistream.xml"
-  ARCHIVE_FILE_NAME="${FILE_NAME}.bz2"
+  FILE_NAME=${ARCHIVE_FILE_NAME/.bz2/""}
   DUMP_URL="https://dumps.wikimedia.org/${LANGUAGE_CODE}wiki/latest/${ARCHIVE_FILE_NAME}"
   echo "Downloading dump for $LANGUAGE_CODE at $DUMP_URL"
   curl $DUMP_URL > $WORKSPACE/$ARCHIVE_FILE_NAME
@@ -24,13 +39,11 @@ function _downloadAndDecompressDump {
 }
 
 function extract {
-  _downloadAndDecompressDump
-
   echo "Extracting with WikiExtractor"
   if [ $TYPE == "sample" ]; then
-    timeout 30 python $WIKI_EXTRACTOR_PATH --processes 4 --json $DUMP_FILE || true
+    timeout 30 python $WIKI_EXTRACTOR_PATH --processes 4 --json -o $EXTRACTED_TEXT_PATH $DUMP_FILE || true
   elif [ $TYPE == "extract" ] || [ $TYPE == "blocklist" ]; then
-    python $WIKI_EXTRACTOR_PATH --processes 4 --json $DUMP_FILE
+    python $WIKI_EXTRACTOR_PATH --processes 4 --json -o $EXTRACTED_TEXT_PATH $DUMP_FILE
   fi
 
   echo "Running extraction"
@@ -42,6 +55,7 @@ function extract {
 }
 
 function cleanup {
-  rm -rf $DUMP_PATH
-  rm -rf $EXTRACTED_DUMP_PATH
+  rm -rf $WORKSPACE/$ARCHIVE_FILE_NAME
+  rm -rf $DUMP_FILE
+  rm -rf $EXTRACTED_TEXT_PATH
 }

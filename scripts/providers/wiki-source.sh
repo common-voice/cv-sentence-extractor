@@ -34,6 +34,7 @@ function extract {
 }
 
 function cleanup {
-  rm -rf $DUMP_PATH
-  rm -rf $EXTRACTED_DUMP_PATH
+  rm -rf $WORKSPACE/$ARCHIVE_FILE_NAME
+  rm -rf $DUMP_FILE
+  rm -rf $EXTRACTED_TEXT_PATH
 }
