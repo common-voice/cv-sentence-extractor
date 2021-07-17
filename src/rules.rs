@@ -37,6 +37,7 @@ pub fn load_rules(language: &str) -> Rules {
 #[derive(Debug,Deserialize)]
 #[serde(default)]
 pub struct Rules {
+    pub tokenizer: String,
     pub min_trimmed_length: usize,
     pub min_word_count: usize,
     pub max_word_count: usize,
@@ -60,6 +61,7 @@ pub struct Rules {
 impl Default for Rules {
     fn default() -> Rules {
         Rules {
+            tokenizer: String::from(""),
             min_trimmed_length: 3,
             min_word_count: 1,
             max_word_count: 14,
@@ -92,6 +94,8 @@ mod test {
             ..Default::default()
         };
 
+        assert_eq!(rules.tokenizer, "");
+        assert_eq!(rules.min_trimmed_length, 3);
         assert_eq!(rules.min_trimmed_length, 3);
         assert_eq!(rules.min_word_count, 1);
         assert_eq!(rules.max_word_count, 14);

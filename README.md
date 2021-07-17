@@ -4,8 +4,8 @@
 
 Right now this tool supports extractions from the following sources:
 
-* Wikipedia - max 3 sentences per articles
-* Wikisource - max 3 sentences per articles
+* Wikipedia - max 3 sentences per article
+* Wikisource - max 3 sentences per article
 * Simple files with one sentence per line
 
 For a source to be added, the dataset needs to be vetted by Mozilla to check license compatibility. If you know about a good source, please start a topic on [Discourse](https://discourse.mozilla.org/c/voice/). Once it's been verified that a source can be used, check the "Adding another scrape target" further below.
@@ -13,6 +13,7 @@ For a source to be added, the dataset needs to be vetted by Mozilla to check lic
 ## Setup
 
 - [Rust Nightly](https://rustup.rs/) (follow the instructions and customize the install to select the `nightly` channel)
+- Install [`pip3`](https://pip.pypa.io/en/stable/installing/) in case it's not installed on your system already
 
 Note: as long as we're using the current `punkt` dependency, we need to use the Nightly version of Rust.
 
@@ -59,6 +60,7 @@ python WikiExtractor.py --json ../enwiki-latest-pages-articles-multistream.xml
 
 ```bash
 cd ../cv-sentence-extractor
+pip3 install -r requirements.txt # can be skipped if your language doesn't use the Python tokenizer
 cargo run --release -- extract -l en -d ../wikiextractor/text/ >> wiki.en.txt
 ```
 
@@ -91,6 +93,7 @@ python WikiExtractor.py --json ../enwikisource-latest-pages-articles.xml
 
 ```bash
 cd ../cv-sentence-extractor
+pip3 install -r requirements.txt # can be skipped if your language doesn't use the Python tokenizer
 cargo run --release -- extract-wikisource -l en -d ../wikiextractor/text/ >> wiki.en.txt
 ```
 
@@ -100,7 +103,8 @@ cargo run --release -- extract-wikisource -l en -d ../wikiextractor/text/ >> wik
 
 If you have one or multiple files with one sentence per line, you can use this extractor to extract sentences from these files applying the defined language rules. This can be useful if you have a large list of sentences and you want to only have sentences which match the rules.
 
-```
+```bash
+pip3 install -r requirements.txt # can be skipped if your language doesn't use the Python tokenizer
 cargo run --release -- extract-file -l en -d ../texts/ >> file.en.txt
 ```
 
@@ -128,6 +132,7 @@ The following rules can be configured per language. Add a `<language>.toml` file
 | other_patterns |  Rust regex to disallow anything else | Rust Regex Array | all other patterns allowed
 | quote_start_with_letter |  If a quote needs to start with a letter | boolean | true
 | replacements |  Replaces abbreviations or other words according to configuration. This happens before any other rules are checked. | Array of replacement configurations: each configuration is an Array of two values: `["search", "replacement"]`. See example below. | nothing gets replaced
+| tokenizer |  Tokenizer to use for this language. See below for more information. | "python" | using `rust-punkt` by default
 
 ### Example for `matching_symbols`
 
@@ -224,6 +229,52 @@ In order to get your language rules and blocklist incorporated in this repo, you
 - Get at least 3 different native speakers (ideally linguistics) to review a random sample of 100-500 sentences and estimate the average error ratio and comment (or link their comment) in the PR. You can use [this template](https://docs.google.com/spreadsheets/d/1dJpysfcwmUwR4oJuw5ttGcUFYLeTbmn50Fpufz9qx-8/edit#gid=0) to simplify review.
 
 Once we have your rules into the repo, we will run an automatic extraction and submit those sentences to Common Voice. This means that you can't manually adjust the sample output you've used for review as these changes would be lost.
+
+## Using a different tokenizer to split sentences
+
+By default we are using the `rust-punkt` tokenizer to split sentences. However this leads to several issues if `rust-punkt` does not support a given language. More info on that can be found in issue #11. Therefore we introduce a new way of adding your own Python-based tokenizer if needed. Note that using Python-based tokenizers will slow down the extract considerably.
+
+If `rust-punkt` is not working well for a language rule file you are implementing, you can use your own custom tokenizer written in Python. While English doesn't use a Python-based tokenizer, there is an English example available in `src/tokenizers.rs` you can use as base to write your own tokenizer in Python.
+
+This is currently experimental.
+
+### Changes needed to add your own tokenizer in Python
+
+First you will need to add the `tokenizer` rule to the rules file:
+
+```
+tokenizer = "python"
+```
+
+This will direct our extraction script to use the special cases Python extraction.
+
+Then you will need to add a new function to `src/tokenizers.rs` with the name `split_sentences_with_python_xx`, replacing `xx` with your language code you also use for the rules file. You can copy/paste `split_sentences_with_python_en` and adjust it to your needs. Using Spanish as an example, your new function might look like this:
+
+```
+pub fn split_sentences_with_python_es(text: &str) -> Vec<String> {
+    let ctx = Context::new();
+
+    ctx.run(python! {
+        import someLibraryWeNeed
+
+        split_sentences = doTheNecessaryWorkToSplitSentences('text)
+    });
+    
+    ctx.get("split_sentences")
+}
+```
+
+Note that the function gets passed the full text as `text`, but you need to use `'text` to reference it within the Python block. This is a simple string with all sentences to be split. The split sentences need to be assigned to the `split_sentences` variable, as our script will read out this variable to continue the extraction.
+
+Additionally you need to make sure that this function is called for your language, otherwise you will get an error that there is no matching function. For this, add a new match case to the `split_sentences_with_python` function. To add Spanish for example, add the following:
+
+```
+  "es" => split_sentences_with_python_es(text),
+```
+
+**Make sure you add all the required Python packages to `requirements.txt` as these will need to be installed by everyone running the respository locally as well as by the extraction pipelines on GitHub.**
+
+As this is experimental, there are certain parts that could be improved, such as moving out each language into its own file, as well as automatically importing the needed file so there is no need to manually add a case to the match. PRs are certainly welcome!
 
 ## Adding another scrape target
 

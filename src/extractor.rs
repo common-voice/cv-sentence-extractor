@@ -3,6 +3,7 @@ use crate::replacer;
 use crate::checker;
 use crate::loaders::Loader;
 use crate::rules::{load_rules, Rules};
+use crate::tokenizer::split_sentences_with_python;
 use glob::glob;
 use punkt::params::Standard;
 use punkt::{SentenceTokenizer, TrainingData};
@@ -33,6 +34,7 @@ pub fn extract(loader: impl Loader, no_check: bool) -> Result<(), String> {
                 checker::check,
                 replacer::replace_strings,
                 no_check,
+                &config.language,
             );
 
             for sentence in sentences {
@@ -57,17 +59,33 @@ fn choose(
     predicate: impl FnMut(&Rules, &str) -> bool,
     mut replacer: impl FnMut(&Rules, &str) -> String,
     no_check: bool,
+    language: &str,
 ) -> Vec<String> {
-    let sentences_replaced_abbreviations: Vec<String> = SentenceTokenizer::<Standard>::new(text, training_data)
+    let sentences: Vec<String>;
+
+    if rules.tokenizer != String::from("") {
+        if rules.tokenizer == "python" {
+            sentences = split_sentences_with_python(language, text);
+        } else {
+            panic!("Tokenizer {} is not yet supported!", rules.tokenizer);
+        }
+    } else {
+        // we use rust-punkt as tokenizer by default
+        sentences = SentenceTokenizer::<Standard>::new(text, training_data)
+            .map(|item| { String::from(item) })
+            .collect();
+    }
+
+    let sentences_pool = sentences.iter()
         .map(|item| { replacer(rules, item) })
         .collect();
 
     if no_check {
-        sentences_replaced_abbreviations
+        sentences_pool
     } else {
         pick_sentences(
             rules,
-            sentences_replaced_abbreviations,
+            sentences_pool,
             existing_sentences,
             config.max_sentences_per_text,
             predicate,
