@@ -102,8 +102,8 @@ mod test {
             ..Default::default()
         };
 
-        assert_eq!(check(&rules, &String::from("  aa     ")), false);
-        assert_eq!(check(&rules, &String::from("  aaa     ")), true);
+        assert!(!check(&rules, &String::from("  aa     ")));
+        assert!(check(&rules, &String::from("  aaa     ")));
     }
 
     #[test]
@@ -113,8 +113,8 @@ mod test {
             ..Default::default()
         };
 
-        assert_eq!(check(&rules, &String::from("one")), false);
-        assert_eq!(check(&rules, &String::from("two words")), true);
+        assert!(!check(&rules, &String::from("one")));
+        assert!(check(&rules, &String::from("two words")));
     }
 
     #[test]
@@ -124,8 +124,8 @@ mod test {
             ..Default::default()
         };
 
-        assert_eq!(check(&rules, &String::from("three words now")), false);
-        assert_eq!(check(&rules, &String::from("two words")), true);
+        assert!(!check(&rules, &String::from("three words now")));
+        assert!(check(&rules, &String::from("two words")));
     }
 
     #[test]
@@ -135,8 +135,8 @@ mod test {
             ..Default::default()
         };
 
-        assert_eq!(check(&rules, &String::from("no!!")), false);
-        assert_eq!(check(&rules, &String::from("yes!")), true);
+        assert!(!check(&rules, &String::from("no!!")));
+        assert!(check(&rules, &String::from("yes!")));
     }
 
     #[test]
@@ -146,14 +146,14 @@ mod test {
             ..Default::default()
         };
 
-        assert_eq!(check(&rules, &String::from("ends with colon:")), false);
+        assert!(!check(&rules, &String::from("ends with colon:")));
 
         rules = Rules {
             may_end_with_colon: true,
             ..Default::default()
         };
 
-        assert_eq!(check(&rules, &String::from("ends with colon:")), true);
+        assert!(check(&rules, &String::from("ends with colon:")));
     }
 
     #[test]
@@ -164,7 +164,7 @@ mod test {
             ..Default::default()
         };
 
-        assert_eq!(check(&rules, &String::from("\"😊 foo")), true);
+        assert!(check(&rules, &String::from("\"😊 foo")));
 
         rules = Rules {
             quote_start_with_letter: true,
@@ -172,7 +172,7 @@ mod test {
             ..Default::default()
         };
 
-        assert_eq!(check(&rules, &String::from("\"😊 foo")), false);
+        assert!(!check(&rules, &String::from("\"😊 foo")));
     }
 
     #[test]
@@ -182,16 +182,16 @@ mod test {
             ..Default::default()
         };
 
-        assert_eq!(check(&rules, &String::from("This has no punctuation")), true);
-        assert_eq!(check(&rules, &String::from("This has punctuation.")), true);
+        assert!(check(&rules, &String::from("This has no punctuation")));
+        assert!(check(&rules, &String::from("This has punctuation.")));
 
         rules = Rules {
             needs_punctuation_end: true,
             ..Default::default()
         };
 
-        assert_eq!(check(&rules, &String::from("This has no punctuation")), false);
-        assert_eq!(check(&rules, &String::from("This has punctuation.")), true);
+        assert!(!check(&rules, &String::from("This has no punctuation")));
+        assert!(check(&rules, &String::from("This has punctuation.")));
     }
 
     #[test]
@@ -201,16 +201,16 @@ mod test {
             ..Default::default()
         };
 
-        assert_eq!(check(&rules, &String::from("?Foo")), true);
-        assert_eq!(check(&rules, &String::from("This has a normal start")), true);
+        assert!(check(&rules, &String::from("?Foo")));
+        assert!(check(&rules, &String::from("This has a normal start")));
 
         rules = Rules {
             needs_letter_start: true,
             ..Default::default()
         };
 
-        assert_eq!(check(&rules, &String::from("?Foo")), false);
-        assert_eq!(check(&rules, &String::from("This has a normal start")), true);
+        assert!(!check(&rules, &String::from("?Foo")));
+        assert!(check(&rules, &String::from("This has a normal start")));
     }
 
     #[test]
@@ -220,16 +220,16 @@ mod test {
             ..Default::default()
         };
 
-        assert_eq!(check(&rules, &String::from("foo")), true);
-        assert_eq!(check(&rules, &String::from("Foo")), true);
+        assert!(check(&rules, &String::from("foo")));
+        assert!(check(&rules, &String::from("Foo")));
 
         rules = Rules {
             needs_uppercase_start: true,
             ..Default::default()
         };
 
-        assert_eq!(check(&rules, &String::from("foo")), false);
-        assert_eq!(check(&rules, &String::from("Foo")), true);
+        assert!(!check(&rules, &String::from("foo")));
+        assert!(check(&rules, &String::from("Foo")));
     }
 
     #[test]
@@ -239,8 +239,8 @@ mod test {
             ..Default::default()
         };
 
-        assert_eq!(check(&rules, &String::from("This has no percentage but other & characters")), true);
-        assert_eq!(check(&rules, &String::from("This has a %")), false);
+        assert!(check(&rules, &String::from("This has no percentage but other & characters")));
+        assert!(!check(&rules, &String::from("This has a %")));
     }
 
     #[test]
@@ -250,8 +250,8 @@ mod test {
             ..Default::default()
         };
 
-        assert_eq!(check(&rules, &String::from("ONLY UPPERCASE AND SPACE IS ALLOWED")), true);
-        assert_eq!(check(&rules, &String::from("This is not uppercase")), false);
+        assert!(check(&rules, &String::from("ONLY UPPERCASE AND SPACE IS ALLOWED")));
+        assert!(!check(&rules, &String::from("This is not uppercase")));
     }
 
     #[test]
@@ -262,7 +262,7 @@ mod test {
             ..Default::default()
         };
 
-        assert_eq!(check(&rules, &String::from("ONLY UPPERCASE AND SPACE IS ALLOWED AND DISALLOWED O IS OKAY")), true);
+        assert!(check(&rules, &String::from("ONLY UPPERCASE AND SPACE IS ALLOWED AND DISALLOWED O IS OKAY")));
     }
 
     #[test]
@@ -272,17 +272,17 @@ mod test {
             ..Default::default()
         };
 
-        assert_eq!(check(&rules, &String::from("This has blerg")), false);
-        assert_eq!(check(&rules, &String::from("This has a capital bLeRg")), false);
-        assert_eq!(check(&rules, &String::from("This has many blergs blerg blerg blerg")), false);
-        assert_eq!(check(&rules, &String::from("Here is a blerg, with comma")), false);
-        assert_eq!(check(&rules, &String::from("This hasn't bl e r g")), true);
+        assert!(!check(&rules, &String::from("This has blerg")));
+        assert!(!check(&rules, &String::from("This has a capital bLeRg")));
+        assert!(!check(&rules, &String::from("This has many blergs blerg blerg blerg")));
+        assert!(!check(&rules, &String::from("Here is a blerg, with comma")));
+        assert!(check(&rules, &String::from("This hasn't bl e r g")));
 
         let rules : Rules = Rules {
             disallowed_words: ["a's"].iter().map(|s| (*s).to_string()).collect(),
             ..Default::default()
         };
-        assert_eq!(check(&rules, &String::from("This has a's")), false);
+        assert!(!check(&rules, &String::from("This has a's")));
     }
 
     #[test]
@@ -292,8 +292,8 @@ mod test {
             ..Default::default()
         };
 
-        assert_eq!(check(&rules, &String::from("This has no broken whitespace")), true);
-        assert_eq!(check(&rules, &String::from("This has  broken whitespace")), false);
+        assert!(check(&rules, &String::from("This has no broken whitespace")));
+        assert!(!check(&rules, &String::from("This has  broken whitespace")));
     }
 
     #[test]
@@ -303,8 +303,8 @@ mod test {
             ..Default::default()
         };
 
-        assert_eq!(check(&rules, &String::from("This no two following uppercase letters")), true);
-        assert_eq!(check(&rules, &String::from("This has two FOllowing uppercase letters")), false);
+        assert!(check(&rules, &String::from("This no two following uppercase letters")));
+        assert!(!check(&rules, &String::from("This has two FOllowing uppercase letters")));
     }
 
     #[test]
@@ -314,12 +314,12 @@ mod test {
             ..Default::default()
         };
 
-        assert_eq!(check(&rules, &String::from("ये कलाकृतियां खजुराहो मंदिर की कलाकृतियों की याद दिलाती हैं.")), false);
-        assert_eq!(check(&rules, &String::from("φφδφξασκ")), false);
-        assert_eq!(check(&rules, &String::from("No long test")), true);
-        assert_eq!(check(&rules, &String::from("Longlong test this is")), false);
-        assert_eq!(check(&rules, &String::from("This is longlong test")), false);
-        assert_eq!(check(&rules, &String::from("This is test which is longlong")), false);
+        assert!(!check(&rules, &String::from("ये कलाकृतियां खजुराहो मंदिर की कलाकृतियों की याद दिलाती हैं.")));
+        assert!(!check(&rules, &String::from("φφδφξασκ")));
+        assert!(check(&rules, &String::from("No long test")));
+        assert!(!check(&rules, &String::from("Longlong test this is")));
+        assert!(!check(&rules, &String::from("This is longlong test")));
+        assert!(!check(&rules, &String::from("This is test which is longlong")));
     }
 
     #[test]
@@ -328,7 +328,7 @@ mod test {
             ..Default::default()
         };
 
-        assert_eq!(check(&rules, &String::from("This has \"uneven quotes and it is fine!")), true);
+        assert!(check(&rules, &String::from("This has \"uneven quotes and it is fine!")));
     }
 
     #[test]
@@ -338,8 +338,8 @@ mod test {
             ..Default::default()
         };
 
-        assert_eq!(check(&rules, &String::from("This has \"uneven quotes and it is fine!")), true);
-        assert_eq!(check(&rules, &String::from("This has (uneven parenthesis and it is fine!")), true);
+        assert!(check(&rules, &String::from("This has \"uneven quotes and it is fine!")));
+        assert!(check(&rules, &String::from("This has (uneven parenthesis and it is fine!")));
     }
 
     #[test]
@@ -349,8 +349,8 @@ mod test {
             ..Default::default()
         };
 
-        assert_eq!(check(&rules, &String::from("This has \"uneven quotes and it is not fine!")), false);
-        assert_eq!(check(&rules, &String::from("This has (uneven parenthesis and it is not fine!")), false);
+        assert!(!check(&rules, &String::from("This has \"uneven quotes and it is not fine!")));
+        assert!(!check(&rules, &String::from("This has (uneven parenthesis and it is not fine!")));
     }
 
     #[test]
@@ -360,7 +360,7 @@ mod test {
             ..Default::default()
         };
 
-        assert_eq!(check(&rules, &String::from("This has \"even\" quotes and it is fine!")), true);
+        assert!(check(&rules, &String::from("This has \"even\" quotes and it is fine!")));
     }
 
     #[test]
@@ -370,7 +370,7 @@ mod test {
             ..Default::default()
         };
 
-        assert_eq!(check(&rules, &String::from("This has \"uneven quotes' and it is fine!")), false);
+        assert!(!check(&rules, &String::from("This has \"uneven quotes' and it is fine!")));
     }
 
     #[test]
@@ -380,7 +380,7 @@ mod test {
             ..Default::default()
         };
 
-        assert_eq!(check(&rules, &String::from("This has \"uneven\" quotes' and it is fine!")), false);
+        assert!(!check(&rules, &String::from("This has \"uneven\" quotes' and it is fine!")));
     }
 
     #[test]
@@ -392,7 +392,7 @@ mod test {
             ..Default::default()
         };
 
-        assert_eq!(check(&rules, &String::from("This is „a quote“")), true);
+        assert!(check(&rules, &String::from("This is „a quote“")));
     }
 
     #[test]
@@ -404,7 +404,7 @@ mod test {
             ..Default::default()
         };
 
-        assert_eq!(check(&rules, &String::from("This is „a quote")), false);
+        assert!(!check(&rules, &String::from("This is „a quote")));
     }
 
     #[test]
@@ -416,7 +416,7 @@ mod test {
             ..Default::default()
         };
 
-        assert_eq!(check(&rules, &String::from("This is „a quote“ and „another one“")), true);
+        assert!(check(&rules, &String::from("This is „a quote“ and „another one“")));
     }
 
     #[test]
@@ -428,7 +428,7 @@ mod test {
             ..Default::default()
         };
 
-        assert_eq!(check(&rules, &String::from("This is „a quote“ and another one“")), false);
+        assert!(!check(&rules, &String::from("This is „a quote“ and another one“")));
     }
 
     #[test]
@@ -440,7 +440,7 @@ mod test {
             ..Default::default()
         };
 
-        assert_eq!(check(&rules, &String::from("This is (a bracket]")), true);
+        assert!(check(&rules, &String::from("This is (a bracket]")));
     }
 
     #[test]
@@ -452,97 +452,97 @@ mod test {
             ..Default::default()
         };
 
-        assert_eq!(check(&rules, &String::from("This is (a bracket")), false);
+        assert!(!check(&rules, &String::from("This is (a bracket")));
     }
 
     #[test]
     fn test_english() {
         let rules : Rules = load_rules("en");
-
-        assert_eq!(check(&rules, &String::from("")), false);
-        assert_eq!(check(&rules, &String::from("\"😊")), false);
-        assert_eq!(check(&rules, &String::from("This ends with:")), false);
-        assert_eq!(check(&rules, &String::from(" AA ")), false);
-        assert_eq!(check(&rules, &String::from("This has broken  space")), false);
-        assert_eq!(check(&rules, &String::from("This as well !")), false);
-        assert_eq!(check(&rules, &String::from("And this ;")), false);
-        assert_eq!(check(&rules, &String::from("This is gonna be way way way way way way way way way way too long")), false);
-        assert_eq!(check(&rules, &String::from("This is absolutely valid.")), true);
-        assert_eq!(check(&rules, &String::from("This contains 1 number")), false);
-        assert_eq!(check(&rules, &String::from("this is lowercase")), true);
-        assert_eq!(check(&rules, &String::from("foo\n\nfoo")), false);
-        assert_eq!(check(&rules, &String::from("foo\\foo")), false);
-        assert_eq!(check(&rules, &String::from("foo<>")), false);
-        assert_eq!(check(&rules, &String::from("foo*@")), false);
-        assert_eq!(check(&rules, &String::from("A.B")), false);
-        assert_eq!(check(&rules, &String::from("S.T.A.L.K.E.R.")), false);
+        
+        assert!(check(&rules, &String::from("This is absolutely valid.")));
+        assert!(check(&rules, &String::from("this is lowercase")));
+        assert!(!check(&rules, &String::from("")));
+        assert!(!check(&rules, &String::from("\"😊")));
+        assert!(!check(&rules, &String::from("This ends with:")));
+        assert!(!check(&rules, &String::from(" AA ")));
+        assert!(!check(&rules, &String::from("This has broken  space")));
+        assert!(!check(&rules, &String::from("This as well !")));
+        assert!(!check(&rules, &String::from("And this ;")));
+        assert!(!check(&rules, &String::from("This is gonna be way way way way way way way way way way too long")));
+        assert!(!check(&rules, &String::from("This contains 1 number")));
+        assert!(!check(&rules, &String::from("foo\n\nfoo")));
+        assert!(!check(&rules, &String::from("foo\\foo")));
+        assert!(!check(&rules, &String::from("foo<>")));
+        assert!(!check(&rules, &String::from("foo*@")));
+        assert!(!check(&rules, &String::from("A.B")));
+        assert!(!check(&rules, &String::from("S.T.A.L.K.E.R.")));
     }
 
     #[test]
     fn test_french() {
         let rules : Rules = load_rules("fr");
 
-        assert_eq!(check(&rules, &String::from("")), false);
-        assert_eq!(check(&rules, &String::from("\"😊")), false);
-        assert_eq!(check(&rules, &String::from("This ends with:")), false);
-        assert_eq!(check(&rules, &String::from("This does not end with a period")), false);
-        assert_eq!(check(&rules, &String::from("?This does not start with a letter")), false);
-        assert_eq!(check(&rules, &String::from("this starts with lowercase")), false);
-        assert_eq!(check(&rules, &String::from(" AA ")), false);
-        assert_eq!(check(&rules, &String::from("This has broken  space")), false);
-        assert_eq!(check(&rules, &String::from("This as well !")), false);
-        assert_eq!(check(&rules, &String::from("And this ;")), false);
-        assert_eq!(check(&rules, &String::from("This is gonna be way way way way way way way way way way too long")), false);
-        assert_eq!(check(&rules, &String::from("Short")), false);
-        assert_eq!(check(&rules, &String::from("This is absolutely validé.")), true);
-        assert_eq!(check(&rules, &String::from("No!!!")), false);
-        assert_eq!(check(&rules, &String::from("This contains 1 number")), false);
-        assert_eq!(check(&rules, &String::from("foo\n\nfoo")), false);
-        assert_eq!(check(&rules, &String::from("foo<>")), false);
-        assert_eq!(check(&rules, &String::from("foo«")), false);
-        assert_eq!(check(&rules, &String::from("foo*@")), false);
-        assert_eq!(check(&rules, &String::from("A.B")), false);
-        assert_eq!(check(&rules, &String::from("S.T.A.L.K.E.R.")), false);
-        assert_eq!(check(&rules, &String::from("Some sentence that ends with A.")), false);
+        assert!(check(&rules, &String::from("This is absolutely validé.")));
+        assert!(!check(&rules, &String::from("")));
+        assert!(!check(&rules, &String::from("\"😊")));
+        assert!(!check(&rules, &String::from("This ends with:")));
+        assert!(!check(&rules, &String::from("This does not end with a period")));
+        assert!(!check(&rules, &String::from("?This does not start with a letter")));
+        assert!(!check(&rules, &String::from("this starts with lowercase")));
+        assert!(!check(&rules, &String::from(" AA ")));
+        assert!(!check(&rules, &String::from("This has broken  space")));
+        assert!(!check(&rules, &String::from("This as well !")));
+        assert!(!check(&rules, &String::from("And this ;")));
+        assert!(!check(&rules, &String::from("This is gonna be way way way way way way way way way way too long")));
+        assert!(!check(&rules, &String::from("Short")));
+        assert!(!check(&rules, &String::from("No!!!")));
+        assert!(!check(&rules, &String::from("This contains 1 number")));
+        assert!(!check(&rules, &String::from("foo\n\nfoo")));
+        assert!(!check(&rules, &String::from("foo<>")));
+        assert!(!check(&rules, &String::from("foo«")));
+        assert!(!check(&rules, &String::from("foo*@")));
+        assert!(!check(&rules, &String::from("A.B")));
+        assert!(!check(&rules, &String::from("S.T.A.L.K.E.R.")));
+        assert!(!check(&rules, &String::from("Some sentence that ends with A.")));
     }
 
     #[test]
     fn test_german() {
         let rules : Rules = load_rules("de");
 
-        assert_eq!(check(&rules, &String::from("Dies ist ein korrekter Satz.")), true);
-        assert_eq!(check(&rules, &String::from("Satzzeichen in der Mitte. Wird nicht akzeptiert.")), false);
-        assert_eq!(check(&rules, &String::from("Satzzeichen in der Mitte? Wird nicht akzeptiert.")), false);
-        assert_eq!(check(&rules, &String::from("Satzzeichen in der Mitte! Wird nicht akzeptiert.")), false);
-        assert_eq!(check(&rules, &String::from("Französische Satzzeichen werden ignorierté.")), false);
-        assert_eq!(check(&rules, &String::from("Andere Satzzeichen wie Åblabla werden auch ignoriert.")), false);
-        assert_eq!(check(&rules, &String::from("Γεια σας")), false);
-        assert_eq!(check(&rules, &String::from("Sätze dürfen keine Wörter mit nur einem B Buchstaben haben.")), false);
-        assert_eq!(check(&rules, &String::from("A auch nicht am Anfang.")), false);
-        assert_eq!(check(&rules, &String::from("Oder am Ende e.")), false);
-        assert_eq!(check(&rules, &String::from("Oder am Ende e.")), false);
-        assert_eq!(check(&rules, &String::from("AmSi ist eine schwarze Masse, isomorph mit LaSi")), false);
-        assert_eq!(check(&rules, &String::from("Die Aussperrung ist nach Art.")), false);
-        assert_eq!(check(&rules, &String::from("Remy & Co.")), false);
-        assert_eq!(check(&rules, &String::from("Es ist die sog.")), false);
-        assert_eq!(check(&rules, &String::from("Kein deutsches Wort: ambiguous.")), false);
-        assert_eq!(check(&rules, &String::from("Bundesliga am Anfang eines Satzes.")), false);
-        assert_eq!(check(&rules, &String::from("Liga am Anfang eines Satzes.")), false);
-        assert_eq!(check(&rules, &String::from("Abkürzung am Ende hl.")), false);
-        assert_eq!(check(&rules, &String::from("Abkürzung am Ende geb.")), false);
+        assert!(check(&rules, &String::from("Dies ist ein korrekter Satz.")));
+        assert!(!check(&rules, &String::from("Satzzeichen in der Mitte. Wird nicht akzeptiert.")));
+        assert!(!check(&rules, &String::from("Satzzeichen in der Mitte? Wird nicht akzeptiert.")));
+        assert!(!check(&rules, &String::from("Satzzeichen in der Mitte! Wird nicht akzeptiert.")));
+        assert!(!check(&rules, &String::from("Französische Satzzeichen werden ignorierté.")));
+        assert!(!check(&rules, &String::from("Andere Satzzeichen wie Åblabla werden auch ignoriert.")));
+        assert!(!check(&rules, &String::from("Γεια σας")));
+        assert!(!check(&rules, &String::from("Sätze dürfen keine Wörter mit nur einem B Buchstaben haben.")));
+        assert!(!check(&rules, &String::from("A auch nicht am Anfang.")));
+        assert!(!check(&rules, &String::from("Oder am Ende e.")));
+        assert!(!check(&rules, &String::from("Oder am Ende e.")));
+        assert!(!check(&rules, &String::from("AmSi ist eine schwarze Masse, isomorph mit LaSi")));
+        assert!(!check(&rules, &String::from("Die Aussperrung ist nach Art.")));
+        assert!(!check(&rules, &String::from("Remy & Co.")));
+        assert!(!check(&rules, &String::from("Es ist die sog.")));
+        assert!(!check(&rules, &String::from("Kein deutsches Wort: ambiguous.")));
+        assert!(!check(&rules, &String::from("Bundesliga am Anfang eines Satzes.")));
+        assert!(!check(&rules, &String::from("Liga am Anfang eines Satzes.")));
+        assert!(!check(&rules, &String::from("Abkürzung am Ende hl.")));
+        assert!(!check(&rules, &String::from("Abkürzung am Ende geb.")));
     }
 
     #[test]
     fn test_hungarian() {
         let rules : Rules = load_rules("hu");
 
-        assert_eq!(check(&rules, &String::from("A BBC Rádió rádiójátékot készített belőle.")), false);
-        assert_eq!(check(&rules, &String::from("A BD fejlesztései miatt verziószámmal is találkozhatunk.")), false);
-        assert_eq!(check(&rules, &String::from("A BCS-elmélet más fermionok közti kölcsönhatások leírására is alkalmas.")), false);
-        assert_eq!(check(&rules, &String::from("A BKV-nál a kocsik elbontásáról döntöttek.")), false);
-        assert_eq!(check(&rules, &String::from("A BL-ben ötször játszhatott.")), false);
-        assert_eq!(check(&rules, &String::from("A B-döntőt hat résztvevővel rendezték.")), false);
-        assert_eq!(check(&rules, &String::from("A -ház egyik legkiválóbb uralkodójaként tartják számon.")), false);
-        assert_eq!(check(&rules, &String::from("A egyik legkiválóbb uralkodójaként tartják számon.")), true);
+        assert!(check(&rules, &String::from("A egyik legkiválóbb uralkodójaként tartják számon.")));
+        assert!(!check(&rules, &String::from("A BBC Rádió rádiójátékot készített belőle.")));
+        assert!(!check(&rules, &String::from("A BD fejlesztései miatt verziószámmal is találkozhatunk.")));
+        assert!(!check(&rules, &String::from("A BCS-elmélet más fermionok közti kölcsönhatások leírására is alkalmas.")));
+        assert!(!check(&rules, &String::from("A BKV-nál a kocsik elbontásáról döntöttek.")));
+        assert!(!check(&rules, &String::from("A BL-ben ötször játszhatott.")));
+        assert!(!check(&rules, &String::from("A B-döntőt hat résztvevővel rendezték.")));
+        assert!(!check(&rules, &String::from("A -ház egyik legkiválóbb uralkodójaként tartják számon.")));
     }
 }

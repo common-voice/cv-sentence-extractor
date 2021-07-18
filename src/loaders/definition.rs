@@ -1,4 +1,4 @@
-use std::path::PathBuf;
+use std::path::Path;
 use crate::config::Config;
 
 // Each loader can process the files given by file_name as they need to.
@@ -18,5 +18,5 @@ use crate::config::Config;
 
 pub trait Loader {
   fn get_config(&self) -> &Config;
-  fn load(&self, file_name: &PathBuf) -> Result<Vec<String>, String>;
+  fn load(&self, file_name: &Path) -> Result<Vec<String>, String>;
 }

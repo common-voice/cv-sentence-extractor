@@ -63,7 +63,7 @@ fn choose(
 ) -> Vec<String> {
     let sentences: Vec<String>;
 
-    if rules.segmenter != String::from("") {
+    if rules.segmenter != *"" {
         if rules.segmenter == "python" {
             sentences = split_sentences_with_python(language, text);
         } else {

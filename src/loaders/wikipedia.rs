@@ -1,7 +1,7 @@
 use serde_json::Value;
 use std::fs::File;
 use std::io::Read;
-use std::path::PathBuf;
+use std::path::Path;
 
 use super::definition::Loader;
 use crate::config::Config;
@@ -28,7 +28,7 @@ impl Loader for Wikipedia {
       &self.config
   }
 
-  fn load(&self, file_name: &PathBuf) -> Result<Vec<String>, String> {
+  fn load(&self, file_name: &Path) -> Result<Vec<String>, String> {
     let mut file = File::open(file_name).map_err(|e| format!("{}", e))?;
     let mut json_str = String::new();
     file.read_to_string(&mut json_str)

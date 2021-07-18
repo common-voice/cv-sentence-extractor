@@ -100,11 +100,11 @@ mod test {
         assert_eq!(rules.min_word_count, 1);
         assert_eq!(rules.max_word_count, 14);
         assert_eq!(rules.min_characters, 0);
-        assert_eq!(rules.may_end_with_colon, false);
-        assert_eq!(rules.quote_start_with_letter, true);
-        assert_eq!(rules.needs_punctuation_end, false);
-        assert_eq!(rules.needs_uppercase_start, false);
-        assert_eq!(rules.needs_letter_start, true);
+        assert!(!rules.may_end_with_colon);
+        assert!(rules.quote_start_with_letter);
+        assert!(!rules.needs_punctuation_end);
+        assert!(!rules.needs_uppercase_start);
+        assert!(rules.needs_letter_start);
         assert_eq!(rules.allowed_symbols_regex, String::from(""));
         assert_eq!(rules.disallowed_symbols, vec![]);
         assert_eq!(rules.disallowed_words, HashSet::new());
