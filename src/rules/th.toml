@@ -1,0 +1,165 @@
+# "other_patterns" borrowing these patterns:
+# BEGIN_REGEX, END_REGEX, STRUCTURE_REGEX, and ABBREVIATION_REGEX
+# with few adjustments, from:
+# https://github.com/common-voice/sentence-collector/blob/main/server/lib/validation/languages/th.js
+#
+# "replacements" borrowing normalization/cleanup patterns,
+# with some adjustments, from:
+# https://github.com/common-voice/sentence-collector/blob/main/server/lib/cleanup/languages/th.js
+
+min_trimmed_length = 3
+# Currently, without Thai word tokenization,
+# this "word" will work effectively for Thai
+# as "a group of character whitespace/punctuation".
+min_word_count = 1
+max_word_count = 5
+min_characters = 6
+may_end_with_colon = false
+quote_start_with_letter = true
+needs_punctuation_end = false
+needs_letter_start = true
+needs_uppercase_start = false
+allowed_symbols_regex = "[0-9\u0020\u0e01-\u0e2e\u0e30-\u0e39\u0e40-\u0e45\u0e47-\u0e4c\\-\\.‚;:!\\?“”‘’\u0022\u0027\u0060]"
+even_symbols = [
+  "\u0022",  # Quotation mark
+]
+matching_symbols = [
+  ["‘", "’"],
+  ["“", "”"]
+]
+broken_whitespace = ["  ", " ,", " .", " ;"]
+
+abbreviation_patterns = [
+  "[A-Z]{2,}",
+  "[A-Z]+\\.*[A-Z]+",
+  "[ก-ฮ]{1,3}\\.([ก-ฮ]{1,3}\\.)+"
+]
+
+# Other patterns
+# - No sentences end with period, comma, colon, semicolon, dash
+# - No characters immediately after comma, colon, semicolon
+# - Missing whitespace after comma, semicolon, etc.
+#
+# MAX_LENGTH:
+# - Sentence longer than 80 characters
+#
+# BEGIN_REGEX:
+# These Thai chars cannot start the word:
+# - All vowels except lead vowels
+# - Tone marks
+# - Phinthu, Thanthakhat, Nikhahit, Yamakkan
+#
+# END_REGEX:
+# These Thai chars cannot end the word:
+# - Lead vowels
+#
+# STRUCTURE_REGEX:
+# - 50 running characters or more without space (difficult to read)
+# - Very short word following by a space at the beginning of sentence (maybe orphan)
+# - Avoid orphan words at the beginning and end of sentence
+#
+# These classes of Thai characters are not allowed to be immediately repeated:
+# - Lead vowels: \u0e40\u0e41\u0e42\u0e43\u0e44
+# - Follow vowels: \u0e30\u0e32\u0e33\u0e45
+# - Above vowels: \u0e31\u0e34\u0e35\u0e36\u0e37\u0e4d\u0e47
+# - Below vowels: \u0e38\u0e39
+# - Tone marks: \u0e48\u0e49\u0e4a\u0e4b
+# - Phinthu: \u0e3a
+# - Thanthakhat: \u0e4c
+# - Nikhahit: \u0e4d
+# - Yamakkan: \u0e4e
+#
+# These classes of Thai characters have a specific legitimate order:
+# - Tone marks/Pinthu/Thanthakat/Nikhahit/Yamakkan can't immediately come after lead and follow vowels
+# - Tone marks/Pinthu/Thanthakat/Nikhahit/Yamakkan can't immediately come before above and below vowels
+other_patterns = [
+  "[\\.,:;-]$",
+  "[,:;]\\S",
+  "[\\.|\\?|!].+$",
+  "^.{101,}$",  # MAX_LENGTH = 100
+  "(^|\\s+)[\u0e30\u0e32\u0e33\u0e45\u0e31\u0e34\u0e35\u0e36\u0e37\u0e4d\u0e47\u0e38\u0e39\u0e48\u0e49\u0e4a\u0e4b\u0e3a\u0e4c\u0e4d\u0e4e]",  # invalid char to start word/sentence
+  "[\u0e40\u0e41\u0e42\u0e43\u0e44](\\s+|$)",  # invalid char to end word/sentence
+  "[\u0e01-\u0e2e\u0e30-\u0e39\u0e40-\u0e4c‘’‚;:“”\u0022\u0027\u0060\\-\\?\\.!]{81,}",  # more than 80 chars running without a space
+  "[\u0e01-\u0e4e]{71,}",  # more than Thai 70 consonants and vowels running without a space
+  "[ก-ฮ]{31,}",  # more than 30 consonants running without a space
+  "^[^ณ]\\s",  # lone character at the beginning of a sentence (except No Nen)
+  "^[บ้าง|ก่อน|เลย|แล้ว|หรือไม่|ไหม|ล่ะ|ด้วย|อีก|และ|หรือ|กับ|ก็]\\s",  # words that indicate orphan starting
+  "^\\S{2,3}\\s",  # orphan starting
+  "\\s\\S{1,3}$",  # orphan ending
+  "\\s[และ|หรือ|กับ|เช่น]$",  # orphan ending
+  "[\u0e40\u0e41\u0e42\u0e43\u0e44]{2,}",
+  "[\u0e30\u0e32\u0e33\u0e45]{2,}",
+  "[\u0e31\u0e34\u0e35\u0e36\u0e37\u0e4d\u0e47]{2,}",
+  "[\u0e38\u0e39]{2,}",
+  "[\u0e48\u0e49\u0e4a\u0e4b]{2,}",
+  "\u0e3A{2,}",
+  "\u0e4C{2,}",
+  "\u0e4D{2,}",
+  "\u0e4E{2,}",
+  "[\u0e40\u0e41\u0e42\u0e43\u0e44\u0e30\u0e32\u0e33\u0e45][\u0e48\u0e49\u0e4a\u0e4b\u0e3a\u0e4c\u0e4d\u0e4e]",
+  "[\u0e48\u0e49\u0e4a\u0e4b\u0e3a\u0e4c\u0e4d\u0e4e][\u0e31\u0e34\u0e35\u0e36\u0e37\u0e4d\u0e47\u0e38\u0e39]",
+]
+
+# Replacements
+# - Remove zero-width characters
+# - Expand abbreviations
+# - Remove punctuations
+# - Normalize character orders
+replacements = [
+  ["\u200b", ""],  # remove zero-width space
+  ["\u200c", ""],  # remove zero-width non-joiner
+  ["\u2063", ""],  # remove invisible separator
+  ["\u0e30\u0e30", "\u0e30"],  # double vowel
+  ["\u0e31\u0e31", "\u0e31"],  # double vowel
+  ["\u0e32\u0e32", "\u0e32"],  # double vowel
+  ["\u0e33\u0e33", "\u0e33"],  # double vowel
+  ["\u0e34\u0e34", "\u0e34"],  # double vowel
+  ["\u0e35\u0e35", "\u0e35"],  # double vowel
+  ["\u0e36\u0e36", "\u0e36"],  # double vowel
+  ["\u0e37\u0e37", "\u0e37"],  # double vowel
+  ["\u0e38\u0e38", "\u0e38"],  # double vowel
+  ["\u0e39\u0e39", "\u0e39"],  # double vowel
+  ["\u0e3a\u0e3a", "\u0e3a"],  # double vowel
+  ["\u0e41\u0e41", "\u0e41"],  # double vowel
+  ["\u0e42\u0e42", "\u0e42"],  # double vowel
+  ["\u0e43\u0e43", "\u0e43"],  # double vowel
+  ["\u0e44\u0e44", "\u0e44"],  # double vowel
+  ["\u0e45\u0e45", "\u0e45"],  # double vowel
+  ["\u0e46\u0e46", "\u0e46"],  # double Maiyamok
+  ["\u0e47\u0e47", "\u0e47"],  # double vowel
+  ["\u0e48\u0e48", "\u0e48"],  # double tone mark
+  ["\u0e49\u0e49", "\u0e49"],  # double tone mark
+  ["\u0e4a\u0e4a", "\u0e4a"],  # double tone mark
+  ["\u0e4b\u0e4b", "\u0e4b"],  # double tone mark
+  ["\u0e4c\u0e4c", "\u0e4c"],  # double symbol
+  ["\u0e4d\u0e4d", "\u0e4d"],  # double symbol
+  ["\u0e4e\u0e4e", "\u0e4e"],  # double symbol
+  [" พ.ร.บ.", " พระราชบัญญัติ"],  # abbreviation
+  [" พ.ร.ก.", " พระราชกำหนด"],  # abbreviation
+  [" พ.ศ. ", " พุทธศักราช "],  # abbreviation
+  [" ค.ศ. ", " คริสต์ศักราช "],  # abbreviation
+  [" ม.ร.ว.", " หม่อมราชวงศ์"],  # abbreviation
+  [" .", "."],
+  [" ,", " "],
+  [" :", ":"],
+  [" ;", ";"],
+  [" !", "!"],
+  [" ?", "?"],
+  [":", ": "],
+  [",", " "],
+  ["..", " "],
+  ["...", " "],
+  ["....", " "],
+  [" .", "."],
+  ["    ", " "],
+  ["   ", " "],
+  ["  ", " "],
+  ["\u0e40\u0e40", "\u0e41"],  # Sara E + Sara E -> Sara Ae
+  ["\u0e4d\u0e32", "\u0e33"],  # Nikhahit + Sara Aa -> Sara Am
+  ["\u0e4d\u0e48\u0e32", "\u0e48\u0e33"],  # Nikhahit + Mai Ek + Sara Aa -> Sara Am
+  ["\u0e4d\u0e49\u0e32", "\u0e49\u0e33"],  # Nikhahit + Mai Tho + Sara Aa -> Sara Am
+  ["\u0e4d\u0e4A\u0e32", "\u0e4A\u0e33"],  # Nikhahit + Mai Tri + Sara Aa -> Sara Am
+  ["\u0e4d\u0e4B\u0e32", "\u0e4B\u0e33"],  # Nikhahit + Mai Chattawa + Sara Aa -> Sara Am
+  ["\u0e24\u0e32", "\u0e24\u0e45"],  # Ru + Sara Aa -> Ru + Lakkhangyao
+  ["\u0e26\u0e32", "\u0e26\u0e45"],  # Lu + Sara Aa -> Lu + Lakkhangyao
+]
