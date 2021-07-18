@@ -18,6 +18,16 @@ function run {
   fi
   rm listing.html
 
+  if [ $TYPE == "sample" ]; then
+    # For a sample extract we only want to run it for the first file
+    ARCHIVE_FILE_NAME=${LANGUAGE_CODE}${ARCHIVE_FILE_NAME_MATCHES/%?/}
+    echo "Starting sample extraction for $ARCHIVE_FILE_NAME"
+    _downloadAndDecompressDump
+    extract
+    cleanup
+    exit $?
+  fi
+
   for archive in "${ARCHIVE_FILE_NAME_MATCHES[@]}"
   do
     ARCHIVE_FILE_NAME=${LANGUAGE_CODE}${archive/%?/}

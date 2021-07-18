@@ -18,6 +18,9 @@ mkdir -p $OUTPUT_PATH
 
 source $HERE/providers/common.sh
 
+echo "Installing Python dependencies"
+pip3 install -r requirements.txt
+
 if [ $TYPE == "sample" ]; then
   source $HERE/providers/wiki.sh
   

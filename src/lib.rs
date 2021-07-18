@@ -14,3 +14,4 @@ mod replacer;
 mod rules;
 mod config;
 mod loaders;
+mod segmenter;
