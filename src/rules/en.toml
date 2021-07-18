@@ -1,4 +1,3 @@
-segmenter = "python"
 min_trimmed_length = 3
 min_word_count = 1
 max_word_count = 14
