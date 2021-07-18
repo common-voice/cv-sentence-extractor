@@ -60,7 +60,7 @@ python WikiExtractor.py --json ../enwiki-latest-pages-articles-multistream.xml
 
 ```bash
 cd ../cv-sentence-extractor
-pip3 install -r requirements.txt # can be skipped if your language doesn't use the Python tokenizer
+pip3 install -r requirements.txt # can be skipped if your language doesn't use the Python segmenter
 cargo run --release -- extract -l en -d ../wikiextractor/text/ >> wiki.en.txt
 ```
 
@@ -93,7 +93,7 @@ python WikiExtractor.py --json ../enwikisource-latest-pages-articles.xml
 
 ```bash
 cd ../cv-sentence-extractor
-pip3 install -r requirements.txt # can be skipped if your language doesn't use the Python tokenizer
+pip3 install -r requirements.txt # can be skipped if your language doesn't use the Python segmenter
 cargo run --release -- extract-wikisource -l en -d ../wikiextractor/text/ >> wiki.en.txt
 ```
 
@@ -104,7 +104,7 @@ cargo run --release -- extract-wikisource -l en -d ../wikiextractor/text/ >> wik
 If you have one or multiple files with one sentence per line, you can use this extractor to extract sentences from these files applying the defined language rules. This can be useful if you have a large list of sentences and you want to only have sentences which match the rules.
 
 ```bash
-pip3 install -r requirements.txt # can be skipped if your language doesn't use the Python tokenizer
+pip3 install -r requirements.txt # can be skipped if your language doesn't use the Python segmenter
 cargo run --release -- extract-file -l en -d ../texts/ >> file.en.txt
 ```
 
@@ -132,7 +132,7 @@ The following rules can be configured per language. Add a `<language>.toml` file
 | other_patterns |  Rust regex to disallow anything else | Rust Regex Array | all other patterns allowed
 | quote_start_with_letter |  If a quote needs to start with a letter | boolean | true
 | replacements |  Replaces abbreviations or other words according to configuration. This happens before any other rules are checked. | Array of replacement configurations: each configuration is an Array of two values: `["search", "replacement"]`. See example below. | nothing gets replaced
-| tokenizer |  Tokenizer to use for this language. See below for more information. | "python" | using `rust-punkt` by default
+| segmenter |  Segmenter to use for this language. See below for more information. | "python" | using `rust-punkt` by default
 
 ### Example for `matching_symbols`
 
@@ -230,25 +230,25 @@ In order to get your language rules and blocklist incorporated in this repo, you
 
 Once we have your rules into the repo, we will run an automatic extraction and submit those sentences to Common Voice. This means that you can't manually adjust the sample output you've used for review as these changes would be lost.
 
-## Using a different tokenizer to split sentences
+## Using a different segmenter to split sentences
 
-By default we are using the `rust-punkt` tokenizer to split sentences. However this leads to several issues if `rust-punkt` does not support a given language. More info on that can be found in issue #11. Therefore we introduce a new way of adding your own Python-based tokenizer if needed. Note that using Python-based tokenizers will slow down the extract considerably.
+By default we are using the `rust-punkt` segmenter to split sentences. However this leads to several issues if `rust-punkt` does not support a given language. More info on that can be found in issue #11. Therefore we introduce a new way of adding your own Python-based segmenter if needed. Note that using Python-based segmenters will slow down the extract considerably.
 
-If `rust-punkt` is not working well for a language rule file you are implementing, you can use your own custom tokenizer written in Python. While English doesn't use a Python-based tokenizer, there is an English example available in `src/tokenizers.rs` you can use as base to write your own tokenizer in Python.
+If `rust-punkt` is not working well for a language rule file you are implementing, you can use your own custom segmenter written in Python. While English doesn't use a Python-based segmenter, there is an English example available in `src/segmenters.rs` you can use as base to write your own segmenter in Python.
 
 This is currently experimental.
 
-### Changes needed to add your own tokenizer in Python
+### Changes needed to add your own segmenter in Python
 
-First you will need to add the `tokenizer` rule to the rules file:
+First you will need to add the `segmenter` rule to the rules file:
 
 ```
-tokenizer = "python"
+segmenter = "python"
 ```
 
 This will direct our extraction script to use the special cases Python extraction.
 
-Then you will need to add a new function to `src/tokenizers.rs` with the name `split_sentences_with_python_xx`, replacing `xx` with your language code you also use for the rules file. You can copy/paste `split_sentences_with_python_en` and adjust it to your needs. Using Spanish as an example, your new function might look like this:
+Then you will need to add a new function to `src/segmenters.rs` with the name `split_sentences_with_python_xx`, replacing `xx` with your language code you also use for the rules file. You can copy/paste `split_sentences_with_python_en` and adjust it to your needs. Using Spanish as an example, your new function might look like this:
 
 ```
 pub fn split_sentences_with_python_es(text: &str) -> Vec<String> {

@@ -3,7 +3,7 @@ use crate::replacer;
 use crate::checker;
 use crate::loaders::Loader;
 use crate::rules::{load_rules, Rules};
-use crate::tokenizer::split_sentences_with_python;
+use crate::segmenter::split_sentences_with_python;
 use glob::glob;
 use punkt::params::Standard;
 use punkt::{SentenceTokenizer, TrainingData};
@@ -63,14 +63,14 @@ fn choose(
 ) -> Vec<String> {
     let sentences: Vec<String>;
 
-    if rules.tokenizer != String::from("") {
-        if rules.tokenizer == "python" {
+    if rules.segmenter != String::from("") {
+        if rules.segmenter == "python" {
             sentences = split_sentences_with_python(language, text);
         } else {
-            panic!("Tokenizer {} is not yet supported!", rules.tokenizer);
+            panic!("Segmenter {} is not yet supported!", rules.segmenter);
         }
     } else {
-        // we use rust-punkt as tokenizer by default
+        // we use rust-punkt as segmenter by default
         sentences = SentenceTokenizer::<Standard>::new(text, training_data)
             .map(|item| { String::from(item) })
             .collect();
