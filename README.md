@@ -248,7 +248,7 @@ segmenter = "python"
 
 This will direct our extraction script to use the special cases Python extraction.
 
-Then you will need to add a new function to `src/segmenters.rs` with the name `split_sentences_with_python_xx`, replacing `xx` with your language code you also use for the rules file. You can copy/paste `split_sentences_with_python_en` and adjust it to your needs. Using Spanish as an example, your new function might look like this:
+Then you will need to add a new function to `src/segmenter.rs` with the name `split_sentences_with_python_xx`, replacing `xx` with your language code you also use for the rules file. You can copy/paste `split_sentences_with_python_en` and adjust it to your needs. Using Spanish as an example, your new function might look like this:
 
 ```
 pub fn split_sentences_with_python_es(text: &str) -> Vec<String> {
