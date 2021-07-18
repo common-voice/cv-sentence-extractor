@@ -15,6 +15,7 @@ jobs:
     steps:
     
     # SETUP
+    - uses: actions/checkout@master
     - uses: hecrj/setup-rust-action@v1.3.4
       with:
         rust-version: ${{ matrix.rust }}
@@ -27,7 +28,6 @@ jobs:
       run: |
         python -m pip install --upgrade pip
         pip install -r requirements.txt
-    - uses: actions/checkout@master
     
     # TESTS
     - name: Run clippy
