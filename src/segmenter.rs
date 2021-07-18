@@ -30,3 +30,25 @@ pub fn split_sentences_with_python_en(text: &str) -> Vec<String> {
     
     ctx.get("split_sentences")
 }
+
+#[cfg(test)]
+mod test {
+    use super::*;
+
+    #[test]
+    fn test_segmenter_en() {
+        let language = "en";
+        let text = "I am a sentence. Me too!";
+
+        assert_eq!(split_sentences_with_python(language, text).len(), 2);
+    }
+
+    #[test]
+    #[should_panic]
+    fn test_segmenter_invalid_language() {
+        let language = "INVALID_LANGUAGE";
+        let text = "I am a sentence. Me too!";
+
+        assert_eq!(split_sentences_with_python(language, text).len(), 2);
+    }
+}
