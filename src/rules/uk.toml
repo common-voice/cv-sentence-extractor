@@ -1,0 +1,83 @@
+min_trimmed_length = 3
+min_word_count = 5
+max_word_count = 14
+min_characters = 1
+may_end_with_colon = false
+quote_start_with_letter = true
+needs_punctuation_end = true
+needs_letter_start = true
+needs_uppercase_start = true
+# Allow letters, apostrophe, spaces, ",.!?" and various dashes
+allowed_symbols_regex = "[А-ЩЬЮЯҐЄІЇа-щьюяґєії'\\s,.\\-‑?!—­‐–―−]"
+disallowed_symbols = []
+broken_whitespace = ["  ", " ,", " .", " ?", " !", " ;", " \""]
+matching_symbols = [
+  ["«", "»"],
+  # No need to balance "’" with "‘" because in Ukrainian texts
+  # they are typically used as apostrophes, not quotes
+]
+replacements = [
+  ["‘", "'"],      # U+2018 => apostrophe
+  ["’", "'"],      # U+2019 => apostrophe
+  ["­", ""],        # U+00AD => empty string
+  [" ", ""],      # U+2028 => empty string
+  [" ", " "],      # U+00A0 => whitespace
+  [" ", " "],      # U+2002 => whitespace
+  [" ", " "],      # U+2009 => whitespace
+  [" ", " "],      # U+202F => whitespace
+  ["　", " "],      # U+3000 => whitespace
+  ["‑", "-"],      # U+2011 => hyphen
+  ["–", "—"],      # U+2013 => U+2014
+  ["―", "—"],      # U+2015 => U+2014
+  ["−", "—"],      # U+2212 => U+2014
+  [" - ", " — "],  # hyphen => U+2014, when between whitespaces
+  [" -- ", " — "], # two hyphens => U+2014, when between whitespaces
+]
+
+# Remove sentences with these patterns:
+abbreviation_patterns = [
+  # Т. Шевченко
+  "[А-ЩЬЮЯҐЄІЇ]\\.",
+  # Ст. Бандера
+  "[А-ЩЬЮЯҐЄІЇ][а-щьюяґєії]\\.",
+  # УССР
+  "[А-ЩЬЮЯҐЄІЇ]{2,}",
+  # Подільського р-ну
+  "р-н[аіу]?[^а-щьюяґєії]",
+  # м.Львів
+  "[а-щьюяґєії]\\.[А-ЩЬЮЯҐЄІЇа-щьюяґєії]",
+  # р. Дніпро
+  "\\s[а-щьюяґєії]\\.",
+  # ст.-укр.
+  "[а-щьюяґєії]{1,3}\\.-[а-щьюяґєії]{1,4}\\.",
+  # госп-во
+  "сп-в",
+  # напр.,
+  "\\.,",
+  # "«-»", "«:»", "«'»"
+  "«[-:']»",
+  # Frequent sentence-final abbreviations
+  "[^А-ЩЬЮЯҐЄІЇа-щьюяґєії](—|-[вгдкрт]|год|гр|дек|див|зав|зал|іт|кв|кг|км|кс|лат|мкм|млн|млрд|мм|напр|нар|нм|нім|од|оо|полк|пор|пд|пл|пн|пр|прп|рад|рос|рус|сер|см|сов|ст|тис|хв)\\.$",
+]
+
+# Also remove sentences with these patterns:
+other_patterns = [
+  # Uppercase in the middle of the sentence
+  ".+([А-ЩЬЮЯҐЄІЇ])",
+  # Invalid punctuation at the end of the sentence
+  "[^.!?]$",
+  # Two or more dots in a row
+  "\\.{2,}",
+  # Two dashes in a row
+  "— —", "-—",
+  # Asymmetric whitespaces around a dash
+  "[а-щьюяґєії](—\\s|\\s—)[а-щьюяґєії]",
+  # No whitespaces around a dash
+  "[А-ЩЬЮЯҐЄІЇа-щьюяґєії]—[А-ЩЬЮЯҐЄІЇа-щьюяґєії]",
+  # Whitespace before hyphen or apostrophe
+  "\\s('|-)+[а-щьюяґєії.,'-]",
+  # Apostrophe between whitespaces
+  "\\s'\\s",
+  # Very frequent sentence-initial patterns, would skew the sentence distribution if allowed
+  "^(Локалізований у (клітинн|цитоплазм)|Кодований геном білок за функці|Задіяний у таких біологічних процесах|Основою економіки є сільське господарство|По завершенні ігрової кар'єри|Статус (надано|присвоєно) (для|з метою) збереження)",
+]
