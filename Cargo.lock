@@ -385,8 +385,7 @@ dependencies = [
 [[package]]
 name = "punkt"
 version = "1.0.5"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "54f746236290dbeb84c89a7123b8ac32b1a3d42d603a5d59812c14bb07b937ea"
+source = "git+https://github.com/dodomorandi/rust-punkt?rev=fb16d30a9e4dbcad1e0ab109edf7772714ff3121#fb16d30a9e4dbcad1e0ab109edf7772714ff3121"
 dependencies = [
  "num",
  "phf",

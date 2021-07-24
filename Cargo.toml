@@ -19,7 +19,7 @@ clap = "2.33.3"
 lazy_static = "1.4.0"
 itertools = "0.10.0"
 regex = "1.5.4"
-punkt = "1.0.5"
+punkt = { git = "https://github.com/dodomorandi/rust-punkt", rev = "fb16d30a9e4dbcad1e0ab109edf7772714ff3121" }
 rand = "0.8.3"
 toml = "0.5.8"
 serde = { version = "1.0.126", features = ["derive"] }
