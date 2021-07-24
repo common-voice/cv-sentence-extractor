@@ -16,7 +16,7 @@ use std::path::PathBuf;
 pub fn extract(loader: impl Loader, no_check: bool) -> Result<(), String> {
     let config = loader.get_config();
     let rules = load_rules(&config.language);
-    let training_data = get_training_data(&loader.get_config().language);
+    let training_data = get_training_data(&config.language);
     let mut existing_sentences = HashSet::new();
     let mut char_count = 0;
     let mut sentence_count = 0;
@@ -25,16 +25,13 @@ pub fn extract(loader: impl Loader, no_check: bool) -> Result<(), String> {
         eprintln!("file_name = {:?}", file_name.to_string_lossy());
         let texts = loader.load(&file_name)?;
         for text in texts {
-            let sentences = choose(
+            let sentences = get_sentences(
                 &rules,
                 &text,
                 &existing_sentences,
                 &training_data,
-                &config,
-                checker::check,
-                replacer::replace_strings,
+                config,
                 no_check,
-                &config.language,
             );
 
             for sentence in sentences {
@@ -50,22 +47,19 @@ pub fn extract(loader: impl Loader, no_check: bool) -> Result<(), String> {
     Ok(())
 }
 
-fn choose(
+fn get_sentences(
     rules: &Rules,
     text: &str,
     existing_sentences: &HashSet<String>,
     training_data: &TrainingData,
     config: &Config,
-    predicate: impl FnMut(&Rules, &str) -> bool,
-    mut replacer: impl FnMut(&Rules, &str) -> String,
     no_check: bool,
-    language: &str,
 ) -> Vec<String> {
     let sentences: Vec<String>;
 
     if rules.segmenter != *"" {
         if rules.segmenter == "python" {
-            sentences = split_sentences_with_python(language, text);
+            sentences = split_sentences_with_python(&config.language, text);
         } else {
             panic!("Segmenter {} is not yet supported!", rules.segmenter);
         }
@@ -77,7 +71,7 @@ fn choose(
     }
 
     let sentences_pool = sentences.iter()
-        .map(|item| { replacer(rules, item) })
+        .map(|item| { replacer::replace_strings(rules, item) })
         .collect();
 
     if no_check {
@@ -88,7 +82,7 @@ fn choose(
             sentences_pool,
             existing_sentences,
             config.max_sentences_per_text,
-            predicate,
+            checker::check,
         )
     }
 }
@@ -131,7 +125,7 @@ fn pick_sentences(
 
         let sentence = &sentences_pool[random_index];
         let not_already_chosen = !existing_sentences.contains(sentence);
-        if predicate(rules, &sentence) && not_already_chosen {
+        if predicate(rules, sentence) && not_already_chosen {
             chosen_sentences.push(sentence.trim().to_string());
             chosen_sentences.sort();
             chosen_sentences.dedup();

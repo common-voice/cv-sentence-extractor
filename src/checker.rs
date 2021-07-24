@@ -55,11 +55,11 @@ pub fn check(rules: &Rules, raw: &str) -> bool {
 
     let abbr = rules.abbreviation_patterns.iter().any(|pattern| {
         let regex = Regex::new(Value::as_str(pattern).unwrap()).unwrap();
-        regex.is_match(&trimmed)
+        regex.is_match(trimmed)
     });
     let other = rules.other_patterns.iter().any(|pattern| {
         let regex = Regex::new(Value::as_str(pattern).unwrap()).unwrap();
-        regex.is_match(&trimmed)
+        regex.is_match(trimmed)
     });
     if abbr || other {
         return false;
