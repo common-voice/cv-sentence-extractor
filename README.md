@@ -15,7 +15,7 @@ For a source to be added, the dataset needs to be vetted by Mozilla to check lic
 - [Rust Nightly](https://rustup.rs/) (follow the instructions and customize the install to select the `nightly` channel)
 - Install [`pip3`](https://pip.pypa.io/en/stable/installing/) in case it's not installed on your system already
 
-Note: as long as we're using the current `punkt` dependency, we need to use the Nightly version of Rust.
+Note: as long as we're using the current `inline-python` dependency, we need to use the Nightly version of Rust.
 
 Clone this repo:
 
@@ -75,7 +75,7 @@ This process is very similar to the Wikipedia process above. We can only extract
 Example (you can change "en" to your locale code)
 
 ```bash
-wget https://dumps.wikimedia.org/enwikisource/latest//enwikisource-latest-pages-articles.xml.bz2 
+wget https://dumps.wikimedia.org/enwikisource/latest//enwikisource-latest-pages-articles.xml.bz2
 bzip2 -d enwikisource-latest-pages-articles.xml.bz2
 ```
 
@@ -259,7 +259,7 @@ pub fn split_sentences_with_python_es(text: &str) -> Vec<String> {
 
         split_sentences = doTheNecessaryWorkToSplitSentences('text)
     });
-    
+
     ctx.get("split_sentences")
 }
 ```
