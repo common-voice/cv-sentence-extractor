@@ -7,8 +7,8 @@ quote_start_with_letter = true
 needs_punctuation_end = true
 needs_letter_start = true
 needs_uppercase_start = true
-# Allow letters, apostrophe, spaces, ",.!?" and various dashes
-allowed_symbols_regex = "[А-ЩЬЮЯҐЄІЇа-щьюяґєії'\\s,.\\-‑?!—­‐–―−]"
+# Allow letters, apostrophe, spaces, ",.!?:;" and various dashes
+allowed_symbols_regex = "[А-ЩЬЮЯҐЄІЇа-щьюяґєії'\\s,.\\-‑?!—­‐–―−:;]"
 disallowed_symbols = []
 broken_whitespace = ["  ", " ,", " .", " ?", " !", " ;", " \""]
 matching_symbols = [
@@ -80,4 +80,24 @@ other_patterns = [
   "\\s'\\s",
   # Very frequent sentence-initial patterns, would skew the sentence distribution if allowed
   "^(Локалізований у (клітинн|цитоплазм)|Кодований геном білок за функці|Задіяний у таких біологічних процесах|Основою економіки є сільське господарство|По завершенні ігрової кар'єри|Статус (надано|присвоєно) (для|з метою) збереження)",
+
+  # Additional patterns contributed by @tamila-krashtan and @danmysak
+
+  # в/й між приголосними й між паузою та приголосним (у т.ч. як префікс)
+  "[бвгґджзйклмнпрстфхцчшщь,;:—]\\s[вй]\\s?[бвгґджзйклмнпрстфхцчшщь]",
+  # в/й на початку речення перед приголосним
+  "^[ЙВ]\\s[бвгґджзйклмнпрстфхцчшщь]",
+  # в перед в, ф, а також перед льв, зв, св, дв, тв, гв, хв і под.
+  "\\sв\\s(ф|[бвгґджзйклмнпрстфхцчшщь]*в)",
+  # й перед йотованими голосними
+  "\\sй\\s[єїюя]",
+  # з перед шиплячими і свистячими
+  "\\sз\\s[зсцчш]",
+
+  # у між голосними (у т.ч. як префікс)
+  "[аеиіоуєїюя]\\sу\\s?[аеиіоуєїюя]",
+  # і між нейотованими голосними (у т.ч. як префікс)
+  "[аеиіоу]\\sі\\s?[аеиіоу]",
+  # у на початку речення перед голосним
+  "^У\\s[аеиіоуєїюя]",
 ]
