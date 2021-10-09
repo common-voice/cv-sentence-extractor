@@ -1,0 +1,49 @@
+# Manually starting a Wikipedia Extraction for a given language
+# This is the main way to run an extraction on articles that are
+# newer than a given date.
+
+name: Manual Dispatch - Wikipedia Extraction Rerun
+
+on:
+  workflow_dispatch:
+    inputs:
+      locale:
+        description: 'Language Code'
+        required: true
+        default: ''
+      endDate:
+        description: 'Earliest date to fetch for'
+        required: true
+        default: ''
+
+jobs:
+  extract:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest]
+        node-version: [16.x]
+
+    steps:
+    # SETUP
+    - uses: actions/checkout@v2
+    - name: Use Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v2.1.2
+      with:
+        node-version: ${{ matrix.node-version }}
+    - name: Query new articles
+      run: |
+        mkdir output
+        cd scripts
+        npm ci
+        node new-wikipedia-articles.js > ../output/new-article-titles.txt
+      env:
+        CI: true
+        WIKI_END_DATE: ${{ github.event.inputs.endDate }}
+        WIKI_LOCALE: ${{ github.event.inputs.locale }}
+
+    # UPLOAD
+    - uses: actions/upload-artifact@v2
+      with:
+        name: extraction
+        path: output/*
