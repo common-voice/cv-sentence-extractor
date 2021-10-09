@@ -9,7 +9,6 @@ const END_DATE = new Date(WIKI_END_DATE).toISOString();
 if (!WIKI_END_DATE || !WIKI_LOCALE) {
   console.error('WIKI_END_DATE and WIKI_LOCALE need to be present in ENV');
   process.exit(1);
-  return;
 }
 
 let numberOfArticles = 0;
