@@ -1,3 +1,4 @@
+use std::collections::HashSet;
 use std::fs::File;
 use std::io::Read;
 use std::path::Path;
@@ -27,7 +28,7 @@ impl Loader for FileLoader {
       &self.config
   }
 
-  fn load(&self, file_name: &Path) -> Result<Vec<String>, String> {
+  fn load(&self, file_name: &Path, _filtered_titles: &HashSet<String>) -> Result<Vec<String>, String> {
     let mut file = File::open(file_name).map_err(|e| format!("{}", e))?;
     let mut all_sentences = String::new();
     file.read_to_string(&mut all_sentences)

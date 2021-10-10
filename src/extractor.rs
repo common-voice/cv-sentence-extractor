@@ -10,20 +10,23 @@ use punkt::{SentenceTokenizer, TrainingData};
 use rand::Rng;
 use rand::rngs::ThreadRng;
 use std::collections::HashSet;
+use std::fs::File;
+use std::io::Read;
 use std::path::Path;
 use std::path::PathBuf;
 
-pub fn extract(loader: impl Loader, no_check: bool) -> Result<(), String> {
+pub fn extract(loader: impl Loader, no_check: bool, filter_list_path: &str) -> Result<(), String> {
     let config = loader.get_config();
     let rules = load_rules(&config.language);
     let training_data = get_training_data(&config.language);
+    let filtered_titles = read_filtered_titles(filter_list_path);
     let mut existing_sentences = HashSet::new();
     let mut char_count = 0;
     let mut sentence_count = 0;
     let file_names = load_file_names(&config.directory, &config.file_prefix).unwrap();
     for file_name in file_names {
         eprintln!("file_name = {:?}", file_name.to_string_lossy());
-        let texts = loader.load(&file_name)?;
+        let texts = loader.load(&file_name, &filtered_titles)?;
         for text in texts {
             let sentences = get_sentences(
                 &rules,
@@ -179,6 +182,28 @@ fn load_file_names(dir_name: &str, prefix: &str) -> Result<Vec<PathBuf>, String>
         .map_err(|e| format!("{}", e))?
         .map(|p| p.map_err(|e| format!("{}", e)))
         .collect::<Result<Vec<PathBuf>, String>>()
+}
+
+fn read_filtered_titles(filtered_titles_path: &str) -> HashSet<String> {
+    if filtered_titles_path.is_empty() {
+        return HashSet::new();
+    }
+
+    eprintln!("Reading titles from {:?}", filtered_titles_path);
+    let mut titles = HashSet::new();
+    let titles_path = Path::new(filtered_titles_path);
+    let mut content = String::new();
+    let mut file = File::open(titles_path).map_err(|e| format!("{}", e)).unwrap();
+    file.read_to_string(&mut content)
+        .map_err(|e| format!("{}", e)).unwrap();
+
+    let all_titles = content.lines();
+    for title in all_titles {
+        titles.insert(title.to_string());
+    }
+
+    eprintln!("Read {:?} titles to filter for..", titles.len());
+    titles
 }
 
 #[cfg(test)]

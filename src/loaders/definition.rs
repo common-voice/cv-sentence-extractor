@@ -1,3 +1,4 @@
+use std::collections::HashSet;
 use std::path::Path;
 use crate::config::Config;
 
@@ -18,5 +19,5 @@ use crate::config::Config;
 
 pub trait Loader {
   fn get_config(&self) -> &Config;
-  fn load(&self, file_name: &Path) -> Result<Vec<String>, String>;
+  fn load(&self, file_name: &Path, filtered_titles: &HashSet<String>) -> Result<Vec<String>, String>;
 }

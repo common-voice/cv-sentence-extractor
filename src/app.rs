@@ -29,6 +29,11 @@ where
                                 .takes_value(true)
                                 .number_of_values(1)
                                 .help("path to folder with files to process");
+    let filter_argument = Arg::with_name("title-filter-list")
+                                .long("title-filter-list")
+                                .takes_value(true)
+                                .number_of_values(1)
+                                .help("path to the file containing titles to filter for");
 
     App::new("common_voice_sentence_collector")
         .about("Common Voice Sentence Extraction Helper")
@@ -40,6 +45,7 @@ where
                 .about("Extract sentences from Wikipedia dump extracts using WikiExtractor")
                 .arg(&language_argument)
                 .arg(&directory_argument)
+                .arg(&filter_argument)
         )
         .subcommand(
             SubCommand::with_name("extract-wikisource")
@@ -72,18 +78,20 @@ fn start(all_matches: ArgMatches) -> Result<(), String> {
     if let Some(matches) = all_matches.subcommand_matches("extract") {
         let language = String::from(matches.value_of("language").unwrap_or("en"));
         let directory = String::from(matches.value_of("dir").unwrap_or_default());
+        let filter_list_path = String::from(matches.value_of("title-filter-list").unwrap_or_default());
 
         let wikipedia_loader = Wikipedia::new(language, directory);
-        return extract(wikipedia_loader, no_check);
+        return extract(wikipedia_loader, no_check, &filter_list_path);
     }
-    
+
     // Wikisource
     if let Some(matches) = all_matches.subcommand_matches("extract-wikisource") {
         let language = String::from(matches.value_of("language").unwrap_or("en"));
         let directory = String::from(matches.value_of("dir").unwrap_or_default());
+        let filter_list_path = String::from(matches.value_of("title-filter-list").unwrap_or_default());
 
         let wikipedia_loader = Wikipedia::new(language, directory);
-        return extract(wikipedia_loader, no_check);
+        return extract(wikipedia_loader, no_check, &filter_list_path);
     }
 
     // File
@@ -92,7 +100,7 @@ fn start(all_matches: ArgMatches) -> Result<(), String> {
         let directory = String::from(matches.value_of("dir").unwrap_or_default());
 
         let file_loader = File::new(language, directory);
-        return extract(file_loader, no_check);
+        return extract(file_loader, no_check, "");
     }
 
     println!("{}", all_matches.usage());
