@@ -7,7 +7,7 @@ name: Manual Dispatch - Wikipedia Extraction Rerun
 on:
   workflow_dispatch:
     inputs:
-      locale:
+      language:
         description: 'Language Code'
         required: true
         default: ''
@@ -59,7 +59,7 @@ jobs:
         CI: true
         WIKI_START_DATE: ${{ github.event.inputs.startDate }}
         WIKI_END_DATE: ${{ github.event.inputs.endDate }}
-        WIKI_LOCALE: ${{ github.event.inputs.locale }}
+        WIKI_LOCALE: ${{ github.event.inputs.language }}
 
     # EXTRACTION ON NEW ARTICLES ONLY
     - name: Full Wikipedia Extraction - ${{ github.event.inputs.language }}
