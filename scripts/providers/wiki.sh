@@ -59,6 +59,8 @@ function extract {
   echo "Running extraction"
   if [ $TYPE == "blocklist" ]; then
     cargo run --release -- extract -l $LANGUAGE_CODE -d $EXTRACTED_TEXT_PATH --no_check >> $EXTRACTED_SENTENCES_PATH
+  elif [ -f "$TITLE_FILTER_PATH" ]; then
+    cargo run --release -- extract -l $LANGUAGE_CODE -d $EXTRACTED_TEXT_PATH --title-filter-list $TITLE_FILTER_PATH >> $EXTRACTED_SENTENCES_PATH
   else
     cargo run --release -- extract -l $LANGUAGE_CODE -d $EXTRACTED_TEXT_PATH >> $EXTRACTED_SENTENCES_PATH
   fi

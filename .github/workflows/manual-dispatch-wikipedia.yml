@@ -22,7 +22,7 @@ jobs:
         rust: [nightly]
 
     steps:
-    
+
     # SETUP
     - name: Maximize build space
       uses: easimon/maximize-build-space@master
