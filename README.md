@@ -325,3 +325,7 @@ The job will then add a comment with its URL, so you can check the output and do
 ```
 /action blocklist en 80
 ```
+
+### Re-running the extraction
+
+There is a manual workflow trigger which allows us to re-run Wikipedia extractions on articles added since the last time we ran the extraction. This makes sure that we only extract new articles, as otherwise we would not fullfil the legal requirements. Any re-run needs to be triggered through this workflow.
