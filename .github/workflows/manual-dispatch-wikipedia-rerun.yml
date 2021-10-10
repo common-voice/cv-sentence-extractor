@@ -15,6 +15,10 @@ on:
         description: 'Earliest date to fetch for'
         required: true
         default: ''
+      startDate:
+        description: 'Latest date to fetch for (defaults to today)'
+        required: false
+        default: ''
 
 jobs:
   extract:
@@ -39,6 +43,7 @@ jobs:
         node new-wikipedia-articles.js > ../output/new-article-titles.txt
       env:
         CI: true
+        WIKI_START_DATE: ${{ github.event.inputs.startDate }}
         WIKI_END_DATE: ${{ github.event.inputs.endDate }}
         WIKI_LOCALE: ${{ github.event.inputs.locale }}
 

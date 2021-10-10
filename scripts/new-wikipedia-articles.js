@@ -1,10 +1,9 @@
-// This is a proof of concept for now, this eventually should probably be
-// rewritten to Rust to keep the repo all Rust?
-
 import fetch from 'node-fetch';
 
-const { WIKI_END_DATE, WIKI_LOCALE } = process.env;
+const { WIKI_START_DATE, WIKI_END_DATE, WIKI_LOCALE } = process.env;
 const END_DATE = new Date(WIKI_END_DATE).toISOString();
+const START_DATE = WIKI_START_DATE ? new Date(WIKI_START_DATE).toISOString() : new Date().toISOString();
+const PAGE_LIMIT = 500;
 
 if (!WIKI_END_DATE || !WIKI_LOCALE) {
   console.error('WIKI_END_DATE and WIKI_LOCALE need to be present in ENV');
@@ -13,8 +12,8 @@ if (!WIKI_END_DATE || !WIKI_LOCALE) {
 
 let numberOfArticles = 0;
 
-async function queryNewArticles(beginDate = new Date().toISOString(), lecontinue) {
-  let url = `https://${WIKI_LOCALE}.wikipedia.org/w/api.php?action=query&format=json&list=logevents&leprop=title%7Ctimestamp&letype=create&lestart=${beginDate}&leend=${END_DATE}&lenamespace=0&lelimit=500`;
+async function queryNewArticles(beginDate = START_DATE, lecontinue) {
+  let url = `https://${WIKI_LOCALE}.wikipedia.org/w/api.php?action=query&format=json&list=logevents&leprop=title%7Ctimestamp&letype=create&lestart=${beginDate}&leend=${END_DATE}&lenamespace=0&lelimit=${PAGE_LIMIT}`;
   if (lecontinue) {
     url += `&lecontinue=${lecontinue}`;
   }
@@ -37,15 +36,18 @@ async function queryNewArticles(beginDate = new Date().toISOString(), lecontinue
   });
 
   numberOfArticles += logEvents.length;
+  console.error('NEW_ARTICLES', numberOfArticles);
+
+  if (logEvents.length < PAGE_LIMIT) {
+    console.error('Received less than LIMIT, we might be done!');
+  }
 
   const forceNewRequest = numberOfArticles % 100_000 === 0;
 
   if (data.continue && data.continue.lecontinue && !forceNewRequest) {
-    console.error('NEW_ARTICLES', numberOfArticles);
     queryNewArticles(beginDate, data.continue.lecontinue);
     return;
-  } else {
-    // We need to issue a new Query to see if we have more
+  } else if (forceNewRequest) {
     console.error('Forcing new request...');
     const newBeginDate = new Date(logEvents[logEvents.length - 1].timestamp).toISOString();
     queryNewArticles(newBeginDate);
