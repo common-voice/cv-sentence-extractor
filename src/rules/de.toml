@@ -18,7 +18,8 @@ disallowed_symbols = []
 broken_whitespace = ["  ", " ,", " .", " ?", " !", " ;"]
 
 matching_symbols = [
-  ["„", "“"]
+  ["„"«, "“"»],
+  ["(", ")"]
 ]
 
 # Other patterns
