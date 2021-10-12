@@ -11,7 +11,7 @@ needs_uppercase_start = true
 allowed_symbols_regex="[AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpRrSsTtUuVvZzĉĈĝĜĥĤĵĴŝŜŭŬ;‚'–\\. \"\\?!«»]"
 broken_whitespace = ["  ", " ,", " .", " ?", " !", " ;"]
 matching_symbols = [
-  ["„"«, "“"»],
+  ["„", "“"],
   ["(", ")"]
 ]
 
