@@ -10,6 +10,10 @@ needs_uppercase_start = true
 #alphabet without the letters q, w, x and y
 allowed_symbols_regex="[AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpRrSsTtUuVvZzĉĈĝĜĥĤĵĴŝŜŭŬ;‚'–\\. \"\\?!«»]"
 broken_whitespace = ["  ", " ,", " .", " ?", " !", " ;"]
+matching_symbols = [
+  ["„"«, "“"»],
+  ["(", ")"]
+]
 
 # Abbreviation examples for each regex, also cheating a bit and adding more regex which has nothing to do with abbreviations:
 #   - A.B or z.B.
