@@ -16,6 +16,8 @@ matching_symbols = [
   ["(", ")"]
 ]
 
+# Abbreviation examples for each regex
+#   - A.B or FBI
 abbreviation_patterns = [
   "[A-Z]+\\.*[A-Z]"
 ]
