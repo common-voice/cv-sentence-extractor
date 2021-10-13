@@ -114,12 +114,12 @@ The following rules can be configured per language. Add a `<language>.toml` file
 
 | Name   |      Description      |  Values | Default |
 |--------|-----------------------|---------|---------|
-| abbreviation_patterns |  Rust regex defining abbreviations | Rust Regex Array | all abbreviations allowed
+| abbreviation_patterns |  Regex defining abbreviations | Rust Regex Array | all abbreviations allowed
 | allowed_symbols_regex |  Regex of allowed symbols or letters. Each character gets matched against this pattern. | String Array | not used
 | broken_whitespace |  Array of broken whitespaces. This could for example disallow two spaces following each other | String Array | all types of whitespaces allowed
-| disallowed_symbols |  Array of disallowed symbols or letters. Only used when allowed_symbols_regex is not set or is an empty String. | String Array | all symbols allowed
-| disallowed_words |  Array of disallowed words | String Array | all words allowed
-| even_symbols |  Symbols that always need an event count | Char Array | []
+| disallowed_symbols |  Use `allowed_symbols_regex` instead. Array of disallowed symbols or letters. Only used when allowed_symbols_regex is not set or is an empty String. | String Array | all symbols allowed
+| disallowed_words |  Array of disallowed words. Prefer the blocklist approach when possible. | String Array | all words allowed
+| even_symbols |  Symbols that always need an even count | Char Array | []
 | matching_symbols |  Symbols that map to another | Array of matching configurations: each configuration is an Array of two values: `["match", "match"]`. See example below. | []
 | max_word_count |  Maximum number of words in a sentence | integer | 14
 | may_end_with_colon |  If a sentence can end with a : or not | boolean | false
@@ -129,7 +129,7 @@ The following rules can be configured per language. Add a `<language>.toml` file
 | needs_letter_start |  If a sentence needs to start with a letter | boolean | true
 | needs_punctuation_end |  If a sentence needs to end with a punctuation | boolean | false
 | needs_uppercase_start |  If a sentence needs to start with an uppercase | boolean | false
-| other_patterns |  Rust regex to disallow anything else | Rust Regex Array | all other patterns allowed
+| other_patterns |  Regex to disallow anything else | Rust Regex Array | all other patterns allowed
 | quote_start_with_letter |  If a quote needs to start with a letter | boolean | true
 | replacements |  Replaces abbreviations or other words according to configuration. This happens before any other rules are checked. | Array of replacement configurations: each configuration is an Array of two values: `["search", "replacement"]`. See example below. | nothing gets replaced
 | segmenter |  Segmenter to use for this language. See below for more information. | "python" | using `rust-punkt` by default
