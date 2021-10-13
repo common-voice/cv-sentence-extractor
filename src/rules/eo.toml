@@ -8,7 +8,7 @@ needs_punctuation_end = true
 needs_letter_start = true
 needs_uppercase_start = true
 #alphabet without the letters q, w, x and y
-allowed_symbols_regex="[AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpRrSsTtUuVvZzĉĈĝĜĥĤĵĴŝŜŭŬ;‚'–\\. \"\\?!«»\(\)]"
+allowed_symbols_regex="[AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpRrSsTtUuVvZzĉĈĝĜĥĤĵĴŝŜŭŬ;‚'–\\. \"\\?!«»()]"
 broken_whitespace = ["  ", " ,", " .", " ?", " !", " ;"]
 matching_symbols = [
   ["„", "“"],
