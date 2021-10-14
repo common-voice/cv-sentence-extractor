@@ -22,4 +22,12 @@ abbreviation_patterns = [
   "[A-Z]+\\.*[A-Z]"
 ]
 
-other_patterns = []
+# Other patterns
+#   - Sentence delimiter can only be at the end of a sentence
+#   - No words with only one letter (" a.", " a", " a ")
+#   - Mixed upper/lowercase in words (LaSi - mostly chemical elements?)
+other_patterns = [
+  "[\\.|\\?|!].+$",
+  "(\\s[A-Za-z]{1}[\\.|\\?|!]*$)|\\s[A-Za-z]{1}\\s",
+  "[a-z][A-Z][a-z]",
+]
