@@ -46,7 +46,7 @@ impl Loader for Wikipedia {
                     .map(String::from)
                     .unwrap_or_default();
 
-                  if filtered_titles.len() == 0 {
+                  if filtered_titles.is_empty() {
                     return text
                   }
 
