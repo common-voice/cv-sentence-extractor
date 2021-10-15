@@ -1,23 +1,18 @@
 min_trimmed_length = 3
-min_word_count = 3
-max_word_count = 14
+min_word_count = 2
+max_word_count = 15
 min_characters = 0
 may_end_with_colon = false
 quote_start_with_letter = true
 needs_punctuation_end = false
 needs_letter_start = true
-needs_uppercase_start = false 
+needs_uppercase_start = true
+broken_whitespace = ["  ", " ,", " .", " ?", " !", " ;", " :", "„ ", " “", "„“", "“-", "-,", ".“", " -", "- ", "?-"]
+abbreviation_patterns = ["[A-Z]+\\.*[A-Z]"]
+even_symbols = ['"']
 disallowed_symbols = [
-  '<', '>', '+', '*', '\', '#', '@', '^', '[', ']', '(', ')', '/',
-  'é', 'è', 'à', 'ç', 'Å',
+  '<', '>', '+', '*', '\', '#', '@', '^', '[', ']', '(', ')', '/','ç', 'Å',
   'α', 'β', 'Γ', 'γ', 'Δ', 'δ', 'ε', 'ζ', 'η', 'Θ', 'θ', 'ι', 'κ',
   'Λ', 'λ', 'μ', 'ν', 'Ξ', 'ξ', 'Π', 'π', 'ρ', 'Σ', 'σ', 'ς', 'τ',
   'υ', 'Φ', 'φ', 'χ', 'Ψ', 'ψ', 'Ω', 'ω',
-]
-broken_whitespace = ["  ", " ,", " .", " ?", " !", " ;", " :", "„ ", " “", "„“", "“-", "-,", ".“", " -", "- ", "?-"]
-abbreviation_patterns = ["[A-Z]+\\.*[A-Z]"]
-matching_symbols = [
-  ["„", "“"],
-  ["(", ")"],
-  ["[", "]"]
 ]
