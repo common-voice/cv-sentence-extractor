@@ -6,7 +6,7 @@ may_end_with_colon = false
 quote_start_with_letter = true
 needs_punctuation_end = false
 needs_letter_start = true
-needs_uppercase_start = false
+needs_uppercase_start = true
 broken_whitespace = ["  ", " ,", " .", " ?", " !", " ;"]
 
 allowed_symbols_regex = "[\u0020A-Za-z\"„“‚‘’–\\.?!()]"
@@ -44,4 +44,6 @@ replacements = [
   ["Prof.", "Professor"],
   ["Dr.", "Doctor"],
   ["a.k.a.", "also known as"],
+  ["et al.", "and others"],
+  ["No.", "number"],
 ]
