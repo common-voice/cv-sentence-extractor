@@ -31,3 +31,17 @@ other_patterns = [
   "(\\s[A-Za-z]{1}[\\.|\\?|!]*$)|\\s[A-Za-z]{1}\\s",
   "[a-z][A-Z][a-z]",
 ]
+
+# Replacements
+
+replacements = [
+  ["e.g.", "for example"],
+  ["E.g.", "For example"],
+  ["i.e.", "that is"],
+  ["I.e.", "That is"],
+  ["Mr.", "Mister"],
+  ["Ms.", "Miss"],
+  ["Prof.", "Professor"],
+  ["Dr.", "Doctor"],
+  ["a.k.a.", "also known as"],
+]
