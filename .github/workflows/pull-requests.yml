@@ -16,7 +16,7 @@ jobs:
         rust: [nightly]
 
     steps:
-    
+
     # SETUP
     - name: Maximize build space
       uses: easimon/maximize-build-space@master
@@ -30,11 +30,9 @@ jobs:
       with:
         rust-version: ${{ matrix.rust }}
     - uses: actions/checkout@master
-    
+
     # GET CHANGED FILES TO DETERMINE LANGUAGE
-    - name: Get Commit Message
-      run: echo "COMMIT_MESSAGE=\"$(git log --format=%B -n 1 ${{ github.event.after }})\"" >> $GITHUB_ENV
-    - uses: futuratrepadeira/changed-files@b4ef6fe532b9b5022be2489df114ba28146aea14
+    - uses: futuratrepadeira/changed-files@e800e40c8475490f1e1325f19064a2b832483d90
       id: files
       with:
         repo-token: ${{ secrets.GITHUB_TOKEN }}
@@ -48,7 +46,7 @@ jobs:
     - name: Deduplicate Wikipedia Extraction
       run: ./scripts/dedupe.sh sample.txt
 
-    # UPLOAD  
+    # UPLOAD
     - uses: actions/upload-artifact@v2
       with:
         name: extraction
