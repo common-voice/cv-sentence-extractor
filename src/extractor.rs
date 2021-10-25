@@ -60,7 +60,15 @@ fn get_sentences(
 ) -> Vec<String> {
     let sentences_pool: Vec<String>;
 
-    // We want to apply the replacements before we split into sentences.
+    // We want to apply the replacements before we split into sentences, as otherwise
+    // the segmentation would not take the replacement into account. This for example
+    // would lead to rust-punkt splitting sentences wrongly, while with the replacement
+    // it would have worked correctly.
+    //
+    // Example: Hi Mr. Smith, how are you?
+    // might get split wrongly by the segmenter to "Hi Mr." and "Smith, how are you?"
+    // If we apply a replacement for "Mr." before, this would for example end up as
+    // "Hi Mister Smith, how are you?"
     let replaced_text = replacer::replace_strings(rules, text);
 
     if rules.segmenter != *"" {
