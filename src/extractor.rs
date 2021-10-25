@@ -58,24 +58,31 @@ fn get_sentences(
     config: &Config,
     no_check: bool,
 ) -> Vec<String> {
-    let sentences: Vec<String>;
+    let sentences_pool: Vec<String>;
+
+    // We want to apply the replacements before we split into sentences, as otherwise
+    // the segmentation would not take the replacement into account. This for example
+    // would lead to rust-punkt splitting sentences wrongly, while with the replacement
+    // it would have worked correctly.
+    //
+    // Example: Hi Mr. Smith, how are you?
+    // might get split wrongly by the segmenter to "Hi Mr." and "Smith, how are you?"
+    // If we apply a replacement for "Mr." before, this would for example end up as
+    // "Hi Mister Smith, how are you?"
+    let replaced_text = replacer::replace_strings(rules, text);
 
     if rules.segmenter != *"" {
         if rules.segmenter == "python" {
-            sentences = split_sentences_with_python(&config.language, text);
+            sentences_pool = split_sentences_with_python(&config.language, &replaced_text);
         } else {
             panic!("Segmenter {} is not yet supported!", rules.segmenter);
         }
     } else {
         // we use rust-punkt as segmenter by default
-        sentences = SentenceTokenizer::<Standard>::new(text, training_data)
+        sentences_pool = SentenceTokenizer::<Standard>::new(&replaced_text, training_data)
             .map(|item| { String::from(item) })
             .collect();
     }
-
-    let sentences_pool = sentences.iter()
-        .map(|item| { replacer::replace_strings(rules, item) })
-        .collect();
 
     if no_check {
         sentences_pool
