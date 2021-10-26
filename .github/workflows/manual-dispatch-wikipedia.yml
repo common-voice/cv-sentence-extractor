@@ -24,7 +24,7 @@ jobs:
     steps:
       # SETUP
       - name: Maximize build space
-        uses: easimon/maximize-build-space@master
+        uses: easimon/maximize-build-space@b4d02c14493a9653fe7af06cc89ca5298071c66e
         with:
           root-reserve-mb: 512
           swap-size-mb: 1024
@@ -34,7 +34,7 @@ jobs:
       - uses: hecrj/setup-rust-action@e0938bab41405f7485391869b453779c5290099d
         with:
           rust-version: ${{ matrix.rust }}
-      - uses: actions/checkout@master
+      - uses: actions/checkout@v2
 
       # EXTRACTION
       - name: Full Wikipedia Extraction - ${{ github.event.inputs.language }}

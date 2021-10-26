@@ -14,8 +14,8 @@ jobs:
 
     steps:
       # SETUP
-      - uses: actions/checkout@master
-      - uses: hecrj/setup-rust-action@v1.3.4
+      - uses: actions/checkout@v2
+      - uses: hecrj/setup-rust-action@e0938bab41405f7485391869b453779c5290099d
         with:
           rust-version: ${{ matrix.rust }}
           components: clippy

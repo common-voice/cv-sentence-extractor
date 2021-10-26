@@ -32,7 +32,7 @@ jobs:
     steps:
       # SETUP
       - name: Maximize build space
-        uses: easimon/maximize-build-space@master
+        uses: easimon/maximize-build-space@b4d02c14493a9653fe7af06cc89ca5298071c66e
         with:
           root-reserve-mb: 512
           swap-size-mb: 1024
@@ -43,7 +43,7 @@ jobs:
         with:
           rust-version: ${{ matrix.rust }}
       - name: Use Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v2.1.2
+        uses: actions/setup-node@v2
         with:
           node-version: ${{ matrix.node-version }}
       - uses: actions/checkout@v2

@@ -28,7 +28,7 @@ jobs:
       - uses: hecrj/setup-rust-action@e0938bab41405f7485391869b453779c5290099d
         with:
           rust-version: ${{ matrix.rust }}
-      - uses: actions/checkout@master
+      - uses: actions/checkout@v2
 
       # GET CHANGED FILES TO DETERMINE LANGUAGE
       - uses: futuratrepadeira/changed-files@e800e40c8475490f1e1325f19064a2b832483d90
