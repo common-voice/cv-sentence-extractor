@@ -16,38 +16,37 @@ jobs:
         rust: [nightly]
 
     steps:
+      # SETUP
+      - name: Maximize build space
+        uses: easimon/maximize-build-space@master
+        with:
+          root-reserve-mb: 512
+          swap-size-mb: 1024
+          remove-dotnet: "true"
+          remove-android: "true"
+          remove-haskell: "true"
+      - uses: hecrj/setup-rust-action@e0938bab41405f7485391869b453779c5290099d
+        with:
+          rust-version: ${{ matrix.rust }}
+      - uses: actions/checkout@master
 
-    # SETUP
-    - name: Maximize build space
-      uses: easimon/maximize-build-space@master
-      with:
-        root-reserve-mb: 512
-        swap-size-mb: 1024
-        remove-dotnet: 'true'
-        remove-android: 'true'
-        remove-haskell: 'true'
-    - uses: hecrj/setup-rust-action@e0938bab41405f7485391869b453779c5290099d
-      with:
-        rust-version: ${{ matrix.rust }}
-    - uses: actions/checkout@master
+      # GET CHANGED FILES TO DETERMINE LANGUAGE
+      - uses: futuratrepadeira/changed-files@e800e40c8475490f1e1325f19064a2b832483d90
+        id: files
+        with:
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
 
-    # GET CHANGED FILES TO DETERMINE LANGUAGE
-    - uses: futuratrepadeira/changed-files@e800e40c8475490f1e1325f19064a2b832483d90
-      id: files
-      with:
-        repo-token: ${{ secrets.GITHUB_TOKEN }}
+      # EXTRACTION
+      - name: Sample Wikipedia Extraction
+        run: ./scripts/extraction.sh
+        env:
+          FILES_CREATED: ${{ steps.files.outputs.files_created }}
+          FILES_UPDATED: ${{ steps.files.outputs.files_updated }}
+      - name: Deduplicate Wikipedia Extraction
+        run: ./scripts/dedupe.sh sample.txt
 
-    # EXTRACTION
-    - name: Sample Wikipedia Extraction
-      run: ./scripts/extraction.sh
-      env:
-        FILES_CREATED: ${{ steps.files.outputs.files_created }}
-        FILES_UPDATED: ${{ steps.files.outputs.files_updated }}
-    - name: Deduplicate Wikipedia Extraction
-      run: ./scripts/dedupe.sh sample.txt
-
-    # UPLOAD
-    - uses: actions/upload-artifact@v2
-      with:
-        name: extraction
-        path: output/*
+      # UPLOAD
+      - uses: actions/upload-artifact@v2
+        with:
+          name: extraction
+          path: output/*
