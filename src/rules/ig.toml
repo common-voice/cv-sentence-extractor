@@ -11,5 +11,3 @@ broken_whitespace = ["  ", " ,", " .", " ?", " !", " ;", " :", "„ ", " “", "
 abbreviation_patterns = ["[A-Z]+\\.*[A-Z]"]
 even_symbols = ['"']
 allowed_symbols_regex="[AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoQqPpRrSsTtUuVvWwXxYyZzĉĈĝĜĥĤĵĴŝŜŭŬ:;‚'-–\\. \"\\?!«»():′ČIfế̙ŋțّoṬFıị·ợǔũÁÀеṅSοēýOKnǎzọВ;äïÇаó´AaÓûνụŽỊ‌WwêĪÒCȯẹ‘ạBx~MNŲḷjśỌ^hpqYðṓǸīgâ'оÖmΕǒṭÜÍồήlGс͗iːõʼ“įěùṇd’òɨéūeǹṛớŌˌРvDö⁄р•ǐñηίιèúőîŃáėÈȮˈbüɪHāĮХJÝšώṣуPōẸỤàôÉʻcíҚXåUsękćyіV,LERã́ ìńṄḾruǪḿ”ŠÙëȧɡ​ÚçÌTŪ̂]"
-
-   
