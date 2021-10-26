@@ -3,6 +3,7 @@ use inline_python::{python, Context};
 pub fn split_sentences_with_python(language: &str, text: &str) -> Vec<String> {
     match language {
         "en" => split_sentences_with_python_en(text),
+        "de" => split_sentences_with_python_de(text),
         _ => {
             panic!("{} is not supported for Python segmenter, please implement it or remove the segmenter rule", language);
         },
@@ -28,6 +29,23 @@ pub fn split_sentences_with_python_en(text: &str) -> Vec<String> {
         split_sentences = nltk.sent_tokenize('text)
     });
     
+    ctx.get("split_sentences")
+}
+
+pub fn split_sentences_with_python_de(text: &str) -> Vec<String> {
+    let ctx = Context::new();
+
+    ctx.run(python! {
+        import nltk
+
+        try:
+            nltk.data.find("tokenizers/punkt")
+        except LookupError:
+            nltk.download("punkt")
+
+        split_sentences = nltk.sent_tokenize('text)
+    });
+
     ctx.get("split_sentences")
 }
 
