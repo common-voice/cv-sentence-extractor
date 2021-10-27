@@ -38,6 +38,7 @@ git clone https://github.com/attardi/wikiextractor.git
 We can only extract at most 3 sentences per article.
 
 1. Download the latest Wikipedia dataset [backup dump from Wikimedia](https://dumps.wikimedia.org/backup-index-bydb.html), select the one with `pages-articles-multistream` in its name.
+If you don't want to download the whole dump file, you can also use the latest pages dump, e.g. https://dumps.wikimedia.org/enwiki/latest/enwiki-latest-pages-articles1.xml-pXXXpXXX.bz2 (replace `XXX` with the numbering found in the directory).
 
 Example (you can change "en" to your locale code)
 
@@ -46,13 +47,16 @@ wget https://dumps.wikimedia.org/enwiki/latest/enwiki-latest-pages-articles-mult
 bzip2 -d enwiki-latest-pages-articles-multistream.xml.bz2
 ```
 
-2. Use WikiExtractor to extract a dump (this might take a few hours)
+2. Use WikiExtractor to extract a dump (this might take a few hours). In the parameters, we specify to use JSON as the output format instead of the default XML.
 
 ```bash
 cd wikiextractor
 git checkout e4abb4cbd019b0257824ee47c23dd163919b731b
 python WikiExtractor.py --json ../enwiki-latest-pages-articles-multistream.xml
 ```
+
+In order to test your setup or create a small test set, you can interrupt the extractor after a few seconds already, as it creates separate files in each step. Those files can be already ingested by the `cv-sentence-extractor`.
+In the beginning, the WikiExtractor prints out how many processes it will use for the extraction: `INFO: Using 7 extract processes.` After that, a list of all extracted articles is printed out. As soon as some articles are extracted, you can abort the process and continue with step 3.
 
 *Important note: Please check the section about [creating a rules file](#using-language-rules) and [a blocklist](#create-a-blocklist-based-on-less-common-words) at this point, you might want to consider creating them and that process should happen before step 3.*
 
@@ -65,6 +69,29 @@ cargo run --release -- extract -l en -d ../wikiextractor/text/ >> wiki.en.txt
 ```
 
 *Tip: You don't need this last process to finish to start observing the output, wiki.en.txt should get a few thousands sentences in just a few minutes, and you can use that as a way to estimate the quality of the output early on and stop the process if you are not happy.*
+
+#### Input file format
+The input files ingested by `cv-sentence-extractor` are following a JSON format, based on what the WikiExtractor outputs. The format is simple:
+
+    {
+      "url": <url to wikipedia page via curid, string>,
+      "text": <page text including title as first sentence with two blank lines, string>,
+      "id": <page id, same as curid in url, string>,
+      "title": <page title, string>
+    }
+
+Multiple pages in one file are separated without comma etc, just with a new line.
+
+**Example**
+
+    {
+      "url": "https://de.wikipedia.org/wiki?curid=888306",
+      "text": "Herzogtum Oels\n\nDas Herzogtum Oels...",
+      "id": "888306",
+      "title": "Herzogtum Oels"
+    }
+
+The file must follow the following directory structure and filename: `AA/wiki_XX`, with `AA` an alphanumerical numbering and `XX` two numbers for different files. The file should not have a file extension.
 
 ### Extract WikiSource
 
