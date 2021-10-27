@@ -43,6 +43,12 @@ matching_symbols = [
   ["(", ")"]
 ]
 
+# Abbreviations
+#   - A.B, z.B., or SMS
+abbreviation_patterns = [
+  "[A-Z]+\\.*[A-Z]",
+]
+
 # Other patterns
 #   - Sentence delimiter can only be at the end of a sentence. This also takes care of abbreviations.
 #   - No words with only one letter (" a.", " a", " a ", "a ")
