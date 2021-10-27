@@ -43,7 +43,11 @@ pub fn split_sentences_with_python_de(text: &str) -> Vec<String> {
         except LookupError:
             nltk.download("punkt")
 
-        split_sentences = nltk.sent_tokenize('text, language="german")
+        additional_abbreviations = ["z. b", "z.b", "ca", "dt"]
+        sentence_tokenizer = nltk.data.load("tokenizers/punkt/german.pickle")
+        sentence_tokenizer._params.abbrev_types.update(additional_abbreviations)
+
+        split_sentences = sentence_tokenizer.tokenize('text)
     });
 
     ctx.get("split_sentences")
