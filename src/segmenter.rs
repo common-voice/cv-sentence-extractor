@@ -28,7 +28,7 @@ pub fn split_sentences_with_python_en(text: &str) -> Vec<String> {
 
         split_sentences = nltk.sent_tokenize('text)
     });
-    
+
     ctx.get("split_sentences")
 }
 
@@ -54,8 +54,8 @@ mod test {
     use super::*;
 
     #[test]
-    fn test_segmenter_en() {
-        let language = "en";
+    fn test_segmenter_de() {
+        let language = "de";
         let text = "I am a sentence. Me too!";
 
         assert_eq!(split_sentences_with_python(language, text).len(), 2);
