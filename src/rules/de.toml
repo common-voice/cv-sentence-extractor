@@ -1,3 +1,8 @@
+# Note added by Michael: this is currently only validated
+# for correct sentence splitting. Full validation will be
+# done together with further rule improvements in
+# https://github.com/common-voice/cv-sentence-extractor/pull/157
+
 segmenter = "python"
 min_trimmed_length = 3
 min_word_count = 2
@@ -16,3 +21,12 @@ matching_symbols = [
   ["„", "“"]
 ]
 
+# Other patterns
+#   - Sentence delimiter can only be at the end of a sentence. This also takes care of abbreviations.
+#   - No words with only one letter (" a.", " a", " a ", "a ")
+#   - Mixed upper/lowercase in words (LaSi - mostly chemical elements?)
+other_patterns = [
+  "[\\.|\\?|!].+$",
+  "(\\s[A-Za-z]{1}[\\.|\\?|!]*$)|(^[A-Za-z]{1}\\s)|\\s[A-Za-z]{1}\\s",
+  "[a-z][A-Z][a-z]",
+]
