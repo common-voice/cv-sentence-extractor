@@ -458,7 +458,7 @@ mod test {
     #[test]
     fn test_english() {
         let rules : Rules = load_rules("en");
-        
+
         assert!(check(&rules, &String::from("This is absolutely valid.")));
         assert!(check(&rules, &String::from("this is lowercase")));
         assert!(!check(&rules, &String::from("")));
@@ -520,16 +520,8 @@ mod test {
         assert!(!check(&rules, &String::from("Sätze dürfen keine Wörter mit nur einem B Buchstaben haben.")));
         assert!(!check(&rules, &String::from("A auch nicht am Anfang.")));
         assert!(!check(&rules, &String::from("Oder am Ende e.")));
-        assert!(!check(&rules, &String::from("Oder am Ende e.")));
         assert!(!check(&rules, &String::from("AmSi ist eine schwarze Masse, isomorph mit LaSi")));
-        assert!(!check(&rules, &String::from("Die Aussperrung ist nach Art.")));
-        assert!(!check(&rules, &String::from("Remy & Co.")));
-        assert!(!check(&rules, &String::from("Es ist die sog.")));
         assert!(!check(&rules, &String::from("Kein deutsches Wort: ambiguous.")));
-        assert!(!check(&rules, &String::from("Bundesliga am Anfang eines Satzes.")));
-        assert!(!check(&rules, &String::from("Liga am Anfang eines Satzes.")));
-        assert!(!check(&rules, &String::from("Abkürzung am Ende hl.")));
-        assert!(!check(&rules, &String::from("Abkürzung am Ende geb.")));
     }
 
     #[test]
