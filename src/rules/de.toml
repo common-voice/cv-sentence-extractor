@@ -17,6 +17,10 @@ replacements = [
   ["usw.", "und so weiter"],
   ["zz.", "zurzeit"],
   ["ggf.", "gegebenenfalls"],
+  ["bspw.", "beispielsweise"],
+  ["mind.", "mindestens"],
+  ["evtl.", "eventuell"],
+  ["bzgl.", "bezüglich"],
 ]
 
 segmenter = "python"
