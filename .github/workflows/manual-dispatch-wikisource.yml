@@ -38,7 +38,9 @@ jobs:
 
       # EXTRACTION
       - name: Full Wikisource Extraction - ${{ github.event.inputs.language }}
-        run: ./scripts/extraction.sh extract-wikisource ${{ github.event.inputs.language }}
+        env:
+          LANGUAGE: ${{ github.event.inputs.language }}
+        run: ./scripts/extraction.sh extract-wikisource "$LANGUAGE"
       - name: Deduplicate Wikipedia Extraction
         run: ./scripts/dedupe.sh extract-wikisource.txt
 

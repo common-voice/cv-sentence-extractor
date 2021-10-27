@@ -33,12 +33,12 @@ jobs:
       # COMMENT
       - name: Get Comment
         id: comment
+        env:
+          BODY: ${{ github.event.comment.body }}
         run: |
-          ACTION_LINE=$(echo "${{ github.event.comment.body }}" | grep "/action " || echo "no-action")
+          ACTION_LINE=$(echo "$BODY" | grep "/action " || echo "no-action")
           ACTION=${ACTION_LINE/\/action /""}
           echo "##[set-output name=action;]$ACTION"
-      - name: Output Command
-        run: "echo ${{ steps.comment.outputs.action }}"
       - name: Create comment
         if: "!contains(steps.comment.outputs.action, 'no-action')"
         uses: peter-evans/create-or-update-comment@dfd809e21f4d5cfc0a52e70caed06890c58d2e6d
@@ -53,7 +53,7 @@ jobs:
         run: ./scripts/extraction.sh ${{ steps.comment.outputs.action }}
       - name: Checkout cvtools
         if: "contains(steps.comment.outputs.action, 'blocklist')"
-        uses: actions/checkout@master
+        uses: actions/checkout@v2
         with:
           repository: dabinat/cvtools
           path: cvtools

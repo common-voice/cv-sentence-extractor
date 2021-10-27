@@ -63,7 +63,9 @@ jobs:
 
       # EXTRACTION ON NEW ARTICLES ONLY
       - name: Full Wikipedia Extraction - ${{ github.event.inputs.language }}
-        run: ./scripts/extraction.sh extract ${{ github.event.inputs.language }} ./output/new-article-titles.txt
+        env:
+          LANGUAGE: ${{ github.event.inputs.language }}
+        run: ./scripts/extraction.sh extract "$LANGUAGE" ./output/new-article-titles.txt
       - name: Deduplicate Wikipedia Extraction
         run: ./scripts/dedupe.sh extract.txt
 
