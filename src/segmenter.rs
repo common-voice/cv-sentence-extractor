@@ -22,7 +22,7 @@ pub fn split_sentences_with_python_en(text: &str) -> Vec<String> {
         import nltk
 
         try:
-            nltk.data.find("tokenizers/punkt")
+            nltk.data.load("tokenizers/punkt")
         except LookupError:
             nltk.download("punkt")
 
@@ -39,11 +39,11 @@ pub fn split_sentences_with_python_de(text: &str) -> Vec<String> {
         import nltk
 
         try:
-            nltk.data.find("tokenizers/punkt")
+            nltk.data.load("tokenizers/punkt/german.pickle")
         except LookupError:
             nltk.download("punkt")
 
-        split_sentences = nltk.sent_tokenize('text)
+        split_sentences = nltk.sent_tokenize('text, language="german")
     });
 
     ctx.get("split_sentences")
