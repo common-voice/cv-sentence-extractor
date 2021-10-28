@@ -23,7 +23,7 @@ pub fn split_sentences_with_python_en(text: &str) -> Vec<String> {
         import nltk
 
         try:
-            nltk.data.load("tokenizers/punkt")
+            nltk.data.find("tokenizers/punkt")
         except LookupError:
             nltk.download("punkt")
 
