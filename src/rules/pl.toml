@@ -10,24 +10,51 @@ needs_punctuation_end = false
 needs_letter_start = true
 needs_uppercase_start = true
 broken_whitespace = ["  ", " ,", " .", " ?", " !", " ;", " :", "( ", " )"]
-allowed_symbols_regex = "[a-ząćęłńóśżźA-ZĄĆĘŁŃÓŚŻŹ ,.?!:\\-–—\"'„“”]"
+allowed_symbols_regex = "[a-ząćęłńóśżźA-ZĄĆĘŁŃÓŚŻŹ ,.?!:\\-–—\"„“”]"
 
 # Trimm out all abbrevation which can be misread or not known by reader
 abbreviation_patterns = [
   "[A-ZĄĆĘŁŃÓŚŻŹ]{2,}",
   "(?i)\\s[a-ząćęłńóśżź]{1,3}\\. ?[a-ząćęłńóśżź]",
   # Abbrevations without a period  
-  "(?i) (bp|dr|nr|mgr|mjr|płk|wg|dra)\\.? "  
+  "(?i) (bp|dr|nr|mgr|mjr|płk|wg|dra|ppłk)\\.? "  
 ]
 
-# Mixed upper/lowercase in words (LaSi - mostly chemical elements?)
+
 other_patterns = [ 
+  # Mixed upper/lowercase in words (LaSi - mostly chemical elements?)
   "[a-z][A-Z][a-z]",
+  # letter groups which are not present in native polish words
+  "(?i)cs",
+  "(?i)gh",
+  "(?i)ly",
+  "(?i)ph",
+  "(?i)qu",
+  "(?i)sh",
+  "(?i)xh",
+  "(?i)th",
+  "(?i)heim",
+  "(?i)novo",
+  "(?i)saur",
+  "(?i)uzen",
+  "(?i)ugg",
+  "(?i)dinam",
+  "(?i)cr",
+  "(?i)rv",
+  "(?i)zr",
+  "(?i)tt",
+  "(?i)tah",
+  "(?i)łł",
+  "(?i)tae",
+  "(?i)kh",
+
 ]
 
 # Replace known abbrevations and other items when only one 
 # way to read it or has one valid form
 replacements = [
+  # some empty quotes spliped afeter splitting probably due to matchin symbols having quotes
+  ["\"\"", ""],
   ["p.n.e.", "przed naszą erą"],
   ["n.e.", "naszej ery"],
   ["n.p.m.", "nad poziomem morza"],
@@ -364,6 +391,7 @@ replacements = [
 matching_symbols = [
   ["„", "“"],
   ["(", ")"],
-  ["[", "]"]
+  ["[", "]"],
+  ["\"", "\""],
 ]
 

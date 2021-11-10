@@ -91,7 +91,7 @@ pub fn split_sentences_with_python_pl(text: &str) -> Vec<String> {
 
         position_abbrev = [
             "Ks", "Abp", "abp", "bp", "dr", "kard", "mgr", "prof", "zwycz", "hab", "arch",
-            "arch.kraj", "B.Sc", "Ph.D", "lek", "med", "n.med", "bł", "św", "hr", "dziek",
+            "arch.kraj", "B.Sc", "Ph.D", "lek", "med", "n.med", "bł", "św", "hr", "dziek", "ks", "inz",
         ]
 
         roman_abbrev = (
@@ -153,7 +153,7 @@ pub fn split_sentences_with_python_pl(text: &str) -> Vec<String> {
         military_abbrev = [
             "kpt", "kpr", "obs", "pil", "mjr", "płk", "dypl", "pp", "gw", "dyw",
             "ppłk", "mar", "marsz", "rez", "ppor", "DPanc", "BPanc", "DKaw", "p.uł",
-            "sierż", "post", "asp", "podinsp", "nadkom"
+            "sierż", "post", "asp", "podinsp", "nadkom", "rtm",
             "bryg",  # brygady
             "szt",  # sztabowy
             "kom",  # komendant, tel. komórka
@@ -174,7 +174,7 @@ pub fn split_sentences_with_python_pl(text: &str) -> Vec<String> {
         sentence_tokenizer = nltk.data.load("tokenizers/punkt/polish.pickle")
         sentence_tokenizer._params.abbrev_types.update(extra_abbreviations)
 
-        split_sentences = sentence_tokenizer.tokenize('text)
+        split_sentences = sentence_tokenizer.tokenize('text)        
     });
 
     ctx.get("split_sentences")
