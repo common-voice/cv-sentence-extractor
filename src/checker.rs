@@ -460,7 +460,7 @@ mod test {
         let rules : Rules = load_rules("en");
 
         assert!(check(&rules, &String::from("This is absolutely valid.")));
-        assert!(check(&rules, &String::from("this is lowercase")));
+        assert!(!check(&rules, &String::from("this is lowercase")));
         assert!(!check(&rules, &String::from("")));
         assert!(!check(&rules, &String::from("\"😊")));
         assert!(!check(&rules, &String::from("This ends with:")));
