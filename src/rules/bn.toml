@@ -1,0 +1,39 @@
+
+# Replacements which are run before sentences are split
+replacements = []
+
+min_trimmed_length = 3
+min_word_count = 3
+max_word_count = 20
+min_characters = 5
+may_end_with_colon = false
+quote_start_with_letter = true
+needs_punctuation_end = false
+needs_letter_start = true
+needs_uppercase_start = false
+broken_whitespace = ["  ", " ,", " .", " ?", " !", " ;"]
+
+disallowed_symbols = [
+  '<', '>', '+', '*', '\', '#', '@', '^', '[', ']', '(', ')', '/',
+  'é', 'è', 'à', 'ç', 'Å',
+  'α', 'β', 'Γ', 'γ', 'Δ', 'δ', 'ε', 'ζ', 'η', 'Θ', 'θ', 'ι', 'κ',
+  'Λ', 'λ', 'μ', 'ν', 'Ξ', 'ξ', 'Π', 'π', 'ρ', 'Σ', 'σ', 'ς', 'τ',
+  'υ', 'Φ', 'φ', 'χ', 'Ψ', 'ψ', 'Ω', 'ω', 'a', 'b', 'c', 'd', 'e', 
+  'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 
+  's', 't', 'u', 'v', 'w', 'x', 'y', 'z', 'A', 'B', 'C', 'D', 'E', 
+  'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 
+  'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'
+]
+
+even_symbols = ['"']
+
+matching_symbols = [
+  ["„", "“"],
+  ["(", ")"]
+]
+
+abbreviation_patterns = [
+]
+
+other_patterns = []
+segmenter = "python"
