@@ -58,12 +58,12 @@ pub fn split_sentences_with_python_bn(text: &str) -> Vec<String> {
         from nltk.tokenize.punkt import PunktSentenceTokenizer, PunktLanguageVars
         try:
             class BengaliLangVars(PunktLanguageVars):
-                sent_end_chars = ('.', '?', '!', '।')
+                sent_end_chars = ('?', '!', '।')
         
         except LookupError:
             nltk.download("punkt")
             class BengaliLangVars(PunktLanguageVars):
-                sent_end_chars = ('.', '?', '!', '।')
+                sent_end_chars = ('?', '!', '।')
 
         tokenizer = PunktSentenceTokenizer(lang_vars = BengaliLangVars())
 
