@@ -6,6 +6,7 @@ replacements = [
   ["gem.", "gemäß"],
   ["sog.", "sogenannt"],
   ["Art.", "Artikel"],
+  ["Abs.", "Absatz"],
   ["geb.", "geboren"],
   ["allg.", "allgemein"],
   ["bes.", "besonders"],
