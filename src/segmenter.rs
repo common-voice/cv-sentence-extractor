@@ -84,6 +84,7 @@ mod test {
         assert_eq!(split_sentences_with_python(language, text).len(), 2);
     }
 
+    #[test]
     fn test_segmenter_bn() {
         let language = "bn";
         let text = "আমি প্রথম বাক্য। আমি আর একটি বাক্য।";
