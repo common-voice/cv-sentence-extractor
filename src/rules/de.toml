@@ -25,6 +25,7 @@ replacements = [
   ["bzgl.", "bezüglich"],
 ]
 
+
 segmenter = "python"
 
 min_trimmed_length = 3
