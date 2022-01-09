@@ -6,9 +6,11 @@ FILE_NAME=$1
 WORKSPACE=${GITHUB_WORKSPACE:-/tmp}
 OUTPUT_PATH="$WORKSPACE/output"
 FILE_PATH="$OUTPUT_PATH/$FILE_NAME"
-OUTPUT_FILE="$OUTPUT_PATH/sorted-unique.txt"
+OUTPUT_FILE="$OUTPUT_PATH/sample.txt"
 
 if [[ -f "$FILE_PATH" ]]; then
-  echo "Sorting and deduplicating $FILE_PATH"
+  echo "Deduplicating $FILE_PATH"
   sort -u $FILE_PATH > $OUTPUT_FILE
+  echo "Re-shuffling $OUTPUT_FILE"
+  shuf $OUTPUT_FILE > $OUTPUT_FILE
 fi
