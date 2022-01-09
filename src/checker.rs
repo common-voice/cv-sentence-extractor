@@ -522,6 +522,8 @@ mod test {
         assert!(!check(&rules, &String::from("Oder am Ende e.")));
         assert!(!check(&rules, &String::from("AmSi ist eine schwarze Masse, isomorph mit LaSi")));
         assert!(!check(&rules, &String::from("Kein deutsches Wort: ambiguous.")));
+        assert!(!check(&rules, &String::from("Zweiter Paragraph im AktG")));
+        assert!(!check(&rules, &String::from("Mai in der Domkirche von Badajoz statt.")));
     }
 
     #[test]
