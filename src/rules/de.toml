@@ -1,7 +1,28 @@
-# Note added by Michael: this is currently only validated
-# for correct sentence splitting. Full validation will be
-# done together with further rule improvements in
-# https://github.com/common-voice/cv-sentence-extractor/pull/157
+replacements = [
+  ["z.B.", "zum Beispiel"],
+  ["z. B.", "zum Beispiel"],
+  ["ca.", "circa"],
+  ["bzw.", "beziehungsweise"],
+  ["gem.", "gemäß"],
+  ["sog.", "sogenannt"],
+  ["Art.", "Artikel"],
+  ["Abs.", "Absatz"],
+  ["geb.", "geboren"],
+  ["allg.", "allgemein"],
+  ["bes.", "besonders"],
+  ["bez.", "bezüglich"],
+  ["eigtl.", "eigentlich"],
+  ["gegr.", "gegründet"],
+  ["ugs.", "umgangssprachlich"],
+  ["urspr.", "ursprünglich"],
+  ["usw.", "und so weiter"],
+  ["zz.", "zurzeit"],
+  ["ggf.", "gegebenenfalls"],
+  ["bspw.", "beispielsweise"],
+  ["mind.", "mindestens"],
+  ["evtl.", "eventuell"],
+  ["bzgl.", "bezüglich"],
+]
 
 segmenter = "python"
 min_trimmed_length = 3
@@ -13,12 +34,22 @@ quote_start_with_letter = true
 needs_punctuation_end = false
 needs_letter_start = true
 needs_uppercase_start = true
-allowed_symbols_regex = "[\u0020-\u007BäöüßÄÖÜ„“‚‘’–\\.]"
+allowed_symbols_regex = "[\u0020A-Za-zäöüßÄÖÜ\"„“‚‘’–\\.?!()]"
 disallowed_symbols = []
 broken_whitespace = ["  ", " ,", " .", " ?", " !", " ;"]
+even_symbols = ['"']
 
 matching_symbols = [
-  ["„", "“"]
+  ["„", "“"],
+  ["(", ")"]
+]
+
+# Abbreviations
+#   - Jahrhundert and others at the beginning of the sentence (circumvents wrongly splitted such as "Im 3. Jahrhundert begann ...")
+#   - A.B, z.B., or SMS
+abbreviation_patterns = [
+  "^(Jahrhundert|Liga|Bundesliga|Klasse)",
+  "[A-Z]+\\.*[A-Z]",
 ]
 
 # Other patterns
