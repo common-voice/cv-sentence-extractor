@@ -48,10 +48,10 @@ matching_symbols = [
 
 # Abbreviations
 #   - Jahrhundert and others at the beginning of the sentence (circumvents wrongly splitted such as "Im 3. Jahrhundert begann ...")
-#   - A.B, z.B., or SMS
+#   - A.B, Z.B., or SMS (abbreviations with lowercase letters are taken care of further down)
 abbreviation_patterns = [
   "^(Jahrhundert|Liga|Bundesliga|Klasse)",
-  "[A-Za-z]+\\.*[A-Za-z]",
+  "[A-Z]+\\.*[A-Z]",
 ]
 
 # Other patterns
