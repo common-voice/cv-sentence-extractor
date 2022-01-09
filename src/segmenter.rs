@@ -33,7 +33,6 @@ pub fn split_sentences_with_python_en(text: &str) -> Vec<String> {
     ctx.get("split_sentences")
 }
 
-
 pub fn split_sentences_with_python_de(text: &str) -> Vec<String> {
     let ctx = Context::new();
 
@@ -101,5 +100,3 @@ mod test {
         assert_eq!(split_sentences_with_python(language, text).len(), 2);
     }
 }
-
-
