@@ -14,4 +14,5 @@ if [[ -f "$FILE_PATH" ]]; then
   sort -u $FILE_PATH > $TEMP_FILE
   echo "Re-shuffling $TEMP_FILE to $OUTPUT_FILE"
   shuf $TEMP_FILE > $OUTPUT_FILE
+  rm -f $TEMP_FILE
 fi
