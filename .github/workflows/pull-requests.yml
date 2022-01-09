@@ -31,9 +31,7 @@ jobs:
       - uses: actions/checkout@v2
 
       # GET CHANGED FILES TO DETERMINE LANGUAGE
-      - name: Get Commit Message
-        run: echo "COMMIT_MESSAGE=\"$(git log --format=%B -n 1 ${{ github.event.after }})\"" >> $GITHUB_ENV
-      - uses: futuratrepadeira/changed-files@b4ef6fe532b9b5022be2489df114ba28146aea14
+      - uses: umani/changed-files@e800e40c8475490f1e1325f19064a2b832483d90
         id: files
         with:
           repo-token: ${{ secrets.GITHUB_TOKEN }}
