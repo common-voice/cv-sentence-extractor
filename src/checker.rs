@@ -524,6 +524,7 @@ mod test {
         assert!(!check(&rules, &String::from("Kein deutsches Wort: ambiguous.")));
         assert!(!check(&rules, &String::from("Zweiter Paragraph im AktG")));
         assert!(!check(&rules, &String::from("Mai in der Domkirche von Badajoz statt.")));
+        assert!(!check(&rules, &String::from("Keine Abkürzung mit Umlauten BÄK")));
     }
 
     #[test]

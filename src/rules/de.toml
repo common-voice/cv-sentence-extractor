@@ -47,23 +47,23 @@ matching_symbols = [
 ]
 
 # Abbreviations
-#   - A.B, Z.B., or SMS (abbreviations with lowercase letters are taken care of further down)
+#   - A.B, Z.B., BÄM, or SMS (abbreviations with lowercase letters are taken care of further down)
 #   - AktG (usually abbreviations of law text names)
 abbreviation_patterns = [
-  "[A-Z]+\\.*[A-Z]",
-  "[a-z]+[A-Z]",
+  "[A-ZÄÖÜ]+\\.*[A-ZÄÖÜ]",
+  "[a-zäöü]+[A-ZÄÖÜ]",
 ]
 
 # Other patterns
 #   - Jahrhundert and others at the beginning of the sentence (circumvents wrongly splitted such as "Im 3. Jahrhundert begann ...")
 #   - Months (usually wrongly splitted due to date number before - i.e. "3. März")
 #   - Sentence delimiter can only be at the end of a sentence. This also takes care of abbreviations.
-#   - No words with only one letter (" a.", " a", " a ", "a ")
+#   - No words with only one letter (" a.", " a", " a ", "a ", " ä")
 #   - Mixed upper/lowercase in words (LaSi - mostly chemical elements?)
 other_patterns = [
   "^(Jahrhundert|Liga|Bundesliga|Klasse|Platz|Grades)",
   "^(Januar|Februar|März|April|Mai|Juni|Juli|September|Oktober|November|Dezember)",
   "[\\.|\\?|!].+$",
-  "(\\s[A-Za-z]{1}[\\.|\\?|!]*$)|(^[A-Za-z]{1}\\s)|\\s[A-Za-z]{1}\\s",
-  "[a-z][A-Z][a-z]",
+  "(\\s[A-ZÄÖÜa-zäöü]{1}[\\.|\\?|!]*$)|(^[A-ZÄÖÜa-zäöü]{1}\\s)|\\s[A-ZÄÖÜa-zäöü]{1}\\s",
+  "[a-zäöü][A-ZÄÖÜ][a-zäöü]",
 ]
