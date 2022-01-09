@@ -1,3 +1,4 @@
+# Replacements are done before splitting the text into sentences
 replacements = [
   ["z.B.", "zum Beispiel"],
   ["z. B.", "zum Beispiel"],
@@ -25,6 +26,7 @@ replacements = [
 ]
 
 segmenter = "python"
+
 min_trimmed_length = 3
 min_word_count = 2
 max_word_count = 14
@@ -49,7 +51,7 @@ matching_symbols = [
 #   - A.B, z.B., or SMS
 abbreviation_patterns = [
   "^(Jahrhundert|Liga|Bundesliga|Klasse)",
-  "[A-Z]+\\.*[A-Z]",
+  "[A-Za-z]+\\.*[A-Za-z]",
 ]
 
 # Other patterns
