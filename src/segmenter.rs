@@ -4,6 +4,7 @@ pub fn split_sentences_with_python(language: &str, text: &str) -> Vec<String> {
     match language {
         "en" => split_sentences_with_python_en(text),
         "de" => split_sentences_with_python_de(text),
+        "bn" => split_sentences_with_python_bn(text),
         _ => {
             panic!("{} is not supported for Python segmenter, please implement it or remove the segmenter rule", language);
         },
@@ -49,6 +50,28 @@ pub fn split_sentences_with_python_de(text: &str) -> Vec<String> {
     ctx.get("split_sentences")
 }
 
+pub fn split_sentences_with_python_bn(text: &str) -> Vec<String> {
+    let ctx = Context::new();
+
+    ctx.run(python! {
+        from nltk.tokenize.punkt import PunktSentenceTokenizer, PunktLanguageVars
+        try:
+            class BengaliLangVars(PunktLanguageVars):
+                sent_end_chars = ('?', '!', '।')
+        
+        except LookupError:
+            nltk.download("punkt")
+            class BengaliLangVars(PunktLanguageVars):
+                sent_end_chars = ('?', '!', '।')
+
+        tokenizer = PunktSentenceTokenizer(lang_vars = BengaliLangVars())
+
+        split_sentences = tokenizer.tokenize('text)
+    });
+
+    ctx.get("split_sentences")
+}
+
 #[cfg(test)]
 mod test {
     use super::*;
@@ -57,6 +80,14 @@ mod test {
     fn test_segmenter_de() {
         let language = "de";
         let text = "I am a sentence. Me too!";
+
+        assert_eq!(split_sentences_with_python(language, text).len(), 2);
+    }
+
+    #[test]
+    fn test_segmenter_bn() {
+        let language = "bn";
+        let text = "আমি প্রথম বাক্য। আমি আর একটি বাক্য।";
 
         assert_eq!(split_sentences_with_python(language, text).len(), 2);
     }
