@@ -23,6 +23,7 @@ replacements = [
   ["mind.", "mindestens"],
   ["evtl.", "eventuell"],
   ["bzgl.", "bezüglich"],
+  ["Nr.", "Nummer"],
 ]
 
 segmenter = "python"
@@ -60,10 +61,13 @@ abbreviation_patterns = [
 #   - Sentence delimiter can only be at the end of a sentence. This also takes care of abbreviations.
 #   - No words with only one letter (" a.", " a", " a ", "a ", " ä")
 #   - Mixed upper/lowercase in words (LaSi - mostly chemical elements?)
+#   - Geburtstag and Titel which are usually followed by the number
+#   - Abbreviations which are not easily replaced or detected
 other_patterns = [
-  "^(Jahrhundert|Liga|Bundesliga|Klasse|Platz|Grades)",
+  "^(Jahrhundert|Liga|Bundesliga|Klasse|Platz|Grades|Runde|Division|Rang)",
   "^(Januar|Februar|März|April|Mai|Juni|Juli|September|Oktober|November|Dezember)",
   "[\\.|\\?|!].+$",
   "(\\s[A-ZÄÖÜa-zäöü]{1}[\\.|\\?|!]*$)|(^[A-ZÄÖÜa-zäöü]{1}\\s)|\\s[A-ZÄÖÜa-zäöü]{1}\\s",
   "[a-zäöü][A-ZÄÖÜ][a-zäöü]",
+  "\\shl.$",
 ]
