@@ -10,6 +10,22 @@ Right now this tool supports extractions from the following sources:
 
 For a source to be added, the dataset needs to be vetted by Mozilla to check license compatibility. If you know about a good source, please start a topic on [Discourse](https://discourse.mozilla.org/c/voice/). Once it's been verified that a source can be used, check the "Adding another scrape target" further below.
 
+## Flow
+
+![Diagram](flow.svg)
+
+*To edit this diagram, load the `flow.svg` in the root of the repository into [diagrams.net](https://app.diagrams.net/) and then save the updated version back into the repository like any other file changes you'd make.*
+
+In the diagram above, light blue squares represent Sentence Extractor processes. The grey squares are processes outside of the Sentence Extractor tooling. The grey processes are the same for other sentence sources, such as bulk submissions and Sentence Extractor
+
+1) If there is no rules file for the language you want to contribute to, then create a new rules file. The rules will be applied to every sentence picked from the datasource. If a sentence does not fulfill the rules, then it will be discarded and a new sentence will be chosen. The script randomly chooses sentences until the maximum allowed number of sentences is reached (if the data source has such a limit).
+2) Check below on how to run the script. After running it, check the output and identify patterns in wrong sentences and add rules to capture these. The end goal is to have an error rate of less than 5%. You will most likely not get to 0% error rate, but aim for the lowest error rate reasonable. You can stop the script after a few seconds during this process to increase feedback time, as this process will require more than a single run. As sentences may be picked randomly, you will not see the same sentences when re-running the script. Therefore general patterns are important to be identified.
+3) Once happy with the result, please create a PR with the rules file. Please also see the "Getting your rules/blocklist incorporated" section below for more information on what to include in this PR.
+4) Once the PR is merged, a core contributor will run the extraction in the GitHub Actions pipeline. The resulting file will be used in the steps below.
+5) The resulting output text file is added to the [language specific folder](https://github.com/common-voice/common-voice/tree/main/server/data) in the Common Voice repository through a PR. This is manual, but reflects the file from the previous step. No changes are done to this file to keep legal requirements fulfilled. Therefore this steps can only be performed by staff or a designated contributor.
+6) Sentences added to the Common Voice `server/data` folder do not instantly get imported Common Voice. This means that they are not instantly available for recording on the Common Voice website. The import of new sentences only happens when a new version of the Common Voice website is released. You can find the past releases [here](https://github.com/common-voice/common-voice/releases).
+7) If a certain language is enabled for contribution, the imported sentences will then be shown to contributors to record.
+
 ## Setup
 
 - [Rust Nightly](https://rustup.rs/) (follow the instructions and customize the install to select the `nightly` channel)
