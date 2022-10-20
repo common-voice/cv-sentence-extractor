@@ -24,6 +24,14 @@ replacements = [
   ["evtl.", "eventuell"],
   ["bzgl.", "bezüglich"],
   ["Nr.", "Nummer"],
+  ["rd.", "rund"], 
+  ["hl.", "heilig"],
+  ["dgl.", "Der gleichen"],
+  ["No.", "Number"],
+  ["Abk.", "Abkürzung"], 
+  ["Abb.", "Abbildung"],
+  ["geb.", "geboren"], 
+  ["gegr.", "gegründet"],
 ]
 
 segmenter = "python"
