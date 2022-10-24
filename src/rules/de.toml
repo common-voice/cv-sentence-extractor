@@ -32,6 +32,8 @@ replacements = [
   ["Abb.", "Abbildung"],
   ["geb.", "geboren"], 
   ["gegr.", "gegründet"],
+  ["vs.", "versus"],
+  ["kgl", "königlich"],
 ]
 
 segmenter = "python"
