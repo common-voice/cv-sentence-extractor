@@ -167,7 +167,7 @@ The following rules can be configured per language. Add a `<language>.toml` file
 | max_word_count |  Maximum number of words in a sentence | integer | 14
 | may_end_with_colon |  If a sentence can end with a : or not | boolean | false
 | min_characters |  Minimum of character occurrences | integer | 0
-| max_characters |  Maximum of character occurrences | integer | 999
+| max_characters |  Maximum of character occurrences | integer | MAX
 | min_trimmed_length |  Minimum length of string after trimming | integer | 3
 | min_word_count |  Minimum number of words in a sentence | integer | 1
 | needs_letter_start |  If a sentence needs to start with a letter | boolean | true
