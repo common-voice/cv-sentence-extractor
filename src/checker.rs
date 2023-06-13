@@ -2,13 +2,13 @@ use crate::rules::Rules;
 use toml::Value;
 use regex::Regex;
 
+fn in_limit(x: usize, min_val: usize, max_val: usize) -> bool {
+    return (x >= min_val) && (x <= max_val)
+}
+
 pub fn check(rules: &Rules, raw: &str) -> bool {
-
-    fn in_limit(x: usize, min_val: usize, max_val: usize) -> bool {
-        return (x >= min_val) && (x <= max_val)
-    }
-
     let trimmed = raw.trim();
+    let alpha_cnt = trimmed.chars().filter(|c| c.is_alphabetic()).count();
     if trimmed.len() < rules.min_trimmed_length
         || rules.quote_start_with_letter
             && trimmed.starts_with('"')
@@ -17,7 +17,7 @@ pub fn check(rules: &Rules, raw: &str) -> bool {
                 .nth(1)
                 .map(|c| !c.is_alphabetic())
                 .unwrap_or_default()
-        || !in_limit(trimmed.chars().filter(|c| c.is_alphabetic()).count(), rules.min_characters, rules.max_characters)
+        || !in_limit(alpha_cnt, rules.min_characters, rules.max_characters)
         || !rules.may_end_with_colon && trimmed.ends_with(':')
         || rules.needs_punctuation_end && trimmed.ends_with(|c: char| c.is_alphabetic())
         || rules.needs_letter_start && trimmed.starts_with(|c: char| !c.is_alphabetic())
@@ -151,8 +151,8 @@ mod test {
             ..Default::default()
         };
 
-        assert!(!check(&rules, &String::from("not less than or equal to 25")));
-        assert!(check(&rules, &String::from("less than or equal to 25")));
+        assert!(!check(&rules, &String::from("This is a very long sentence which should not be accepted")));
+        assert!(check(&rules, &String::from("This is a short sentence")));
     }
 
     #[test]
