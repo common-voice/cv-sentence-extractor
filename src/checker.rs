@@ -3,6 +3,11 @@ use toml::Value;
 use regex::Regex;
 
 pub fn check(rules: &Rules, raw: &str) -> bool {
+
+    fn in_limit(x: usize, min_val: usize, max_val: usize) -> bool {
+        return (x >= min_val) && (x <= max_val)
+    }
+
     let trimmed = raw.trim();
     if trimmed.len() < rules.min_trimmed_length
         || rules.quote_start_with_letter
@@ -12,7 +17,7 @@ pub fn check(rules: &Rules, raw: &str) -> bool {
                 .nth(1)
                 .map(|c| !c.is_alphabetic())
                 .unwrap_or_default()
-        || trimmed.chars().filter(|c| c.is_alphabetic()).count() < rules.min_characters
+        || !in_limit(trimmed.chars().filter(|c| c.is_alphabetic()).count(), rules.min_characters, rules.max_characters)
         || !rules.may_end_with_colon && trimmed.ends_with(':')
         || rules.needs_punctuation_end && trimmed.ends_with(|c: char| c.is_alphabetic())
         || rules.needs_letter_start && trimmed.starts_with(|c: char| !c.is_alphabetic())
@@ -137,6 +142,17 @@ mod test {
 
         assert!(!check(&rules, &String::from("no!!")));
         assert!(check(&rules, &String::from("yes!")));
+    }
+
+    #[test]
+    fn test_max_characters() {
+        let rules : Rules = Rules {
+            max_characters: 25,
+            ..Default::default()
+        };
+
+        assert!(!check(&rules, &String::from("not less than or equal to 25")));
+        assert!(check(&rules, &String::from("less than or equal to 25")));
     }
 
     #[test]

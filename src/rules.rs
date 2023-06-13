@@ -42,6 +42,7 @@ pub struct Rules {
     pub min_word_count: usize,
     pub max_word_count: usize,
     pub min_characters: usize,
+    pub max_characters: usize,
     pub may_end_with_colon: bool,
     pub quote_start_with_letter: bool,
     pub needs_punctuation_end: bool,
@@ -66,6 +67,7 @@ impl Default for Rules {
             min_word_count: 1,
             max_word_count: 14,
             min_characters: 0,
+            max_characters: std::usize::MAX,
             may_end_with_colon: false,
             quote_start_with_letter: true,
             needs_punctuation_end: false,
@@ -100,6 +102,7 @@ mod test {
         assert_eq!(rules.min_word_count, 1);
         assert_eq!(rules.max_word_count, 14);
         assert_eq!(rules.min_characters, 0);
+        assert_eq!(rules.max_characters, 999);
         assert!(!rules.may_end_with_colon);
         assert!(rules.quote_start_with_letter);
         assert!(!rules.needs_punctuation_end);
