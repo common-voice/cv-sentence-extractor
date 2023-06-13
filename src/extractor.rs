@@ -109,13 +109,13 @@ fn pick_sentences(
     // We do not extract if the total is below the max amount.
     // This makes sure that we handle legal requirements correctly
     // such as not using the full corpus of a source.
-    if total_in_pool <= amount && amount != std::usize::MAX {
+    if total_in_pool <= amount && amount != usize::MAX {
         return vec![];
     }
 
     // If we're allowed to pick all sentences, we do not need to
     // select randomly
-    if amount == std::usize::MAX {
+    if amount == usize::MAX {
         return sentences_pool.iter().filter(|&sentence| {
             let not_already_chosen = !existing_sentences.contains(sentence);
             predicate(rules, sentence) && not_already_chosen
@@ -293,7 +293,7 @@ mod test {
             String::from("Test4"),
             String::from("Test5"),
         ];
-        let amount = std::usize::MAX;
+        let amount = usize::MAX;
 
         assert_eq!(pick_sentences(&rules, sentences, &existing_sentences, amount, check_true).len(), 5);
     }

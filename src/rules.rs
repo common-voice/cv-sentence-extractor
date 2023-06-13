@@ -67,7 +67,7 @@ impl Default for Rules {
             min_word_count: 1,
             max_word_count: 14,
             min_characters: 0,
-            max_characters: std::usize::MAX,
+            max_characters: usize::MAX,
             may_end_with_colon: false,
             quote_start_with_letter: true,
             needs_punctuation_end: false,
@@ -102,7 +102,7 @@ mod test {
         assert_eq!(rules.min_word_count, 1);
         assert_eq!(rules.max_word_count, 14);
         assert_eq!(rules.min_characters, 0);
-        assert_eq!(rules.max_characters, 999);
+        assert_eq!(rules.max_characters, usize::MAX);
         assert!(!rules.may_end_with_colon);
         assert!(rules.quote_start_with_letter);
         assert!(!rules.needs_punctuation_end);
