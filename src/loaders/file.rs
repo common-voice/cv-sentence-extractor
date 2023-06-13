@@ -15,7 +15,7 @@ impl FileLoader {
     let config = Config {
       language,
       directory,
-      max_sentences_per_text: std::usize::MAX,
+      max_sentences_per_text: usize::MAX,
       file_prefix: String::from(""),
     };
 
