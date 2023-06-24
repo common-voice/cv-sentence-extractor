@@ -174,6 +174,7 @@ The following rules can be configured per language. Add a `<language>.toml` file
 | needs_punctuation_end |  If a sentence needs to end with a punctuation | boolean | false
 | needs_uppercase_start |  If a sentence needs to start with an uppercase | boolean | false
 | other_patterns |  Regex to disallow anything else | Rust Regex Array | all other patterns allowed
+| stem_separator_regex |  If given, splits words at the given characters to reach the stem words to check them again against the blacklist, e.g. prevents "Rust's" to pass if "Rust" is in the blacklist. | Simple regex of separators, e.g. for apostrophe `stem_separator_regex = "[']"` | ""
 | quote_start_with_letter |  If a quote needs to start with a letter | boolean | true
 | replacements |  Replaces abbreviations or other words according to configuration. This happens before any other rules are checked. | Array of replacement configurations: each configuration is an Array of two values: `["search", "replacement"]`. See example below. | nothing gets replaced
 | segmenter |  Segmenter to use for this language. See below for more information. | "python" | using `rust-punkt` by default
