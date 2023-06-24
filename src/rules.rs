@@ -54,6 +54,7 @@ pub struct Rules {
     pub broken_whitespace: Array,
     pub abbreviation_patterns: Array,
     pub other_patterns: Array,
+    pub stem_separator_regex: String,
     pub replacements: Array,
     pub even_symbols: Array,
     pub matching_symbols: Array,
@@ -79,6 +80,7 @@ impl Default for Rules {
             broken_whitespace: vec![],
             abbreviation_patterns: vec![],
             other_patterns: vec![],
+            stem_separator_regex: String::from(""),
             replacements: vec![],
             even_symbols: vec![],
             matching_symbols: vec![],
@@ -114,6 +116,7 @@ mod test {
         assert_eq!(rules.broken_whitespace, vec![]);
         assert_eq!(rules.abbreviation_patterns, vec![]);
         assert_eq!(rules.other_patterns, vec![]);
+        assert_eq!(rules.stem_separator_regex, String::from(""));
         assert_eq!(rules.replacements, vec![]);
         assert_eq!(rules.even_symbols, vec![]);
         assert_eq!(rules.matching_symbols, vec![]);
