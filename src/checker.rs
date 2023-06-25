@@ -3,7 +3,7 @@ use toml::Value;
 use regex::Regex;
 
 fn in_limit(x: usize, min_val: usize, max_val: usize) -> bool {
-    return (x >= min_val) && (x <= max_val)
+    x >= min_val && x <= max_val
 }
 
 pub fn check(rules: &Rules, raw: &str) -> bool {
@@ -477,7 +477,7 @@ mod test {
 
         assert!(check(&rules, &String::from("This is absolutely valid.")));
         assert!(!check(&rules, &String::from("this is lowercase")));
-        assert!(!check(&rules, &String::from("")));
+        assert!(!check(&rules, ""));
         assert!(!check(&rules, &String::from("\"😊")));
         assert!(!check(&rules, &String::from("This ends with:")));
         assert!(!check(&rules, &String::from(" AA ")));
@@ -499,7 +499,7 @@ mod test {
         let rules : Rules = load_rules("fr");
 
         assert!(check(&rules, &String::from("This is absolutely validé.")));
-        assert!(!check(&rules, &String::from("")));
+        assert!(!check(&rules, ""));
         assert!(!check(&rules, &String::from("\"😊")));
         assert!(!check(&rules, &String::from("This ends with:")));
         assert!(!check(&rules, &String::from("This does not end with a period")));
