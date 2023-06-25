@@ -63,9 +63,9 @@ pub fn check(rules: &Rules, raw: &str) -> bool {
         let mut stems_words: Vec<&str> = vec![];
         
         for word in words {
-            let maybe_stem_word: &str = &(regex.split(word).nth(0).unwrap_or(word));
+            let maybe_stem_word: &str = regex.split(word).next().unwrap_or(word);
             if maybe_stem_word != word {
-                stems_words.push(&maybe_stem_word);
+                stems_words.push(maybe_stem_word);
             }
         }
 
