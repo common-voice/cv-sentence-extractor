@@ -47,15 +47,31 @@ pub fn check(rules: &Rules, raw: &str) -> bool {
         return false;
     }
 
-    let mut words = trimmed.split_whitespace();
+    let words = trimmed.split_whitespace();
     let word_count = words.clone().count();
     if word_count < rules.min_word_count
         || word_count > rules.max_word_count
-        || words.any(|word| rules.disallowed_words.contains(
+        || words.clone().any(|word| rules.disallowed_words.contains(
              &word.trim_matches(|c: char| !c.is_alphabetic()).to_lowercase()
            ))
     {
         return false;
+    }
+
+    if !rules.stem_separator_regex.is_empty() {
+        let regex: Regex = Regex::new(&rules.stem_separator_regex).unwrap();
+        let mut stems_words: Vec<&str> = vec![];
+        
+        for word in words {
+            let maybe_stem_word = regex.split(word).next().unwrap_or(word);
+            if maybe_stem_word != word {
+                stems_words.push(maybe_stem_word);
+            }
+        }
+
+        if stems_words.into_iter().any(|word| rules.disallowed_words.contains(word)) {
+            return false;
+        }
     }
 
     let abbr = rules.abbreviation_patterns.iter().any(|pattern| {
@@ -299,6 +315,26 @@ mod test {
             ..Default::default()
         };
         assert!(!check(&rules, &String::from("This has a's")));
+    }
+
+    #[test]
+    fn test_stem_separator_regex() {
+        let rules : Rules = Rules {
+            stem_separator_regex: "[']".to_string(),
+            disallowed_words: ["Smithsonian", "DC", "Museum"].iter().map(|s| (*s).to_string()).collect(),
+            ..Default::default()
+        };
+
+        assert!(check(&rules, &String::from("The Mall has many museums.")));
+        assert!(!check(&rules, &String::from("Smithsonian's venues are in the Mall.")));
+        assert!(!check(&rules, &String::from("Do you know Smithsonian's African American Museum's location?")));
+        assert!(!check(&rules, &String::from("Washington DC's Mall has many musums.")));
+
+        let rules : Rules = Rules {
+            disallowed_words: ["Smithsonian", "DC", "Museum"].iter().map(|s| (*s).to_string()).collect(),
+            ..Default::default()
+        };
+        assert!(check(&rules, &String::from("Smithsonian's venues are in DC's Mall - no check for stems.")));
     }
 
     #[test]
