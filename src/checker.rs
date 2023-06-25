@@ -63,14 +63,13 @@ pub fn check(rules: &Rules, raw: &str) -> bool {
         let mut stems_words: Vec<&str> = vec![];
         
         for word in words {
-            let maybe_stem_word: &str = regex.split(word).next().unwrap_or(word);
+            let maybe_stem_word = regex.split(word).next().unwrap_or(word);
             if maybe_stem_word != word {
                 stems_words.push(maybe_stem_word);
             }
         }
 
-        if stems_words.into_iter().any(|word| rules.disallowed_words.contains(word))
-        {
+        if stems_words.into_iter().any(|word| rules.disallowed_words.contains(word)) {
             return false;
         }
     }
@@ -335,9 +334,7 @@ mod test {
             disallowed_words: ["Smithsonian", "DC", "Museum"].iter().map(|s| (*s).to_string()).collect(),
             ..Default::default()
         };
-        assert!(check(&rules, &String::from("Smithsonian's venues are in DC's Mall - this will not be checked for stem words.")));
-
-
+        assert!(check(&rules, &String::from("Smithsonian's venues are in DC's Mall - no check for stems.")));
     }
 
     #[test]
