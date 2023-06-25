@@ -18,17 +18,17 @@ jobs:
     steps:
       # SETUP
       - name: Maximize build space
-        uses: easimon/maximize-build-space@master
+        uses: easimon/maximize-build-space@b4d02c14493a9653fe7af06cc89ca5298071c66e
         with:
           root-reserve-mb: 512
           swap-size-mb: 1024
           remove-dotnet: "true"
           remove-android: "true"
           remove-haskell: "true"
-      - uses: hecrj/setup-rust-action@967aec96c6a27a0ce15c1dac3aaba332d60565e2
+      - uses: hecrj/setup-rust-action@50a120e4d34903c2c1383dec0e9b1d349a9cc2b1
         with:
           rust-version: ${{ matrix.rust }}
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
 
       # GET CHANGED FILES TO DETERMINE LANGUAGE
       - uses: umani/changed-files@e800e40c8475490f1e1325f19064a2b832483d90
@@ -46,7 +46,7 @@ jobs:
         run: ./scripts/dedupe.sh sample.txt
 
       # UPLOAD
-      - uses: actions/upload-artifact@v2
+      - uses: actions/upload-artifact@v3
         with:
           name: extraction
           path: output/*
