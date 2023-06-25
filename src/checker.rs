@@ -58,19 +58,18 @@ pub fn check(rules: &Rules, raw: &str) -> bool {
         return false;
     }
 
-    if !rules.stem_separator_regex.is_empty() && !(rules.stem_separator_regex == "[]") {
+    if !rules.stem_separator_regex.is_empty() {
         let regex: Regex = Regex::new(&rules.stem_separator_regex).unwrap();
         let mut stems_words: Vec<&str> = vec![];
         
         for word in words {
-            let maybe_stem_word: &str;
-            maybe_stem_word = &(regex.split(word).nth(0).unwrap_or(word));
+            let maybe_stem_word: &str = &(regex.split(word).nth(0).unwrap_or(word));
             if maybe_stem_word != word {
                 stems_words.push(&maybe_stem_word);
             }
         }
 
-        if stems_words.clone().into_iter().any( |word| rules.disallowed_words.contains(word))
+        if stems_words.into_iter().any(|word| rules.disallowed_words.contains(word))
         {
             return false;
         }
@@ -333,11 +332,10 @@ mod test {
         assert!(!check(&rules, &String::from("Washington DC's Mall has many musums.")));
 
         let rules : Rules = Rules {
-            stem_separator_regex: "[]".to_string(),
             disallowed_words: ["Smithsonian", "DC", "Museum"].iter().map(|s| (*s).to_string()).collect(),
             ..Default::default()
         };
-        assert!(check(&rules, &String::from("Smithsonian's venues are in DC's Mall will not be checked for stem words.")));
+        assert!(check(&rules, &String::from("Smithsonian's venues are in DC's Mall - this will not be checked for stem words.")));
 
 
     }
