@@ -26,7 +26,7 @@ jobs:
     strategy:
       matrix:
         os: [ubuntu-latest]
-        node-version: [16.x]
+        node-version: [18.x]
         rust: [nightly]
 
     steps:
@@ -39,14 +39,14 @@ jobs:
           remove-dotnet: "true"
           remove-android: "true"
           remove-haskell: "true"
-      - uses: hecrj/setup-rust-action@967aec96c6a27a0ce15c1dac3aaba332d60565e2
+      - uses: hecrj/setup-rust-action@50a120e4d34903c2c1383dec0e9b1d349a9cc2b1
         with:
           rust-version: ${{ matrix.rust }}
       - name: Use Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v2
+        uses: actions/setup-node@v3
         with:
           node-version: ${{ matrix.node-version }}
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
 
       # NEW ARTICLES
       - name: Query new articles
@@ -70,7 +70,7 @@ jobs:
         run: ./scripts/dedupe.sh extract.txt
 
       # UPLOAD
-      - uses: actions/upload-artifact@v2
+      - uses: actions/upload-artifact@v3
         with:
           name: extraction
           path: output/*

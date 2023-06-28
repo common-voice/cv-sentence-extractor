@@ -25,10 +25,10 @@ jobs:
           remove-dotnet: "true"
           remove-android: "true"
           remove-haskell: "true"
-      - uses: hecrj/setup-rust-action@967aec96c6a27a0ce15c1dac3aaba332d60565e2
+      - uses: hecrj/setup-rust-action@50a120e4d34903c2c1383dec0e9b1d349a9cc2b1
         with:
           rust-version: ${{ matrix.rust }}
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
 
       # COMMENT
       - name: Get Comment
@@ -53,14 +53,14 @@ jobs:
         run: ./scripts/extraction.sh ${{ steps.comment.outputs.action }}
       - name: Checkout cvtools
         if: "contains(steps.comment.outputs.action, 'blocklist')"
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         with:
           repository: dabinat/cvtools
           path: cvtools
       - name: Generate Blocklist
         if: "contains(steps.comment.outputs.action, 'blocklist')"
         run: ./scripts/create-blocklist.sh ${{ steps.comment.outputs.action }}
-      - uses: actions/upload-artifact@v2
+      - uses: actions/upload-artifact@v3
         if: "contains(steps.comment.outputs.action, 'blocklist')"
         with:
           name: blocklist
