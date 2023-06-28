@@ -1,0 +1,336 @@
+segmenter = "python"
+
+min_trimmed_length = 5
+min_word_count = 4
+max_word_count = 20
+min_characters = 10
+max_characters = 105
+may_end_with_colon = true
+quote_start_with_letter = true
+needs_punctuation_end = true
+needs_letter_start = true
+needs_uppercase_start = true
+# Only Turkish alphabet (without the letters q, w, x, but added extras with ^)
+allowed_symbols_regex = "[\u0020abcçdefgğhıijklmnoöprsştuüvyzâîûABCÇDEFGĞHIİJKLMNOÖPRSŞTUÜVYZÂÎÛ–—.‚:?!…'\\-\"]"
+disallowed_symbols = []
+broken_whitespace = []
+even_symbols = ['"']
+stem_separator_regex = "[']"
+
+# matching_symbols = [
+#   ["„", "“"],
+#   ["(", ")"],
+#   ["[", "]"],
+#   ["{", "}"],
+#   ["<", ">"],
+# ]
+
+# Abbreviations
+abbreviation_patterns = [
+  # for ABD, TSE, A.B.D, T.B.M.M. and similar
+  "[[A-ZÇĞİŞÖÜÂÎÛ]\\.]{2,}",
+  # for SaaB and similar
+  "[A-ZÇĞİŞÖÜÂÎÛ][a-zçğıöüşâîû]+[A-ZÇĞİŞÖÜÂÎÛ]",
+]
+
+# Other patterns
+#   - Sentence delimiter can only be at the end of a sentence. This also takes care of abbreviations.
+#   - No words with only one letter (" a.", " a", " a ", "a ", " ä")
+#   - Mixed upper/lowercase in words (LaSi - mostly chemical elements?)
+other_patterns = [
+  "[\\.|\\?|!|…].+$",
+  "(\\s[A-ZÇĞİŞÖÜÂÎÛa-zçğıöüşâîû]{1}[\\.|\\?|!]*$)|(^[A-ZÇĞİŞÖÜÂÎÛa-zçğıöüşâîû]{1}\\s)|\\s[A-ZÇĞİŞÖÜÂÎÛa-zçğıöüşâîû]{1}\\s",
+  "[a-zçğıöüşâîû][A-ZÇĞİŞÖÜÂÎÛ][a-zçğıöüşâîû]",
+  # constructs like "T-cell", e.g. "M-tipi gezegen" where we are not sure how people can read the "M"
+  "[A-ZÇĞİŞÖÜ][\\-–—][a-zçğıöüşA-ZÇĞİŞÖÜ]*",
+  "\\shl.$",
+]
+
+# Replacements are done before splitting the text into sentences
+replacements = [
+  ["\u00406", "I"],     # U+0406 => I (we have many from the cyrillic code page)
+  ["\u00410", "A"],     # U+0410 => A
+  ["\u00415", "E"],     # U+0415 => E
+  ["\u0041E", "O"],     # U+041E => O
+  ["\u004E6", "Ö"],     # U+04E6 => Ö
+  ["\u00430", "a"],     # U+0430 => a
+  ["\u00435", "e"],     # U+0435 => e
+  ["\u0043E", "o"],     # U+043E => o
+  ["\u00456", "i"],     # U+0456 => i
+  ["\u004E7", "ö"],     # U+0456 => ö
+  # ["\u00440", "p"],     # U+0440 => p
+  # ["\u00441", "c"],     # U+0441 => x
+  # ["\u00455", "s"],     # U+0455 => s
+  # ["ј", "j"],       # U+ => 
+  ["­", ""],       # U+00AD => empty string
+  [" ", " "],     # U+00A0 => whitespace
+  [" ", " "],     # U+2002 => whitespace
+  [" ", " "],     # U+202F => whitespace
+  ["\"\"","\""],  # Get rid of double "" (correct to single)
+  ["‑", "-"],     # U+2011 => hyphen
+  ["–", "—"],     # U+2013 => U+2014
+  ["―", "—"],     # U+2015 => U+2014
+  ["−", "—"],     # U+2212 => U+2014
+  [" - ", " — "], # hyphen => U+2014, when between whitespaces
+  ["...", "…"],   # Use Unicode ellipsis
+  ["„", "\""],    # Normalize alternate quotes
+  ["“", "\""],
+  ["”", "\""],
+  ["«", " \""],
+  ["»", "\" "],
+  ["(", " —"],    # Replace ()[]{} with — (U+2014)
+  [")", "— "],
+  ["[", " —"],
+  ["]", "— "],
+  ["{", " —"],
+  ["}", "— "],
+  [" …", "…"],    # "unbreak" broken whitespace
+  [" .", "."],
+  [" ;", ";"],
+  [" :", ":"],
+  [" !", "!"],
+  [" ?", "?"],
+
+  # Abbreviations
+
+  # military titles  
+  # ["As.İz.",     "Askerî İnzibat "],
+  # ["As. İz.",    "Askerî İnzibat "],
+  # ["Atğm. ",      "Asteğmen "],
+  ["Alb.",        "Albay "],
+  ["Asb.",        "Astsubay "],
+  ["Bçvş.",       "Başçavuş "],
+  ["Bnb.",        "Binbaşı "],
+  ["Çvş.",        "Çavuş "],
+  ["Gen.",        "General "],
+  ["Kd.",         "Kıdemli "],
+  ["Kora.",       "Koramiral "],
+  ["Korg.",       "Korgeneral "],
+  ["Onb.",        "Onbaşı "],
+  ["Sb.",         "Subay "],
+  ["Tb.",         "Tabur "],
+  ["Tğm.",        "Teğmen "],
+  ["Tug.",        "Tugay "],
+  ["Tuğa.",       "Tuğamiral "],
+  ["Tuğg.",       "Tuğgeneral "],
+  ["Tüm.",        "Tümen "],
+  ["Tüma.",       "Tümamiral "],
+  ["Tümg.",       "Tümgeneral "],
+  ["Uzm.",        "Uzman "],
+  ["Üçvş.",       "Üstçavuş "],
+  ["Ütğm.",       "Üsteğmen "],
+  ["Yb.",         "Yarbay "],
+  ["Yd.Sb.",      "Yedek Subay "],
+  ["Yzb.",        "Yüzbaşı "],
+  # Academic titles
+  # ["Arş.Gör.",   "Araştırma Görevlisi"],
+  # ["Arş. Gör.",  "Araştırma Görevlisi"],
+  ["Yrd.Doç.",    "Yardımcı Doçent "],
+  ["Yrd. Doç.",   "Yardımcı Doçent "],
+  ["Doç.Dr.",     "Doçent Doktor "],
+  ["Prof.Dr.",    "Profesör Doktor "],
+  ["Ord.Prof.",   "Ordünaryüs Profesör "],
+  ["Ord. Prof.",  "Ordünaryüs Profesör "],
+  ["Yrd.",        "Yardımcı "],
+  ["Prof.",       "Profesör "],
+  ["Doç.",        "Doçent "],
+  ["Dr.",         "Doktor "],
+  # profession titles
+  ["Av.",         "Avukat "],
+  ["Ecz.",        "Eczacı "],
+  ["Vet.",        "Veteriner "],
+  ["Y.Mim.",      "Yüksek Mimar "],
+  ["Yük.Mim.",    "Yüksek Mimar "],
+  ["Yük. Mim.",   "Yüksek Mimar "],
+  ["Y.Müh.",      "Yüksek Mühendis "],
+  ["Yük.Müh.",    "Yüksek Mühendis "],
+  ["Yük. Müh.",   "Yüksek Mühendis "],
+  ["Müh.",        "Mühendisi "],
+  ["Mim.",        "Mimar "],
+
+  # Other titles
+  ["Hz.",         "Hazreti "],
+
+  # other common abbr
+  ["Bn.",         "Bayan "],
+  ["Bşk.",        "Başkanlığı "],
+  ["Gön.",        "Gönderen "],
+  ["Sn.",         "Sayın "],
+  ["Sok.",        "Sokak "],
+  ["Şb.",         "Şube "],
+  ["T.C.",        "Türkiye Cumhuriyeti "],
+  [" Apt.",       " apartmanı "],
+  [" apt.",       " apartmanı "],
+  [" bk.",        " bakınız "],
+  [" bs.",        " baskı "],
+  [" Bul.",       " Bulvarı "],
+  [" Cad.",       " Caddesi "],
+  [" çev.",       " çeviren "],
+  [" dk.",        " dakika "],
+  [" drl.",       " derleyen "],
+  [" dzl.",       " düzenleyen "],
+  [" haz.",       " hazırlayan "],
+  [" hek.",       " hekimi "],
+  [" kr.",        " kuruş "],
+  [" öl.",        " ölüm tarihi "],
+  [" ör.",        " örnek "],
+  [" s.",         " sayfa "],
+  [" sa.",        " saat "],
+  [" sn.",        " saniye "],
+  [" tel.",       " telefon "],
+  [" telg.",      " telgraf "],
+  [" vd. ",       " ve diğerleri. "],
+  [" vd.",        " ve diğerleri "],
+  [" vs. ",       " vesaire. "],
+  [" vs.",        " vesaire "],
+  [" Yay.",       " Yayınları "],
+
+  # measures and money
+  [" mt ",        " metre "],
+  [" km ",        " kilometre "],
+  [" ha ",        " hektar "],
+  [" g ",         " gram "],
+  [" kg ",        " kilogram "],
+  [" Hz ",        " hertz "],
+  [" KHz ",       " kilohertz "],
+  [" MHz ",       " megahertz "],
+  [" KB ",        " kilobayt "],
+  [" MB ",        " megabayt "],
+  [" GB ",        " gigabayt "],
+  [" TB ",        " terabayt "],
+  [" TL ",        " Türk Lirası "],
+  [" USD ",       " Amerikan Doları "],
+  [" EUR ",       " Avro "],
+  [" GBP ",       " İngiliz Sterlini "],
+
+  # ordinal numbers & centuries
+  [" MÖ ",        " Milattan önce "],
+  [" MS ",        " Milattan sonra "],
+
+  [" 1. ",        " birinci "],
+  [" 2. ",        " ikinci "],
+  [" 3. ",        " üçüncü "],
+  [" 4. ",        " dördüncü "],
+  [" 5. ",        " beşinci "],
+  [" 6. ",        " altıncı "],
+  [" 7. ",        " yedinci "],
+  [" 8. ",        " sekizinci "],
+  [" 9. ",        " dokuzuncu "],
+  [" 10. ",       " onuncu "],
+  [" 11. ",       " on birinci "],
+  [" 12. ",       " on ikinci "],
+  [" 13. ",       " on üçüncü "],
+  [" 14. ",       " on dördüncü "],
+  [" 15. ",       " on beşinci "],
+  [" 16. ",       " on altıncı "],
+  [" 17. ",       " on yedinci "],
+  [" 18. ",       " on sekizinci "],
+  [" 19. ",       " on dokuzuncu "],
+  [" 20. ",       " yirminci "],
+  [" 21. ",       " yirmi birinci "],
+  [" 22. ",       " yirmi ikinci "],
+  [" 23. ",       " yirmi üçüncü "],
+  [" 24. ",       " yirmi dördüncü "],
+  [" 25. ",       " yirmi beşinci "],
+
+  [" yy. ",       " yüzyıl "],
+  [" yy ",        " yüzyıl "],
+
+  [" I. yüzyıl ",     " birinci yüzyıl "],
+  [" II. yüzyıl ",    " ikinci yüzyıl "],
+  [" III. yüzyıl ",   " üçüncü yüzyıl "],
+  [" IV. yüzyıl ",    " dördüncü yüzyıl "],
+  [" V. yüzyıl ",     " beşinci yüzyıl "],
+  [" VI. yüzyıl ",    " altıncı yüzyıl "],
+  [" VII. yüzyıl ",   " yedinci yüzyıl "],
+  [" VIII. yüzyıl ",  " sekizinci yüzyıl "],
+  [" IX. yüzyıl ",    " dokuzuncu yüzyıl "],
+  [" X. yüzyıl ",     " onuncu yüzyıl "],
+  [" XI. yüzyıl ",    " on birinci yüzyıl "],
+  [" XII. yüzyıl ",   " on ikinci yüzyıl "],
+  [" XIII. yüzyıl ",  " on üçüncü yüzyıl "],
+  [" XIV. yüzyıl ",   " on dördüncü yüzyıl "],
+  [" XV. yüzyıl ",    " on beşinci yüzyıl "],
+  [" XVI. yüzyıl ",   " on altıncı yüzyıl "],
+  [" XVII. yüzyıl ",  " on yedinci yüzyıl "],
+  [" XVIII. yüzyıl ", " on sekizinci yüzyıl "],
+  [" XIX. yüzyıl ",   " on dokuzuncu yüzyıl "],
+  [" XX. yüzyıl ",    " yirminci yüzyıl "],
+  [" XXI. yüzyıl ",   " yirmi birinci yüzyıl "],
+  [" XXII. yüzyıl ",  " yirmi ikinci yüzyıl "],
+  [" XXIII. yüzyıl ", " yirmi üçüncü yüzyıl "],
+  [" XXIV. yüzyıl ",  " yirmi dördüncü yüzyıl "],
+  [" XXV. yüzyıl ",   " yirmi beşinci yüzyıl " ],
+
+  [" I. ",        " birinci "],
+  [" II. ",       " ikinci "],
+  [" III. ",      " üçüncü "],
+  [" IV. ",       " dördüncü "],
+  [" V. ",        " beşinci "],
+  [" VI. ",       " altıncı "],
+  [" VII. ",      " yedinci "],
+  [" VIII. ",     " sekizinci "],
+  [" IX. ",       " dokuzuncu "],
+  [" X. ",        " onuncu "],
+  [" XI. ",       " on birinci "],
+  [" XII. ",      " on ikinci "],
+  [" XIII. ",     " on üçüncü "],
+  [" XIV. ",      " on dördüncü "],
+  [" XV. ",       " on beşinci "],
+  [" XVI. ",      " on altıncı "],
+  [" XVII. ",     " on yedinci "],
+  [" XVIII. ",    " on sekizinci "],
+  [" XIX. ",      " on dokuzuncu "],
+  [" XX. ",       " yirminci "],
+  [" XXI. ",      " yirmi birinci "],
+  [" XXII. ",     " yirmi ikinci "],
+  [" XXIII. ",    " yirmi üçüncü "],
+  [" XXIV. ",     " yirmi dördüncü "],
+  [" XXV. ",      " yirmi beşinci " ],
+
+  # rudimentary number conversion
+  [" 1 ",         " bir "],
+  [" 2 ",         " iki "],
+  [" 3 ",         " üç "],
+  [" 4 ",         " dört "],
+  [" 5 ",         " beş "],
+  [" 6 ",         " altı "],
+  [" 7 ",         " yedi "],
+  [" 8 ",         " sekiz "],
+  [" 9 ",         " dokuz "],
+  [" 10 ",        " on "],
+  [" 11 ",        " on bir "],
+  [" 12 ",        " on iki "],
+  [" 13 ",        " on üç "],
+  [" 14 ",        " on dört "],
+  [" 15 ",        " on beş "],
+  [" 16 ",        " on altı "],
+  [" 17 ",        " on yedi "],
+  [" 18 ",        " on sekiz "],
+  [" 19 ",        " on dokuz "],
+  [" 20 ",        " yirmi "],
+  [" 21 ",        " yirmi bir "],
+  [" 22 ",        " yirmi iki "],
+  [" 23 ",        " yirmi üç "],
+  [" 24 ",        " yirmi dört "],
+  [" 25 ",        " yirmi beş "],
+  [" 30 ",        " otuz "],
+  [" 40 ",        " kırk "],
+  [" 50 ",        " elli "],
+  [" 60 ",        " altmış "],
+  [" 70 ",        " yetmiş "],
+  [" 80 ",        " seksen "],
+  [" 90 ",        " doksan "],
+  [" 100 ",       " yüz "],
+
+  # most common mistakes/old forms
+  ["Hıristiyan",  "Hristiyan"],
+  ["Hiristiyan",  "Hristiyan"],
+
+  ["  ", " "],    # post-clean double 0x20 a couple times
+  ["  ", " "],
+  ["  ", " "],
+  ["  ", " "],
+
+  # # ["", ""],
+]
