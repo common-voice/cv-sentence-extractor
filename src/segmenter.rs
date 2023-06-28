@@ -77,14 +77,10 @@ pub fn split_sentences_with_python_tr(text: &str) -> Vec<String> {
     let ctx = Context::new();
 
     ctx.run(python! {
-        import nltk
+        from zemberek import TurkishSentenceExtractor
 
-        try:
-            nltk.data.load("tokenizers/punkt/turkish.pickle")
-        except LookupError:
-            nltk.download("punkt")
-
-        split_sentences = nltk.sent_tokenize('text)
+        extractor = TurkishSentenceExtractor()
+        split_sentences = extractor.from_paragraph('text)
     });
 
     ctx.get("split_sentences")
