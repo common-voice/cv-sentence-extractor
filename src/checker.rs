@@ -69,7 +69,9 @@ pub fn check(rules: &Rules, raw: &str) -> bool {
             }
         }
 
-        if stems_words.into_iter().any(|word| rules.disallowed_words.contains(word)) {
+        if stems_words.into_iter().any(|word| rules.disallowed_words.contains(
+            &word.to_lowercase()
+        )) {
             return false;
         }
     }
@@ -321,14 +323,14 @@ mod test {
     fn test_stem_separator_regex() {
         let rules : Rules = Rules {
             stem_separator_regex: "[']".to_string(),
-            disallowed_words: ["Smithsonian", "DC", "Museum"].iter().map(|s| (*s).to_string()).collect(),
+            disallowed_words: ["Smithsonian", "DC", "Museum"].iter().map(|s| (*s).to_string().to_lowercase()).collect(),
             ..Default::default()
         };
 
         assert!(check(&rules, &String::from("The Mall has many museums.")));
         assert!(!check(&rules, &String::from("Smithsonian's venues are in the Mall.")));
         assert!(!check(&rules, &String::from("Do you know Smithsonian's African American Museum's location?")));
-        assert!(!check(&rules, &String::from("Washington DC's Mall has many musums.")));
+        assert!(!check(&rules, &String::from("Washington DC's Mall has many museums.")));
 
         let rules : Rules = Rules {
             disallowed_words: ["Smithsonian", "DC", "Museum"].iter().map(|s| (*s).to_string()).collect(),
