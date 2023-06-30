@@ -27,7 +27,7 @@ jobs:
       matrix:
         os: [ubuntu-latest]
         node-version: [18.x]
-        rust: [nightly]
+        rust: [nightly-2023-06-28]
 
     steps:
       # SETUP
