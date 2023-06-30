@@ -19,7 +19,7 @@ jobs:
     strategy:
       matrix:
         os: [ubuntu-latest]
-        rust: [nightly]
+        rust: [nightly-2023-06-28]
 
     steps:
       # SETUP
