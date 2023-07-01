@@ -5,7 +5,7 @@ use crate::loaders::{File, Wikipedia};
 
 #[derive(Parser, Debug)]
 #[command(author, version, about, long_about = None)]
-struct CLI {
+struct Args {
     /// Output all the sentences without verification
     #[arg(short, long)]
     no_check: bool,
@@ -39,24 +39,24 @@ enum Commands {
 }
 
 pub fn start() -> Result<(), String> {
-    let cli = CLI::parse();
+    let args = Args::parse();
 
-    let no_check = cli.no_check;
-    let language = cli.language;
-    let directory = cli.dir;
+    let no_check = args.no_check;
+    let language = args.language;
+    let directory = args.dir;
 
-    match &cli.command {
+    match &args.command {
         Commands::Extract { title_filter_list } => {
             let wikipedia_loader = Wikipedia::new(language, directory);
-            return extract(wikipedia_loader, no_check, &title_filter_list);
+            extract(wikipedia_loader, no_check, title_filter_list)
         },
         Commands::ExtractWikisource => {
             let wikipedia_loader = Wikipedia::new(language, directory);
-            return extract(wikipedia_loader, no_check, "");
+            extract(wikipedia_loader, no_check, "")
         },
         Commands::ExtractFile => {
             let file_loader = File::new(language, directory);
-            return extract(file_loader, no_check, "");
+            extract(file_loader, no_check, "")
         }
     }
 }
