@@ -5,7 +5,7 @@ use regex::Regex;
 fn maybe_remove_parentheses(rules: &Rules, txt: &str) -> String {
     let mut replaced = txt.to_string();
     if rules.remove_parentheses {
-        let regex = Regex::new("\\(.*\\)").unwrap();
+        let regex = Regex::new("\\([^\\()\n]*\\)").unwrap();
         replaced = regex.replace_all(txt, "").to_string().replace("  ", " ");
     }
     return replaced;
@@ -154,7 +154,7 @@ mod test {
         };
 
         assert_eq!(replace_strings(&rules, &String::from("Third (content) should be removed.")), "Third should be removed.");
-        assert_eq!(replace_strings(&rules, &String::from("Fourth (content (and nested one)) should be removed.")), "Fourth should be removed.");
+        assert_eq!(replace_strings(&rules, &String::from("Fourth (content (and nested one)) only nested should be removed.")), "Fourth (content ) only nested should be removed.");
         assert_eq!(replace_strings(&rules, &String::from("Fifth [content (and nested one)] should partly be removed.")), "Fifth [content ] should partly be removed.");
         assert_ne!(replace_strings(&rules, &String::from("Sixth (content \n on \n multiple lines) should not be removed.")), "Sixth should not be removed.");
     }
