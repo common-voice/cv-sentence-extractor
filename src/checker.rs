@@ -10,10 +10,8 @@ fn maybe_remove_parentheses(rules: &Rules, line: &str) -> String {
     if rules.remove_parentheses {
         let regex = Regex::new("\\(.*\\)").unwrap();
         let replaced = regex.replace_all(line, "").to_string();
-        println!("PAREN REMOVED: {}", replaced.as_str().replace("  ", " "));
         return replaced.to_string().replace("  ", " ");
     } else {
-        println!("PAREN KEPT: {}", line);
         return line.to_string();
     }
 }
