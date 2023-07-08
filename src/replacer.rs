@@ -157,5 +157,6 @@ mod test {
         assert_eq!(replace_strings(&rules, &String::from("Fourth (content (and nested one)) only nested should be removed.")), "Fourth (content ) only nested should be removed.");
         assert_eq!(replace_strings(&rules, &String::from("Fifth [content (and nested one)] should partly be removed.")), "Fifth [content ] should partly be removed.");
         assert_ne!(replace_strings(&rules, &String::from("Sixth (content \n on \n multiple lines) should not be removed.")), "Sixth should not be removed.");
+        assert_eq!(replace_strings(&rules, &String::from("Seventh (one) and (two) 'and' should stay.")), "Seventh and 'and' should stay.");
     }
 }
