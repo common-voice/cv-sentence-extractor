@@ -6,8 +6,22 @@ fn in_limit(x: usize, min_val: usize, max_val: usize) -> bool {
     x >= min_val && x <= max_val
 }
 
+fn maybe_remove_parentheses(rules: &Rules, line: &str) -> String {
+    if rules.remove_parentheses {
+        let regex = Regex::new("\\(.*\\)").unwrap();
+        let replaced = regex.replace_all(line, "").to_string();
+        println!("PAREN REMOVED: {}", replaced.as_str().replace("  ", " "));
+        return replaced.to_string().replace("  ", " ");
+    } else {
+        println!("PAREN KEPT: {}", line);
+        return line.to_string();
+    }
+}
+
 pub fn check(rules: &Rules, raw: &str) -> bool {
-    let trimmed = raw.trim();
+
+    let trimmed: &str = &maybe_remove_parentheses(rules, raw.trim());
+    
     let alpha_cnt = trimmed.chars().filter(|c| c.is_alphabetic()).count();
     if trimmed.len() < rules.min_trimmed_length
         || rules.quote_start_with_letter
@@ -264,6 +278,26 @@ mod test {
 
         assert!(!check(&rules, &String::from("foo")));
         assert!(check(&rules, &String::from("Foo")));
+    }
+
+    #[test]
+    fn test_remove_parentheses() {
+        let mut rules : Rules = Rules {
+            remove_parentheses: false,
+            ..Default::default()
+        };
+
+        assert_eq!(maybe_remove_parentheses(&rules, &String::from("First (content) should stay.")), "First (content) should stay.");
+        assert_ne!(maybe_remove_parentheses(&rules, &String::from("Second (content) should stay.")), "Second should stay.");
+
+        rules = Rules {
+            remove_parentheses: true,
+            ..Default::default()
+        };
+
+        assert_eq!(maybe_remove_parentheses(&rules, &String::from("Third (content) should be removed.")), "Third should be removed.");
+        assert_eq!(maybe_remove_parentheses(&rules, &String::from("Fourth (content (and nested one)) should be removed.")), "Fourth should be removed.");
+        assert_eq!(maybe_remove_parentheses(&rules, &String::from("Fifth [content (and nested one)] should partly be removed.")), "Fifth [content ] should partly be removed.");
     }
 
     #[test]
