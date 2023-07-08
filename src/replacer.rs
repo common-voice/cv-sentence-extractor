@@ -1,8 +1,18 @@
 use crate::rules::Rules;
 use toml::Value;
+use regex::Regex;
+
+fn maybe_remove_parentheses(rules: &Rules, txt: &str) -> String {
+    let mut replaced = txt.to_string();
+    if rules.remove_parentheses {
+        let regex = Regex::new("\\(.*\\)").unwrap();
+        replaced = regex.replace_all(txt, "").to_string().replace("  ", " ");
+    }
+    return replaced;
+}
 
 pub fn replace_strings(rules: &Rules, raw: &str) -> String {
-    let mut result = raw.trim().to_string();
+    let mut result = maybe_remove_parentheses(&rules, raw.trim());
 
     for replacement_rules in rules.replacements.iter() {
         if Value::as_array(replacement_rules).unwrap().len() == 2 {
@@ -126,5 +136,26 @@ mod test {
         };
 
         assert_eq!(replace_strings(&rules, &String::from("Me&You")), "MeYou");
+    }
+
+    #[test]
+    fn test_remove_parentheses() {
+        let mut rules : Rules = Rules {
+            remove_parentheses: false,
+            ..Default::default()
+        };
+
+        assert_eq!(replace_strings(&rules, &String::from("First (content) should stay.")), "First (content) should stay.");
+        assert_ne!(replace_strings(&rules, &String::from("Second (content) should stay.")), "Second should stay.");
+
+        rules = Rules {
+            remove_parentheses: true,
+            ..Default::default()
+        };
+
+        assert_eq!(replace_strings(&rules, &String::from("Third (content) should be removed.")), "Third should be removed.");
+        assert_eq!(replace_strings(&rules, &String::from("Fourth (content (and nested one)) should be removed.")), "Fourth should be removed.");
+        assert_eq!(replace_strings(&rules, &String::from("Fifth [content (and nested one)] should partly be removed.")), "Fifth [content ] should partly be removed.");
+        assert_ne!(replace_strings(&rules, &String::from("Sixth (content \n on \n multiple lines) should not be removed.")), "Sixth should not be removed.");
     }
 }
