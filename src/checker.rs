@@ -7,9 +7,7 @@ fn in_limit(x: usize, min_val: usize, max_val: usize) -> bool {
 }
 
 pub fn check(rules: &Rules, raw: &str) -> bool {
-
     let trimmed: &str = raw.trim();
-    
     let alpha_cnt = trimmed.chars().filter(|c| c.is_alphabetic()).count();
     if trimmed.len() < rules.min_trimmed_length
         || rules.quote_start_with_letter
