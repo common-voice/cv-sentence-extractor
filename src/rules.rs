@@ -48,7 +48,7 @@ pub struct Rules {
     pub needs_punctuation_end: bool,
     pub needs_uppercase_start: bool,
     pub needs_letter_start: bool,
-    pub remove_parentheses: bool,
+    pub remove_brackets_list: Array,
     pub allowed_symbols_regex: String,
     pub disallowed_symbols: Array,
     pub disallowed_words: HashSet<String>,
@@ -75,7 +75,7 @@ impl Default for Rules {
             needs_punctuation_end: false,
             needs_uppercase_start: false,
             needs_letter_start: true,
-            remove_parentheses: false,
+            remove_brackets_list: vec![],
             allowed_symbols_regex: String::from(""),
             disallowed_symbols: vec![],
             disallowed_words: HashSet::new(),
@@ -112,7 +112,7 @@ mod test {
         assert!(!rules.needs_punctuation_end);
         assert!(!rules.needs_uppercase_start);
         assert!(rules.needs_letter_start);
-        assert!(!rules.remove_parentheses);
+        assert_eq!(rules.remove_brackets_list, vec![]);
         assert_eq!(rules.allowed_symbols_regex, String::from(""));
         assert_eq!(rules.disallowed_symbols, vec![]);
         assert_eq!(rules.disallowed_words, HashSet::new());
