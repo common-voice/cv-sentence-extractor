@@ -2,18 +2,24 @@ use crate::rules::Rules;
 use toml::Value;
 use regex::Regex;
 
-fn maybe_remove_parentheses(rules: &Rules, txt: &str) -> String {
-    let mut replaced = txt.to_string();
-    if rules.remove_parentheses {
-        let regex = Regex::new("\\([^\\()\n]*\\)").unwrap();
-        replaced = regex.replace_all(txt, "").to_string().replace("  ", " ");
-    }
-    return replaced;
-}
-
 pub fn replace_strings(rules: &Rules, raw: &str) -> String {
-    let mut result = maybe_remove_parentheses(&rules, raw.trim());
+    let mut result = raw.trim().to_string();
 
+    // bracket removal
+    for bracket_pair in rules.remove_brackets_list.iter() {
+        if Value::as_array(bracket_pair).unwrap().len() == 2 {
+            let br0 = bracket_pair[0].as_str().unwrap();
+            let br1 = bracket_pair[1].as_str().unwrap();
+            let regex = Regex::new(format!(r#"\{}[^\{}\{}]*\{}"#, br0, br0, br1, br1).as_str()).unwrap();
+            let mut prev = String::from("");
+            while prev != result {
+                prev = result.clone();
+                result = regex.replace_all(prev.as_str(), " ").to_string().replace("  ", " ");
+            }
+        }
+    }
+
+    // replacements
     for replacement_rules in rules.replacements.iter() {
         if Value::as_array(replacement_rules).unwrap().len() == 2 {
             let abbreviation = replacement_rules[0].as_str().unwrap();
@@ -139,24 +145,29 @@ mod test {
     }
 
     #[test]
-    fn test_remove_parentheses() {
-        let mut rules : Rules = Rules {
-            remove_parentheses: false,
+    fn test_remove_brackets_list_empty() {
+        let rules : Rules = Rules {
             ..Default::default()
         };
 
-        assert_eq!(replace_strings(&rules, &String::from("First (content) should stay.")), "First (content) should stay.");
-        assert_ne!(replace_strings(&rules, &String::from("Second (content) should stay.")), "Second should stay.");
+        assert_eq!(replace_strings(&rules, &String::from("One: (content) should stay.")), "One: (content) should stay.");
+        assert_ne!(replace_strings(&rules, &String::from("Two: (content) should stay.")), "Two: should stay.");
+    }
 
-        rules = Rules {
-            remove_parentheses: true,
+    #[test]
+    fn test_remove_brackets_list() {
+        let rules = Rules {
+            remove_brackets_list: vec![
+                Value::try_from([Value::try_from("(").unwrap(), Value::try_from(")").unwrap()]).unwrap(),
+                Value::try_from([Value::try_from("[").unwrap(), Value::try_from("]").unwrap()]).unwrap(),
+            ],
             ..Default::default()
         };
 
-        assert_eq!(replace_strings(&rules, &String::from("Third (content) should be removed.")), "Third should be removed.");
-        assert_eq!(replace_strings(&rules, &String::from("Fourth (content (and nested one)) only nested should be removed.")), "Fourth (content ) only nested should be removed.");
-        assert_eq!(replace_strings(&rules, &String::from("Fifth [content (and nested one)] should partly be removed.")), "Fifth [content ] should partly be removed.");
-        assert_ne!(replace_strings(&rules, &String::from("Sixth (content \n on \n multiple lines) should not be removed.")), "Sixth should not be removed.");
-        assert_eq!(replace_strings(&rules, &String::from("Seventh (one) and (two) 'and' should stay.")), "Seventh and 'and' should stay.");
+        assert_eq!(replace_strings(&rules, &String::from("Three: (content) should be removed.")), "Three: should be removed.");
+        assert_eq!(replace_strings(&rules, &String::from("Four: [content (and nested one)] should be removed.")), "Four: should be removed.");
+        assert_eq!(replace_strings(&rules, &String::from("Five: (content (and nested one)) should be removed.")), "Five: should be removed.");
+        assert_eq!(replace_strings(&rules, &String::from("Six: (one) (two) and [three] 'and' should stay.")), "Six: and 'and' should stay.");
+        assert_ne!(replace_strings(&rules, &String::from("Seven: Test edge case (here).")), "Seven: Test edge case.");
     }
 }
