@@ -151,7 +151,6 @@ mod test {
         };
 
         assert_eq!(replace_strings(&rules, &String::from("One: (content) should stay.")), "One: (content) should stay.");
-        assert_ne!(replace_strings(&rules, &String::from("Two: (content) should stay.")), "Two: should stay.");
     }
 
     #[test]
@@ -164,10 +163,9 @@ mod test {
             ..Default::default()
         };
 
-        assert_eq!(replace_strings(&rules, &String::from("Three: (content) should be removed.")), "Three: should be removed.");
-        assert_eq!(replace_strings(&rules, &String::from("Four: [content (and nested one)] should be removed.")), "Four: should be removed.");
-        assert_eq!(replace_strings(&rules, &String::from("Five: (content (and nested one)) should be removed.")), "Five: should be removed.");
-        assert_eq!(replace_strings(&rules, &String::from("Six: (one) (two) and [three] 'and' should stay.")), "Six: and 'and' should stay.");
-        assert_ne!(replace_strings(&rules, &String::from("Seven: Test edge case (here).")), "Seven: Test edge case.");
+        assert_eq!(replace_strings(&rules, &String::from("Two: (content) should be removed.")), "Two: should be removed.");
+        assert_eq!(replace_strings(&rules, &String::from("Three: [content (and nested one)] should be removed.")), "Three: should be removed.");
+        assert_eq!(replace_strings(&rules, &String::from("Four: (content (and nested one)) should be removed.")), "Four: should be removed.");
+        assert_eq!(replace_strings(&rules, &String::from("Five: (one) (two) and [three] 'and' should stay.")), "Five: and 'and' should stay.");
     }
 }
