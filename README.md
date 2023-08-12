@@ -175,6 +175,7 @@ The following rules can be configured per language. Add a `<language>.toml` file
 | needs_uppercase_start |  If a sentence needs to start with an uppercase | boolean | false
 | other_patterns |  Regex to disallow anything else | Rust Regex Array | all other patterns allowed
 | quote_start_with_letter |  If a quote needs to start with a letter | boolean | true
+| remove_brackets_list |  Removes (possibly nested) user defined brackets and content inside them `(anything [else])` from the sentence before replacements and checking other rules | Array of matching brackets: each configuration is an Array of two values: `["opening_bracket", "closing_bracket"]`. See example below. | []
 | replacements |  Replaces abbreviations or other words according to configuration. This happens before any other rules are checked. | Array of replacement configurations: each configuration is an Array of two values: `["search", "replacement"]`. See example below. | nothing gets replaced
 | segmenter |  Segmenter to use for this language. See below for more information. | "python" | using `rust-punkt` by default
 | stem_separator_regex |  If given, splits words at the given characters to reach the stem words to check them again against the blacklist, e.g. prevents "Rust's" to pass if "Rust" is in the blacklist. | Simple regex of separators, e.g. for apostrophe `stem_separator_regex = "[']"` | ""
@@ -197,6 +198,25 @@ Output: Valid
 
 Input: This is (a test))
 Output: Invalid
+```
+
+### Example for `remove_brackets_list`
+
+```
+remove_brackets_list = [
+  ["(", ")"],
+  ["[", "]"]
+]
+```
+
+This internally creates related regex patterns and removes them with their content, executed in given order.
+
+```
+Input: This (parantheses) (and this) will be removed also this one (another [one]) should.
+Output: This will be removed also this one should.
+
+Input: This is (malformed)) at the source.
+Output: This is ) at the source.
 ```
 
 ### Example for `replacements`
