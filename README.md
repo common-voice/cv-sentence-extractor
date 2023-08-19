@@ -81,7 +81,7 @@ In the beginning, the WikiExtractor prints out how many processes it will use fo
 ```bash
 cd ../cv-sentence-extractor
 pip3 install -r requirements.txt # can be skipped if your language doesn't use the Python segmenter
-cargo run --release -- extract -l en -d ../wikiextractor/text/ >> wiki.en.txt
+cargo run --release -- -l en -d ../wikiextractor/text/ extract >> wiki.en.txt
 ```
 
 *Tip: You don't need this last process to finish to start observing the output, wiki.en.txt should get a few thousands sentences in just a few minutes, and you can use that as a way to estimate the quality of the output early on and stop the process if you are not happy.*
@@ -137,7 +137,7 @@ python WikiExtractor.py --json ../enwikisource-latest-pages-articles.xml
 ```bash
 cd ../cv-sentence-extractor
 pip3 install -r requirements.txt # can be skipped if your language doesn't use the Python segmenter
-cargo run --release -- extract-wikisource -l en -d ../wikiextractor/text/ >> wiki.en.txt
+cargo run --release -- -l en -d ../wikiextractor/text/ extract-wikisource >> wiki.en.txt
 ```
 
 *Tip: You don't need this last process to finish to start observing the output, wiki.en.txt should get a few thousands sentences in just a few minutes, and you can use that as a way to estimate the quality of the output early on and stop the process if you are not happy.*
@@ -148,7 +148,7 @@ If you have one or multiple files with one sentence per line, you can use this e
 
 ```bash
 pip3 install -r requirements.txt # can be skipped if your language doesn't use the Python segmenter
-cargo run --release -- extract-file -l en -d ../texts/ >> file.en.txt
+cargo run --release -- -l en -d ../texts/ extract-file >> file.en.txt
 ```
 
 ## Using language rules
@@ -257,7 +257,7 @@ After running step 1 and 2 from the `Usage` section above, run:
 
 ```bash
 cd ../cv-sentence-extractor
-cargo run --release -- extract -l en -d ../wikiextractor/text/ --no-check >> wiki.en.all.txt
+cargo run --release -- -l en -d ../wikiextractor/text/ --no-check extract >> wiki.en.all.txt
 ```
 
 Then you can use the cvtools scripts to generate a list of the word frequency:
