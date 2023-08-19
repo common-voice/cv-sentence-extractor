@@ -123140,6 +123140,7 @@ uzri
 uzrî
 uzsonna
 uzt
+uztun
 uzudur
 uzuğ
 uzuhun
@@ -127576,6 +127577,7 @@ yaşanyan
 yaşari
 yaşatığı
 yaşayarlar
+yaşçıları
 yaşda
 yaşgününde
 yaşıldır
