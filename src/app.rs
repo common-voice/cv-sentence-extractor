@@ -28,7 +28,7 @@ enum Commands {
     Extract {
         /// path to the file containing titles to filter for
         #[arg(short, long)]
-        title_filter_list: String,
+        title_filter_list: Option<String>,
     },
 
     /// Extract sentences from Wikisource dump extracts using WikiExtractor
@@ -48,15 +48,16 @@ pub fn start() -> Result<(), String> {
     match &args.command {
         Commands::Extract { title_filter_list } => {
             let wikipedia_loader = Wikipedia::new(language, directory);
-            extract(wikipedia_loader, no_check, title_filter_list)
+            let filter_list_value = title_filter_list.clone().unwrap_or(String::from(""));
+            extract(wikipedia_loader, no_check, filter_list_value)
         },
         Commands::ExtractWikisource => {
             let wikipedia_loader = Wikipedia::new(language, directory);
-            extract(wikipedia_loader, no_check, "")
+            extract(wikipedia_loader, no_check, String::from(""))
         },
         Commands::ExtractFile => {
             let file_loader = File::new(language, directory);
-            extract(file_loader, no_check, "")
+            extract(file_loader, no_check, String::from(""))
         }
     }
 }

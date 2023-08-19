@@ -15,7 +15,7 @@ use std::io::Read;
 use std::path::Path;
 use std::path::PathBuf;
 
-pub fn extract(loader: impl Loader, no_check: bool, filter_list_path: &str) -> Result<(), String> {
+pub fn extract(loader: impl Loader, no_check: bool, filter_list_path: String) -> Result<(), String> {
     let config = loader.get_config();
     let rules = load_rules(&config.language);
     let training_data = get_training_data(&config.language);
@@ -191,14 +191,14 @@ fn load_file_names(dir_name: &str, prefix: &str) -> Result<Vec<PathBuf>, String>
         .collect::<Result<Vec<PathBuf>, String>>()
 }
 
-fn read_filtered_titles(filtered_titles_path: &str) -> HashSet<String> {
+fn read_filtered_titles(filtered_titles_path: String) -> HashSet<String> {
     if filtered_titles_path.is_empty() {
         return HashSet::new();
     }
 
     eprintln!("Reading titles from {:?}", filtered_titles_path);
     let mut titles = HashSet::new();
-    let titles_path = Path::new(filtered_titles_path);
+    let titles_path = Path::new(&filtered_titles_path);
     let mut content = String::new();
     let mut file = File::open(titles_path).map_err(|e| format!("{}", e)).unwrap();
     file.read_to_string(&mut content)
