@@ -5,6 +5,7 @@ pub fn split_sentences_with_python(language: &str, text: &str) -> Vec<String> {
         "en" => split_sentences_with_python_en(text),
         "de" => split_sentences_with_python_de(text),
         "bn" => split_sentences_with_python_bn(text),
+        "tr" => split_sentences_with_python_tr(text),
         _ => {
             panic!("{} is not supported for Python segmenter, please implement it or remove the segmenter rule", language);
         },
@@ -72,6 +73,19 @@ pub fn split_sentences_with_python_bn(text: &str) -> Vec<String> {
     ctx.get("split_sentences")
 }
 
+pub fn split_sentences_with_python_tr(text: &str) -> Vec<String> {
+    let ctx = Context::new();
+
+    ctx.run(python! {
+        from zemberek import TurkishSentenceExtractor
+
+        extractor = TurkishSentenceExtractor()
+        split_sentences = extractor.from_paragraph('text)
+    });
+
+    ctx.get("split_sentences")
+}
+
 #[cfg(test)]
 mod test {
     use super::*;
@@ -88,6 +102,14 @@ mod test {
     fn test_segmenter_bn() {
         let language = "bn";
         let text = "আমি প্রথম বাক্য। আমি আর একটি বাক্য।";
+
+        assert_eq!(split_sentences_with_python(language, text).len(), 2);
+    }
+
+    #[test]
+    fn test_segmenter_tr() {
+        let language = "tr";
+        let text = "Ben bir cümleyim. Ben de!";
 
         assert_eq!(split_sentences_with_python(language, text).len(), 2);
     }
