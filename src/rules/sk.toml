@@ -1,0 +1,17 @@
+allowed_symbols_regex="[A-Za-zěščŕřžýáíéóôďťňúůĺľÁÄĚŠČŔŘŽÝÁÍÉÓÔĎŤŇĹĽäöüÚ‚–\\. \"„“]"
+matching_symbols = [["„", "“"]]
+min_trimmed_length = 6
+min_word_count = 1
+max_word_count = 14
+min_characters = 0
+may_end_with_colon = false
+quote_start_with_letter = true
+needs_punctuation_end = true
+needs_letter_start = true
+needs_uppercase_start = true
+even_symbols = ["\""]
+broken_whitespace = ["  ", " ,", " .", " ?", " !", " ;"]
+abbreviation_patterns = ["[A-ZĹĽĚŠČŔŘŽÝÁÍÉĎŤŇÓÔÚ]+\\.*[a-z]*[A-ZĹĽĚŠČŔŘŽÝÁÍÉĎŤŇÓÔÚ]+", "a i\\.", "a pod\\.", "atd\\.", "\\baj\\.", "tj\\.", "\\brec\\.", "[nN]apr\\.", 
+"\".\"", "\\s[^aikosuvzáó]\\s", "zkr\\.", "[Tt]zv\\.", "[dD]r\\.", "\\b[aAeE]d\\.", "\\b[sS]?[tT]r\\.", "[aA]rch\\.", "Inc\\.", "Ltd\\.", "[pP]opr\\.",
+"\\b[fF]r\\.", "\\b[A-Z]+DR\\b", "[pP]ozn\\.", "[sS]rov\\.", "\\b[eE][a-z]\\.", "[zZ]ejm\\.", "[JS]r\\.", "\\b[lL][lL]",
+"Mgr\\.", "[mM]j\\.", "\\b[sS]tol\\.", "\\b[pP]ol\\.", "Ing\\.", "[cCkK]pt\\.", "\\b[lL]t\\.", "Mr?s?\\.", "\\s[^\\s]{1,2}\\.",  "\\bviz\\.", "\\b[sS]at\\."]
