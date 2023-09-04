@@ -1,0 +1,46 @@
+min_trimmed_length = 3
+min_word_count = 2
+max_word_count = 14
+min_characters = 2
+may_end_with_colon = false
+quote_start_with_letter = true
+needs_punctuation_end = true
+needs_letter_start = true
+needs_uppercase_start = true
+# This should cover most common Swedish words
+allowed_symbols_regex = "[a-zåäöA-ZÅÄÖé,.?!: ]"
+broken_whitespace = ["  ", " ,", " .", " ?", " !", " ;"]
+
+# No roman numerals (common in texts about Swedish kings etc., but hard to read out)
+# The :s is for genitive constructions (Karl XII:s)
+other_patterns = ["[MDCLXVI]+(:s)?"]
+
+# We don’t allow quotes or parenthesis symbols. No other use for matching
+# (Swedish quotes are actually opening "”" and closing "”", so impossible to
+# match anyway)
+# matching_symbols = [ ]
+
+#expand some commmon abbreviations that will probably be reasonable and unambigous to speak out
+replacements = [
+  ["bl.a.", "bland annat"],
+  ["ca.", "cirka"],
+  ["d.v.s.", "det vill säga"],
+  ["fr.o.m.", "från och med"],
+  ["i.o.m.", "i och med"],
+  ["m.m.", "med mera"],
+  ["m.fl.", "med flera"],
+  ["o.d.", "och dylikt"],
+  ["o.dyl.", "och dylikt"],
+  ["o.s.v.", "och så vidare"],
+  ["p.g.a.", "på grund av"],
+  ["resp.", "respektive"],
+  ["t.ex.", "till exempel"],
+  ["t.o.m.", "till och med"],
+]
+
+# Filter out lots of other abbreviations
+# Taken from list: https://sv.wikipedia.org/wiki/Lista_%C3%B6ver_f%C3%B6rkortningar
+# Cleaned up and prioritized more common ones and finally compiled using emacs’ regexp-opt
+abbreviation_patterns = [
+"((A\\.D|B\\.V|D\\.S|N\\.N|P\\.S|R\\.I\\.P|St|a(\\.a|lban|r(ab|men|t)|tt)|d(\\.[yä]|an|isk|oc)|e(\\.(Kr|v\\.t|[go])|kon|ng|st)|f(\\.d|arm|i[gln]|r((an|i)s)|sv|[deir])|g(\\.s|ot|r(ek)?)|h(e(br|tt)|oll)|i(\\.e|bid|(s|ta)l|[bdrt])|j(ap|ur)|korn|l(a(pp|t)|ett|i[ct])|m( ö\\.h|ag|ed|in|om|ån)|n[lo]|o(mkr|p|rdf)|p(ers|o(l|rt)|ro[fv]|t)|r(ef|undan|y(ss)?)|s(\\.(a\\.s|[kå])|e(kr?|nlat)|id|kepp|lav|pec|tud|[kptv])|t(\\.[hv]|a[bm]|e(kn|ol)|im|rol|[fry])|u(\\.p\\.a|ng|rspr|tg)|vall|w\\.o|äv|ö(\\.h|vers))\\.)"
+]
