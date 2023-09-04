@@ -1,0 +1,68 @@
+# Replacements are done before splitting the text into sentences
+
+
+replacements = [
+  # Replace wrongly used latin letters by cyrillic ones
+  ["a", "а"],
+  ["A", "А"],  
+  ["c", "с"],
+  ["C", "С"],
+  ["e", "е"],
+  ["E", "Е"],
+  ["h", "һ"],
+  ["H", "Н"],
+  ["o", "о"],
+  ["O", "О"],
+  ["p", "р"],
+  ["P", "Р"],
+  ["x", "х"],
+  ["X", "Х"],
+]
+
+
+abbreviation_patterns = [
+  # С.М.Ахинжанов
+  "[А-ЯҔҊҤӨҺҮ]\\.",
+  # Дж.
+  "[А-ЯҔҊҤӨҺҮ][а-яҕҋҥөһү]\\.",
+  # Элбэх ССРС
+  "[А-ЯҔҊҤӨҺҮ]{2,}",
+  # үүнээйи.Сэбирдэхтэрэ
+  "[а-яҕҋҥөһү]\\.[А-ЯҔҊҤӨҺҮа-яҕҋҥөһү]",
+  # о. д. а.
+  "\\s[а-яҕҋҥөһү]\\.",
+  # А.-З
+  "\\.\\-",
+  # Some commonly used word abbreviations the end of the sentence
+  "[^А-ЯҔҊҤӨҺҮа-яҕҋҥөһү](аат|дат|Нац|пед|ред|соц|таб|монг|Респ|азерб)\\.$",
+]
+
+
+min_trimmed_length = 3
+min_word_count = 2
+max_word_count = 14
+min_characters = 2
+may_end_with_colon = true
+quote_start_with_letter = true
+needs_punctuation_end = true
+needs_letter_start = true
+needs_uppercase_start = true
+allowed_symbols_regex = "[А-ЯҔҊҤӨҺҮа-яҕҋҥөһү'\\s,.\\-‑?!—­‐–―−„“\"«»]"
+broken_whitespace =  ["  ", " ,", " .", " ?", " !", " ;"]
+matching_symbols = [
+  ["„", "“"],
+  ["(", ")"],
+  ["«", "»"],
+  ["\"", "\""],
+]
+
+other_patterns = [
+    # Some Russian stopwords not present in Sakha language
+    "(\\sпочти\\s|\\sне\\s|\\sВ\\s|\\sв\\s|\\sна\\s|\\sс\\s|\\sчто\\s|\\sк\\s|\\sпо\\s|\\sу\\s|\\sиз\\s|\\sбыл\\s|\\sто\\s|\\sкоторого\\s|\\sвесь\\s|\\sи\\s|\\sэто\\s)",
+    # Very frequent sentence-initial patterns, would skew the sentence distribution if allowed
+    "(нэһилиэгэ, киинэ|Национальная)",
+    # Words that occur in Russian but not in Sakha
+    "(день|вчера|Якутии|край|люди|труд|узел|ский|ская)"
+]
+
+
