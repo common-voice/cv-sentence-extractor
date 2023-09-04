@@ -1,0 +1,78 @@
+min_trimmed_length = 3
+
+# For count = 2 we have sentences like: "Это он", "Будет беда"
+# and a lot of trash abbreviations like "до н.", "и доп."
+min_word_count = 3
+
+max_word_count = 14
+
+# In Russian, words can consist of one letter, so no restrictions
+min_characters = 0
+
+may_end_with_colon = false
+quote_start_with_letter = true
+needs_punctuation_end = false
+needs_letter_start = true
+
+# Apparently, in some places the sentences are cut incorrectly,
+# which is why we get some part of the sentence, and not its entirety.
+# This is required to fix sentences like:
+# с Иваном Галамяном.
+needs_uppercase_start = true
+
+allowed_symbols_regex = "[А-Яа-яёЁ\\s:,.\\-‑?;!—­‐–'·=’―−”‘]"
+
+disallowed_symbols = [
+  # Here invisible chars: use vim to work with them
+  '­', '​', '﻿', '་'
+]
+
+broken_whitespace = ["  ", " ,", " .", " ?", " !", " ;", " \""]
+
+abbreviation_patterns = [
+  # Abbreviations:
+  
+  # 1. М.Н.С.
+  "[А-Я]+\\.*[А-Я]",
+  
+  # 2. А. Пушкин
+  "[А-Я]\\.",
+
+  # 3. Дж.
+  "[А-Я][а-я]\\.",
+  
+  # 4. СССР
+  "[А-Я]{2,}",
+
+  # 5. г. Пушкина.
+  "\\s[а-я]\\.",
+
+  # 6. — —
+  "— —",
+
+  # 7. сайка фито— и зоопланктоном
+  "[а-я]—\\s[а-я]",
+
+  # 8. Повод —первое упоминание
+  "[а-я]\\s—[а-я]",
+
+  # 9. с разрывом связей С—С и образованием
+  "[А-Я]—[А-Я]",
+
+  # 10. Words that are similar to ordinary, but cannot be at the end of a sentence,
+  #     which means they are abbreviations
+  "\\s(ор|ок|ом|ум|те|ил)\\.",
+
+  # 11. по учению св.отцов
+  "[а-я]\\.[а-я]",
+
+  # 12. др.-евр. чл.-корр.
+  "[а-я]{1,3}\\.-[а-я]{1,4}\\.",
+
+  # 13. ул.Тюменская
+  "[А-Яа-я]\\.[А-Яа-я]",
+
+  # 14. Ставропольский кр.,
+  "\\.,"
+]
+
