@@ -41,10 +41,10 @@ git clone https://github.com/Common-Voice/cv-sentence-extractor.git
 
 ### Wikipedia Extraction
 
-You need to download the WikiExtractor:
+Install the WikiExtractor:
 
 ```
-git clone https://github.com/attardi/wikiextractor.git
+pip install wikiextractor
 ```
 
 ## Extraction
@@ -66,9 +66,7 @@ bzip2 -d enwiki-latest-pages-articles-multistream.xml.bz2
 2. Use WikiExtractor to extract a dump (this might take a few hours). In the parameters, we specify to use JSON as the output format instead of the default XML.
 
 ```bash
-cd wikiextractor
-git checkout e4abb4cbd019b0257824ee47c23dd163919b731b
-python WikiExtractor.py --json ../enwiki-latest-pages-articles-multistream.xml
+python -m wikiextractor.WikiExtractor --json enwiki-latest-pages-articles-multistream.xml
 ```
 
 In order to test your setup or create a small test set, you can interrupt the extractor after a few seconds already, as it creates separate files in each step. Those files can be already ingested by the `cv-sentence-extractor`.
@@ -79,9 +77,9 @@ In the beginning, the WikiExtractor prints out how many processes it will use fo
 3. Scrape the sentences into a new file from the WikiExtractor output dir (this might take more than 6h to finish)
 
 ```bash
-cd ../cv-sentence-extractor
+cd cv-sentence-extractor
 pip3 install -r requirements.txt # can be skipped if your language doesn't use the Python segmenter
-cargo run --release -- -l en -d ../wikiextractor/text/ extract >> wiki.en.txt
+cargo run --release -- -l en -d ../text/ extract >> wiki.en.txt
 ```
 
 *Tip: You don't need this last process to finish to start observing the output, wiki.en.txt should get a few thousands sentences in just a few minutes, and you can use that as a way to estimate the quality of the output early on and stop the process if you are not happy.*
@@ -118,16 +116,14 @@ This process is very similar to the Wikipedia process above. We can only extract
 Example (you can change "en" to your locale code)
 
 ```bash
-wget https://dumps.wikimedia.org/enwikisource/latest//enwikisource-latest-pages-articles.xml.bz2
+wget https://dumps.wikimedia.org/enwikisource/latest/enwikisource-latest-pages-articles.xml.bz2
 bzip2 -d enwikisource-latest-pages-articles.xml.bz2
 ```
 
 2. Use WikiExtractor to extract a dump (this might take a few hours)
 
 ```bash
-cd wikiextractor
-git checkout e4abb4cbd019b0257824ee47c23dd163919b731b
-python WikiExtractor.py --json ../enwikisource-latest-pages-articles.xml
+python -m wikiextractor.WikiExtractor --json enwikisource-latest-pages-articles.xml
 ```
 
 *Important note: Please check the section about [creating a rules file](#using-language-rules) and [a blocklist](#create-a-blocklist-based-on-less-common-words) at this point, you might want to consider creating them and that process should happen before step 3.*
@@ -135,9 +131,9 @@ python WikiExtractor.py --json ../enwikisource-latest-pages-articles.xml
 3. Scrape the sentences into a new file from the WikiExtractor output dir (this might take more than 6h to finish)
 
 ```bash
-cd ../cv-sentence-extractor
+cd cv-sentence-extractor
 pip3 install -r requirements.txt # can be skipped if your language doesn't use the Python segmenter
-cargo run --release -- -l en -d ../wikiextractor/text/ extract-wikisource >> wiki.en.txt
+cargo run --release -- -l en -d ../text/ extract-wikisource >> wiki.en.txt
 ```
 
 *Tip: You don't need this last process to finish to start observing the output, wiki.en.txt should get a few thousands sentences in just a few minutes, and you can use that as a way to estimate the quality of the output early on and stop the process if you are not happy.*
