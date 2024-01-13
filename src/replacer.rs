@@ -31,7 +31,7 @@ pub fn replace_strings(rules: &Rules, raw: &str) -> String {
     // regex replacements
     for regex_replacement in rules.regex_replacement_list.iter() {
         if Value::as_array(regex_replacement).unwrap().len() == 3 {
-            let regex = Regex::new(&regex_replacement[0].as_str().unwrap()).unwrap();
+            let regex = Regex::new(regex_replacement[0].as_str().unwrap()).unwrap();
             let search = regex_replacement[1].as_str().unwrap();
             let replacement = regex_replacement[2].as_str().unwrap();
 
