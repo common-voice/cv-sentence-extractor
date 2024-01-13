@@ -1,0 +1,109 @@
+allowed_symbols_regex="[aābcčdeēfgģhiījkķlļmnņoprsštuūvzžAĀBCČDEĒFGĢHIĪJKĶLĻMNŅOPRSŠTUŪVZŽ,–:\\.!\\? \"„“]"
+matching_symbols = [["„", "“"]]
+even_symbols = ['"']
+min_trimmed_length = 6
+min_word_count = 7
+max_word_count = 14
+min_characters = 2
+may_end_with_colon = false
+quote_start_with_letter = true
+needs_punctuation_end = true
+needs_letter_start = true
+needs_uppercase_start = true
+broken_whitespace = ["  ", " ,", " .", " ?", " !", " ;"]
+segmenter="python"
+replacements = [
+	[" ", " "],
+	["…", "..."],
+	["—", "–"],
+	["−", "-"],
+	["«", "\""],
+	["»", "\""],
+	["‘", "\""],
+	["’", "\""],
+	["“", "\""],
+	["”", "\""],
+	["'", "\""],
+	["\"\"", "\""],
+	["\"\"", "\""],
+	["\"\"", "\""],
+	["‚", ","],
+	["ŗ", "r"],
+	["Ŗ", "R"],
+
+	# Common abbreviations
+	["p.m.ē.", "pirms mūsu ēras"],
+	["t.i.", "–"],
+	["g.k.", "galvenokārt"],
+	["pr.Kr.", "pirms Kristus"],
+	["pr. Kr.", "pirms Kristus"],
+	["p Kr.", "pirms Kristus"],
+]
+regex_replacement_list = [
+	# Un glue glued sentences
+	["\\ [AĀBCČDEĒFGĢHIĪJKĶLĻMNŅOPRSŠTUŪVZŽaābcčdeēfgģhiījkķlļmnņoprsštuūvzž\"]{3,}\\.[AĀBCČDEĒFGĢHIĪJKĶLĻMNŅOPRSŠTUŪVZŽ][aābcčdeēfgģhiījkķlļmnņoprsštuūvzž,:]{1,}\\ ", ".", ". "],
+	["\\.\\.\\.", "...", "... "],
+	["\\.\\.", "..", ".. "],
+
+	# Split long sentences
+	["\\b(?:\\S+\\s+){15,}\\S+[.!?]", ", bet ", ". Bet "],
+	["\\b(?:\\S+\\s+){15,}\\S+[.!?]", ", un ", ". Un "],
+	["\\b(?:\\S+\\s+){15,}\\S+[.!?]", ", ko ", ". Ko "],
+	["\\b(?:\\S+\\s+){15,}\\S+[.!?]", ", ka ", ". Ka "],
+	["\\b(?:\\S+\\s+){15,}\\S+[.!?]", ", kā ", ". Kā "],
+	["\\b(?:\\S+\\s+){15,}\\S+[.!?]", ", jo ", ". Jo "],
+	["\\b(?:\\S+\\s+){15,}\\S+[.!?]", ", ja ", ". Ja "],
+	["\\b(?:\\S+\\s+){15,}\\S+[.!?]", ", lai ", ". Lai "],
+	["\\b(?:\\S+\\s+){15,}\\S+[.!?]", ", kas ", ". Kas "],
+	["\\b(?:\\S+\\s+){15,}\\S+[.!?]", ", kur ", ". Kur "],
+	["\\b(?:\\S+\\s+){15,}\\S+[.!?]", ", kad ", ". Kad "],
+	["\\b(?:\\S+\\s+){15,}\\S+[.!?]", ", kam ", ". Kam "],
+	["\\b(?:\\S+\\s+){15,}\\S+[.!?]", ", kurš ", ". Kurš "],
+	["\\b(?:\\S+\\s+){15,}\\S+[.!?]", ", kura ", ". Kura "],
+	["\\b(?:\\S+\\s+){15,}\\S+[.!?]", ", kuri ", ". Kuri "],
+	["\\b(?:\\S+\\s+){15,}\\S+[.!?]", ", kurā ", ". Kurā "],
+	["\\b(?:\\S+\\s+){15,}\\S+[.!?]", ", kuru ", ". Kuru "],
+	["\\b(?:\\S+\\s+){15,}\\S+[.!?]", ", kurus ", ". Kurus "],
+	["\\b(?:\\S+\\s+){15,}\\S+[.!?]", ", kuras ", ". Kuras "],
+	["\\b(?:\\S+\\s+){15,}\\S+[.!?]", ", kuram ", ". Kuram "],
+	["\\b(?:\\S+\\s+){15,}\\S+[.!?]", ", kurai ", ". Kurai "],
+	["\\b(?:\\S+\\s+){15,}\\S+[.!?]", ", kurām ", ". Kurām "],
+	["\\b(?:\\S+\\s+){15,}\\S+[.!?]", ", kuriem ", ". Kuriem "],
+	["\\b(?:\\S+\\s+){15,}\\S+[.!?]", ", kuros ", ". Kuros "],
+	["\\b(?:\\S+\\s+){15,}\\S+[.!?]", ", kurās ", ". Kurās "],
+	["\\b(?:\\S+\\s+){15,}\\S+[.!?]", ", tomēr ", ". Tomēr "],
+	["\\b(?:\\S+\\s+){15,}\\S+[.!?]", ", taču ", ". Taču "],
+	["\\b(?:\\S+\\s+){15,}\\S+[.!?]", ", kādu ", ". Kādu "],
+	["\\b(?:\\S+\\s+){15,}\\S+[.!?]", ", tāpēc ", ". Tāpēc "],
+	["\\b(?:\\S+\\s+){15,}\\S+[.!?]", ", tātad ", ". Tātad "],
+	["\\b(?:\\S+\\s+){15,}\\S+[.!?]", ", tad ", ". Tad "],
+	["\\b(?:\\S+\\s+){15,}\\S+[.!?]", ", tas ", ". Tas "],
+]
+abbreviation_patterns = [
+	"[AĀBCČDEĒFGĢHIĪJKĶLĻMNŅOPRSŠTUŪVZŽ]+\\.",
+	"Dz\\.",
+	"Dž\\.",
+	"Fr\\.",
+	"[AĀBCČDEĒFGĢHIĪJKĶLĻMNŅOPRSŠTUŪVZŽ]+\\.*[AĀBCČDEĒFGĢHIĪJKĶLĻMNŅOPRSŠTUŪVZŽ]",
+	# For AS, SIA, NVS and similar
+	"[AĀBCČDEĒFGĢHIĪJKĶLĻMNŅOPRSŠTUŪVZŽ]{2,}",
+	# Coommon abbreviations
+	"t\\.s\\.|t\\. s\\.|t\\.s|t\\. sk\\.|mēn\\.|m\\.ē\\.|el\\.|[Nn]r\\.|[Dd]r\\.|[Pp]rof\\.|[Ll]td\\.|[Pp]iem\\.",
+	"t\\.|kand\\.|inž\\.|Sv\\.|Kr\\.|Ād\\.|vsk\\.",
+]
+other_patterns = [
+	# internet addresses
+	"\\.[com|net|org|lv|lt|ee|de|fi|fm|js|py|ru|am]",
+
+	# roman numbering
+	"[MCLXVI]\\s",
+
+	# - Sentence delimiter can only be at the end of a sentence
+	# - No words with only one letter (" a.", " a", " a ")
+	# - Mixed upper/lowercase in words (LaSi - mostly chemical elements?)
+  	"[\\.|\\?|!].+$",
+  	"(\\s[A-Za-z]{1}[\\.|\\?|!]*$)|\\s[A-Za-z]{1}\\s",
+  	"[a-z][A-Z][a-z]",
+]
+
+disallowed_words = [ ]

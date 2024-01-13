@@ -6,6 +6,7 @@ pub fn split_sentences_with_python(language: &str, text: &str) -> Vec<String> {
         "de" => split_sentences_with_python_de(text),
         "bn" => split_sentences_with_python_bn(text),
         "tr" => split_sentences_with_python_tr(text),
+        "lv" => split_sentences_with_python_lv(text),
         _ => {
             panic!("{} is not supported for Python segmenter, please implement it or remove the segmenter rule", language);
         },
@@ -86,6 +87,23 @@ pub fn split_sentences_with_python_tr(text: &str) -> Vec<String> {
     ctx.get("split_sentences")
 }
 
+pub fn split_sentences_with_python_lv(text: &str) -> Vec<String> {
+    let ctx = Context::new();
+
+    ctx.run(python! {
+        import nltk
+
+        try:
+            nltk.data.load("tokenizers/punkt/english.pickle")
+        except LookupError:
+            nltk.download("punkt")
+
+        split_sentences = nltk.sent_tokenize('text)
+    });
+
+    ctx.get("split_sentences")
+}
+
 #[cfg(test)]
 mod test {
     use super::*;
@@ -110,6 +128,14 @@ mod test {
     fn test_segmenter_tr() {
         let language = "tr";
         let text = "Ben bir cümleyim. Ben de!";
+
+        assert_eq!(split_sentences_with_python(language, text).len(), 2);
+    }
+
+    #[test]
+    fn test_segmenter_lv() {
+        let language = "lv";
+        let text = "Esmu teikums. Es arī!";
 
         assert_eq!(split_sentences_with_python(language, text).len(), 2);
     }
