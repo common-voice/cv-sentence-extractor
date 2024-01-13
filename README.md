@@ -252,8 +252,9 @@ regex_replacement_list = [
 ]
 ```
 
-This will find words that glue two sentences and will add a space to un-glue them. 
-And will split a long sentence in two smaller.
+First regex will find words that glue two sentences and will add a space to un-glue them. 
+
+Second example will split long sentences in two smaller. Use it with caution, test if you are getting valuable sentences as splitting can introduce a lot of small duplicate sentences that get selected from the article instead of longer and more valuable sentences. 
 
 ```
 Input: A sentence.Glued to another.
