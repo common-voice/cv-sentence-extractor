@@ -155,30 +155,31 @@ cargo run --release -- -l en -d ../texts/ extract-file >> file.en.txt
 
 The following rules can be configured per language. Add a `<language>.toml` file in the `rules` directory to enable a new locale. Note that the `replacements` get applied before any other rules are checked.
 
-| Name   |      Description      |  Values | Default |
-|--------|-----------------------|---------|---------|
-| abbreviation_patterns |  Regex defining abbreviations | Rust Regex Array | all abbreviations allowed
-| allowed_symbols_regex |  Regex of allowed symbols or letters. Each character gets matched against this pattern. | String Array | not used
-| broken_whitespace |  Array of broken whitespaces. This could for example disallow two spaces following each other | String Array | all types of whitespaces allowed
-| disallowed_symbols |  Use `allowed_symbols_regex` instead. Array of disallowed symbols or letters. Only used when allowed_symbols_regex is not set or is an empty String. | String Array | all symbols allowed
-| disallowed_words |  Array of disallowed words. Prefer the blocklist approach when possible. | String Array | all words allowed
-| even_symbols |  Symbols that always need an even count | Char Array | []
-| matching_symbols |  Symbols that map to another | Array of matching configurations: each configuration is an Array of two values: `["match", "match"]`. See example below. | []
-| max_word_count |  Maximum number of words in a sentence | integer | 14
-| may_end_with_colon |  If a sentence can end with a : or not | boolean | false
-| min_characters |  Minimum of character occurrences | integer | 0
-| max_characters |  Maximum of character occurrences | integer | MAX
-| min_trimmed_length |  Minimum length of string after trimming | integer | 3
-| min_word_count |  Minimum number of words in a sentence | integer | 1
-| needs_letter_start |  If a sentence needs to start with a letter | boolean | true
-| needs_punctuation_end |  If a sentence needs to end with a punctuation | boolean | false
-| needs_uppercase_start |  If a sentence needs to start with an uppercase | boolean | false
-| other_patterns |  Regex to disallow anything else | Rust Regex Array | all other patterns allowed
-| quote_start_with_letter |  If a quote needs to start with a letter | boolean | true
-| remove_brackets_list |  Removes (possibly nested) user defined brackets and content inside them `(anything [else])` from the sentence before replacements and checking other rules | Array of matching brackets: each configuration is an Array of two values: `["opening_bracket", "closing_bracket"]`. See example below. | []
-| replacements |  Replaces abbreviations or other words according to configuration. This happens before any other rules are checked. | Array of replacement configurations: each configuration is an Array of two values: `["search", "replacement"]`. See example below. | nothing gets replaced
-| segmenter |  Segmenter to use for this language. See below for more information. | "python" | using `rust-punkt` by default
-| stem_separator_regex |  If given, splits words at the given characters to reach the stem words to check them again against the blacklist, e.g. prevents "Rust's" to pass if "Rust" is in the blacklist. | Simple regex of separators, e.g. for apostrophe `stem_separator_regex = "[']"` | ""
+| Name                          | Description                                                                                                                                                                     | Values                                                                                                                                | Default |
+|-------------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|---------------------------------------------------------------------------------------------------------------------------------------|---------|
+| abbreviation_patterns         | Regex defining abbreviations                                                                                                                                                    | Rust Regex Array                                                                                                                      | all abbreviations allowed
+| allowed_symbols_regex         | Regex of allowed symbols or letters. Each character gets matched against this pattern.                                                                                          | String Array                                                                                                                          | not used
+| broken_whitespace             | Array of broken whitespaces. This could for example disallow two spaces following each other                                                                                    | String Array                                                                                                                          | all types of whitespaces allowed
+| disallowed_symbols            | Use `allowed_symbols_regex` instead. Array of disallowed symbols or letters. Only used when allowed_symbols_regex is not set or is an empty String.                             | String Array                                                                                                                          | all symbols allowed
+| disallowed_words              | Array of disallowed words. Prefer the blocklist approach when possible.                                                                                                         | String Array                                                                                                                          | all words allowed
+| even_symbols                  | Symbols that always need an even count                                                                                                                                          | Char Array                                                                                                                            | []
+| matching_symbols              | Symbols that map to another                                                                                                                                                     | Array of matching configurations: each configuration is an Array of two values: `["match", "match"]`. See example below.              | []
+| max_word_count                | Maximum number of words in a sentence                                                                                                                                           | integer                                                                                                                               | 14
+| may_end_with_colon            | If a sentence can end with a : or not                                                                                                                                           | boolean                                                                                                                               | false
+| min_characters                | Minimum of character occurrences                                                                                                                                                | integer                                                                                                                               | 0
+| max_characters                | Maximum of character occurrences                                                                                                                                                | integer                                                                                                                               | MAX
+| min_trimmed_length            | Minimum length of string after trimming                                                                                                                                         | integer                                                                                                                               | 3
+| min_word_count                | Minimum number of words in a sentence                                                                                                                                           | integer                                                                                                                               | 1
+| needs_letter_start            | If a sentence needs to start with a letter                                                                                                                                      | boolean                                                                                                                               | true
+| needs_punctuation_end         | If a sentence needs to end with a punctuation                                                                                                                                   | boolean                                                                                                                               | false
+| needs_uppercase_start         | If a sentence needs to start with an uppercase                                                                                                                                  | boolean                                                                                                                               | false
+| other_patterns                | Regex to disallow anything else                                                                                                                                                 | Rust Regex Array                                                                                                                      | all other patterns allowed
+| quote_start_with_letter       | If a quote needs to start with a letter                                                                                                                                         | boolean                                                                                                                               | true
+| remove_brackets_list          | Removes (possibly nested) user defined brackets and content inside them `(anything [else])` from the sentence before replacements and checking other rules                      | Array of matching brackets: each configuration is an Array of two values: `["opening_bracket", "closing_bracket"]`. See example below. | []
+| replacements                  | Replaces abbreviations or other words according to configuration. This happens before any other rules are checked.                                                              | Array of replacement configurations: each configuration is an Array of two values: `["search", "replacement"]`. See example below.    | nothing gets replaced
+| regex_replacement_list        | Finds regex and makes replacements within found patterns. This happens before any other rules are checked.                                                                      | Array of configurations: each configuration is an Array of three values: `["regex", "search", "replacement"]`. See example below.     | nothing gets replaced
+| segmenter                     | Segmenter to use for this language. See below for more information.                                                                                                             | "python"                                                                                                                              | using `rust-punkt` by default
+| stem_separator_regex          | If given, splits words at the given characters to reach the stem words to check them again against the blacklist, e.g. prevents "Rust's" to pass if "Rust" is in the blacklist. | Simple regex of separators, e.g. for apostrophe `stem_separator_regex = "[']"`                                                        | ""
 
 ### Example for `matching_symbols`
 
@@ -237,6 +238,30 @@ Output: I am a hi et cetera
 
 Input: I am foo test a test
 Output: I am hi a hi
+```
+
+### Example for `regex_replacement_list`
+
+```
+regex_replacement_list = [
+  # Split glued sentences
+  ["\\ [a-z]{3,}\\.[A-Z][a-z]{2,}\\ ", ".", ". "],
+  
+  # Split long sentences
+  ["\\b(?:\\S+\\s+){15,}\\S+[.!?]", ", but ", ". But "],
+]
+```
+
+First regex will find words that glue two sentences and will add a space to un-glue them. 
+
+Second example will split long sentences in two smaller. Use it with caution, test if you are getting valuable sentences as splitting can introduce a lot of small duplicate sentences that get selected from the article instead of longer and more valuable sentences. 
+
+```
+Input: A sentence.Glued to another.
+Output: A sentence. Glued to another.
+
+Input: A first part of a long sentence that would be rejected, but infact it could be used.
+Output: A first part of a long sentence that would be rejected. But infact it could be used.
 ```
 
 ## Using disallowed words

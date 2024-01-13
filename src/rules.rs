@@ -57,6 +57,7 @@ pub struct Rules {
     pub other_patterns: Array,
     pub stem_separator_regex: String,
     pub replacements: Array,
+    pub regex_replacement_list: Array,
     pub even_symbols: Array,
     pub matching_symbols: Array,
 }
@@ -84,6 +85,7 @@ impl Default for Rules {
             other_patterns: vec![],
             stem_separator_regex: String::from(""),
             replacements: vec![],
+            regex_replacement_list: vec![],
             even_symbols: vec![],
             matching_symbols: vec![],
         }
@@ -121,6 +123,7 @@ mod test {
         assert_eq!(rules.other_patterns, vec![]);
         assert_eq!(rules.stem_separator_regex, String::from(""));
         assert_eq!(rules.replacements, vec![]);
+        assert_eq!(rules.regex_replacement_list, vec![]);
         assert_eq!(rules.even_symbols, vec![]);
         assert_eq!(rules.matching_symbols, vec![]);
     }

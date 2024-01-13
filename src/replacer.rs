@@ -28,6 +28,19 @@ pub fn replace_strings(rules: &Rules, raw: &str) -> String {
         }
     }
 
+    // regex replacements
+    for regex_replacement in rules.regex_replacement_list.iter() {
+        if Value::as_array(regex_replacement).unwrap().len() == 3 {
+            let regex = Regex::new(regex_replacement[0].as_str().unwrap()).unwrap();
+            let search = regex_replacement[1].as_str().unwrap();
+            let replacement = regex_replacement[2].as_str().unwrap();
+
+            result = regex.replace_all(&result, |caps: &regex::Captures| {
+                caps[0].replace(search, replacement)
+            }).to_string();
+        }
+    }
+
     result
 }
 
@@ -167,5 +180,21 @@ mod test {
         assert_eq!(replace_strings(&rules, &String::from("Three: [content (and nested one)] should be removed.")), "Three: should be removed.");
         assert_eq!(replace_strings(&rules, &String::from("Four: (content (and nested one)) should be removed.")), "Four: should be removed.");
         assert_eq!(replace_strings(&rules, &String::from("Five: (one) (two) and [three] 'and' should stay.")), "Five: and 'and' should stay.");
+    }
+
+    #[test]
+    fn test_regex_replacement() {
+        let rules = Rules {
+            regex_replacement_list: vec![
+                Value::try_from([
+                    Value::try_from("\\ [a-z]{3,}\\.[A-Z][a-z]{2,}\\ ").unwrap(),
+                    Value::try_from(".").unwrap(),
+                    Value::try_from(". ").unwrap()
+                ]).unwrap(),
+            ],
+            ..Default::default()
+        };
+
+        assert_eq!(replace_strings(&rules, &String::from("A sentence.Glued to another.")), "A sentence. Glued to another.");
     }
 }
