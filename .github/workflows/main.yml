@@ -5,24 +5,36 @@ name: CI
 on: [push, pull_request]
 
 jobs:
+  lint:
+    runs-on: "ubuntu-latest"
+    steps:
+      - uses: actions/checkout@v3
+      - uses: hecrj/setup-rust-action@50a120e4d34903c2c1383dec0e9b1d349a9cc2b1
+        with:
+          rust-version: nightly-2023-06-28
+          components: clippy
+      - name: Run clippy
+        run: cargo clippy --all-targets --all-features
+
   test:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
         os: [ubuntu-latest, windows-latest, macOS-latest]
-        rust: [nightly]
+        rust: [nightly-2023-06-28]
 
     steps:
-    
-    # SETUP
-    - uses: hecrj/setup-rust-action@v1.3.4
-      with:
-        rust-version: ${{ matrix.rust }}
-        components: clippy
-    - uses: actions/checkout@master
-    
-    # TESTS
-    - name: Run clippy
-      run: cargo clippy --all-targets --all-features
-    - name: Run tests
-      run: cargo test --verbose
+      - uses: actions/checkout@v3
+      - uses: hecrj/setup-rust-action@50a120e4d34903c2c1383dec0e9b1d349a9cc2b1
+        with:
+          rust-version: ${{ matrix.rust }}
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v4
+        with:
+          python-version: 3.11
+      - name: Install Python dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+      - name: Run tests
+        run: cargo test --verbose

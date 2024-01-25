@@ -13,66 +13,65 @@ jobs:
     strategy:
       matrix:
         os: [ubuntu-latest]
-        rust: [nightly]
+        rust: [nightly-2023-06-28]
 
     steps:
-    
-    # SETUP
-    - name: Maximize build space
-      uses: easimon/maximize-build-space@master
-      with:
-        root-reserve-mb: 512
-        swap-size-mb: 1024
-        remove-dotnet: 'true'
-        remove-android: 'true'
-        remove-haskell: 'true'
-    - uses: hecrj/setup-rust-action@master
-      with:
-        rust-version: ${{ matrix.rust }}
-    - uses: actions/checkout@master
+      # SETUP
+      - name: Maximize build space
+        uses: easimon/maximize-build-space@b4d02c14493a9653fe7af06cc89ca5298071c66e
+        with:
+          root-reserve-mb: 512
+          swap-size-mb: 1024
+          remove-dotnet: "true"
+          remove-android: "true"
+          remove-haskell: "true"
+      - uses: hecrj/setup-rust-action@50a120e4d34903c2c1383dec0e9b1d349a9cc2b1
+        with:
+          rust-version: ${{ matrix.rust }}
+      - uses: actions/checkout@v3
 
-    # COMMENT
-    - name: Get Comment
-      id: comment
-      run: |
-        ACTION_LINE=$(echo "${{ github.event.comment.body }}" | grep "/action " || echo "no-action")
-        ACTION=${ACTION_LINE/\/action /""}
-        echo "##[set-output name=action;]$ACTION"
-    - name: Output Command
-      run: "echo ${{ steps.comment.outputs.action }}"
-    - name: Create comment
-      if: "!contains(steps.comment.outputs.action, 'no-action')"
-      uses: peter-evans/create-or-update-comment@v1
-      with:
-        issue-number: ${{ github.event.issue.number }}
-        body: |
-          Job started: https://github.com/${{ github.repository }}/actions/runs/${{github.run_id}}
+      # COMMENT
+      - name: Get Comment
+        id: comment
+        env:
+          BODY: ${{ github.event.comment.body }}
+        run: |
+          ACTION_LINE=$(echo "$BODY" | grep "/action " || echo "no-action")
+          ACTION=${ACTION_LINE/\/action /""}
+          echo "##[set-output name=action;]$ACTION"
+      - name: Create comment
+        if: "!contains(steps.comment.outputs.action, 'no-action')"
+        uses: peter-evans/create-or-update-comment@dfd809e21f4d5cfc0a52e70caed06890c58d2e6d
+        with:
+          issue-number: ${{ github.event.issue.number }}
+          body: |
+            Job started: https://github.com/${{ github.repository }}/actions/runs/${{github.run_id}}
 
-    # BLOCKLIST
-    - name: Full Wikipedia Extraction - no checks for blocklist
-      if: "contains(steps.comment.outputs.action, 'blocklist')"
-      run: ./scripts/extraction.sh ${{ steps.comment.outputs.action }}
-    - name: Checkout cvtools
-      if: "contains(steps.comment.outputs.action, 'blocklist')"
-      uses: actions/checkout@master
-      with:
-        repository: dabinat/cvtools
-        path: cvtools
-    - name: Generate Blocklist
-      if: "contains(steps.comment.outputs.action, 'blocklist')"
-      run: ./scripts/create-blocklist.sh ${{ steps.comment.outputs.action }}
-    - uses: actions/upload-artifact@v2
-      if: "contains(steps.comment.outputs.action, 'blocklist')"
-      with:
-        name: blocklist
-        path: output/*
+      # BLOCKLIST
+      - name: Full Wikipedia Extraction - no checks for blocklist
+        if: "contains(steps.comment.outputs.action, 'blocklist')"
+        run: ./scripts/extraction.sh ${{ steps.comment.outputs.action }}
+      - name: Checkout cvtools
+        if: "contains(steps.comment.outputs.action, 'blocklist')"
+        uses: actions/checkout@v3
+        with:
+          repository: dabinat/cvtools
+          path: cvtools
+      - name: Generate Blocklist
+        if: "contains(steps.comment.outputs.action, 'blocklist')"
+        run: ./scripts/create-blocklist.sh ${{ steps.comment.outputs.action }}
+      - uses: actions/upload-artifact@v3
+        if: "contains(steps.comment.outputs.action, 'blocklist')"
+        with:
+          name: blocklist
+          path: output/*
 
-    # CREATE FINAL COMMENT
-    - name: Create final comment
-      if: "!contains(steps.comment.outputs.action, 'no-action')"
-      uses: peter-evans/create-or-update-comment@v1
-      with:
-        issue-number: ${{ github.event.issue.number }}
-        body: |
-          Job finished: https://github.com/${{ github.repository }}/actions/runs/${{github.run_id}}
-          Don't forget to download the artifacts.
+      # CREATE FINAL COMMENT
+      - name: Create final comment
+        if: "!contains(steps.comment.outputs.action, 'no-action')"
+        uses: peter-evans/create-or-update-comment@dfd809e21f4d5cfc0a52e70caed06890c58d2e6d
+        with:
+          issue-number: ${{ github.event.issue.number }}
+          body: |
+            Job finished: https://github.com/${{ github.repository }}/actions/runs/${{github.run_id}}
+            Don't forget to download the artifacts.

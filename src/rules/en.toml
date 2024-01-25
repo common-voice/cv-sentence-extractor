@@ -1,18 +1,49 @@
+
+# Replacements which are run before sentences are split
+replacements = [
+  ["e.g.", "for example"],
+  ["E.g.", "For example"],
+  ["i.e.", "that is"],
+  ["I.e.", "That is"],
+  ["Mr.", "Mister"],
+  ["Ms.", "Miss"],
+  ["Prof.", "Professor"],
+  ["Dr.", "Doctor"],
+  ["a.k.a.", "also known as"],
+  ["et al.", "and others"],
+  ["No.", "number"],
+]
+
 min_trimmed_length = 3
 min_word_count = 1
 max_word_count = 14
-min_characters = 0
+min_characters = 1
 may_end_with_colon = false
 quote_start_with_letter = true
 needs_punctuation_end = false
 needs_letter_start = true
-needs_uppercase_start = false
-disallowed_symbols = [
-  '<', '>', '+', '*', '\', '#', '@', '^', '[', ']', '(', ')', '/',
-  'é', 'è', 'à', 'ç', 'Å',
-  'α', 'β', 'Γ', 'γ', 'Δ', 'δ', 'ε', 'ζ', 'η', 'Θ', 'θ', 'ι', 'κ',
-  'Λ', 'λ', 'μ', 'ν', 'Ξ', 'ξ', 'Π', 'π', 'ρ', 'Σ', 'σ', 'ς', 'τ',
-  'υ', 'Φ', 'φ', 'χ', 'Ψ', 'ψ', 'Ω', 'ω',
-]
+needs_uppercase_start = true
 broken_whitespace = ["  ", " ,", " .", " ?", " !", " ;"]
-abbreviation_patterns = ["[A-Z]+\\.*[A-Z]"]
+
+allowed_symbols_regex = "[\u0020A-Za-z\"„“‚‘’–\\.?!()]"
+even_symbols = ['"']
+matching_symbols = [
+  ["„", "“"],
+  ["(", ")"]
+]
+
+# Abbreviation examples for each regex
+#   - A.B or FBI
+abbreviation_patterns = [
+  "[A-Z]+\\.*[A-Z]"
+]
+
+# Other patterns
+#   - Sentence delimiter can only be at the end of a sentence
+#   - No words with only one letter (" a.", " a", " a ")
+#   - Mixed upper/lowercase in words (LaSi - mostly chemical elements?)
+other_patterns = [
+  "[\\.|\\?|!].+$",
+  "(\\s[A-Za-z]{1}[\\.|\\?|!]*$)|\\s[A-Za-z]{1}\\s",
+  "[a-z][A-Z][a-z]",
+]

@@ -1,0 +1,76 @@
+# Manually starting a Wikipedia Extraction for a given language
+# This is the main way to run an extraction on articles that are
+# newer than a given date.
+
+name: Manual Dispatch - Wikipedia Extraction Rerun
+
+on:
+  workflow_dispatch:
+    inputs:
+      language:
+        description: "Language Code"
+        required: true
+        default: ""
+      endDate:
+        description: "Earliest date to fetch for"
+        required: true
+        default: ""
+      startDate:
+        description: "Latest date to fetch for (defaults to today)"
+        required: false
+        default: ""
+
+jobs:
+  extract:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest]
+        node-version: [18.x]
+        rust: [nightly-2023-06-28]
+
+    steps:
+      # SETUP
+      - name: Maximize build space
+        uses: easimon/maximize-build-space@b4d02c14493a9653fe7af06cc89ca5298071c66e
+        with:
+          root-reserve-mb: 512
+          swap-size-mb: 1024
+          remove-dotnet: "true"
+          remove-android: "true"
+          remove-haskell: "true"
+      - uses: hecrj/setup-rust-action@50a120e4d34903c2c1383dec0e9b1d349a9cc2b1
+        with:
+          rust-version: ${{ matrix.rust }}
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node-version }}
+      - uses: actions/checkout@v3
+
+      # NEW ARTICLES
+      - name: Query new articles
+        run: |
+          mkdir output
+          cd scripts
+          npm ci
+          node new-wikipedia-articles.js > ../output/new-article-titles.txt
+        env:
+          CI: true
+          WIKI_START_DATE: ${{ github.event.inputs.startDate }}
+          WIKI_END_DATE: ${{ github.event.inputs.endDate }}
+          WIKI_LOCALE: ${{ github.event.inputs.language }}
+
+      # EXTRACTION ON NEW ARTICLES ONLY
+      - name: Full Wikipedia Extraction - ${{ github.event.inputs.language }}
+        env:
+          LANGUAGE: ${{ github.event.inputs.language }}
+        run: ./scripts/extraction.sh extract "$LANGUAGE" ./output/new-article-titles.txt
+      - name: Deduplicate Wikipedia Extraction
+        run: ./scripts/dedupe.sh extract.txt
+
+      # UPLOAD
+      - uses: actions/upload-artifact@v3
+        with:
+          name: extraction
+          path: output/*

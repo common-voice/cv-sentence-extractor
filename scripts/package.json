@@ -1,0 +1,12 @@
+{
+  "name": "cv-sentence-extractor-scripts",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "type": "module",
+  "author": "Michael Kohler",
+  "license": "MPL-2.0",
+  "dependencies": {
+    "node-fetch": "^3.3.1"
+  }
+}

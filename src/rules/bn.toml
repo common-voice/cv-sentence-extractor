@@ -1,0 +1,44 @@
+
+# Replacements which are run before sentences are split
+replacements = [
+  ["ডাঃ","ডাক্তার"],
+  ["ডা.","ডাক্তার"],
+  ["ড.","ডাক্তার"],
+  ["নাং", "নম্বর"],
+  ["ন.", "নম্বর"],
+  ["নাং.", "নম্বর"],
+  ["নং", "নম্বর"],
+  ["মো.", "মোহাম্মদ"],
+  ["মোঃ", "মোহাম্মদ"]
+]
+
+min_trimmed_length = 3
+min_word_count = 2
+max_word_count = 20
+min_characters = 5
+may_end_with_colon = false
+quote_start_with_letter = true
+needs_punctuation_end = false
+needs_letter_start = true
+needs_uppercase_start = false
+broken_whitespace = ["  ", " ,", " .", " ?", " !", " ;"]
+
+allowed_symbols_regex = "[॰ঁংঃঅআইঈউঊঋঌএঐওঔকখগঘঙচছজঝঞটঠডঢণতথদধনপফবভমযরলশষসহ়ঽািীুূৃৄেৈোৌ্ৎৗয়ৠৡ৤ৰৱ৳৹৺ਂ!\"',-\\./:;\\?`।„“‚‘’ ]"
+
+even_symbols = ['"']
+
+matching_symbols = [
+  ["„", "“"],
+  ["(", ")"]
+]
+
+# Abbreviation examples for each regex
+#   - will match for বি. এ , এস.কে , এম.
+#   - won't match for এসকে, বিএ 
+
+abbreviation_patterns = [
+  "([\u0995-\u09B9\u09CE\u09DC-\u09DF\u0985-\u0994\u09BE-\u09CC\u09D7\u09BC]+\\.+)+[\u0995-\u09B9\u09CE\u09DC-\u09DF\u0985-\u0994\u09BE-\u09CC\u09D7\u09BC]*"
+]
+
+other_patterns = []
+segmenter = "python"

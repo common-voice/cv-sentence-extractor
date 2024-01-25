@@ -3,35 +3,37 @@ use crate::replacer;
 use crate::checker;
 use crate::loaders::Loader;
 use crate::rules::{load_rules, Rules};
+use crate::segmenter::split_sentences_with_python;
 use glob::glob;
 use punkt::params::Standard;
 use punkt::{SentenceTokenizer, TrainingData};
 use rand::Rng;
 use rand::rngs::ThreadRng;
 use std::collections::HashSet;
+use std::fs::File;
+use std::io::Read;
 use std::path::Path;
 use std::path::PathBuf;
 
-pub fn extract(loader: impl Loader, no_check: bool) -> Result<(), String> {
+pub fn extract(loader: impl Loader, no_check: bool, filter_list_path: String) -> Result<(), String> {
     let config = loader.get_config();
     let rules = load_rules(&config.language);
-    let training_data = get_training_data(&loader.get_config().language);
+    let training_data = get_training_data(&config.language);
+    let filtered_titles = read_filtered_titles(filter_list_path);
     let mut existing_sentences = HashSet::new();
     let mut char_count = 0;
     let mut sentence_count = 0;
     let file_names = load_file_names(&config.directory, &config.file_prefix).unwrap();
     for file_name in file_names {
         eprintln!("file_name = {:?}", file_name.to_string_lossy());
-        let texts = loader.load(&file_name)?;
+        let texts = loader.load(&file_name, &filtered_titles)?;
         for text in texts {
-            let sentences = choose(
+            let sentences = get_sentences(
                 &rules,
                 &text,
                 &existing_sentences,
                 &training_data,
-                &config,
-                checker::check,
-                replacer::replace_strings,
+                config,
                 no_check,
             );
 
@@ -48,29 +50,49 @@ pub fn extract(loader: impl Loader, no_check: bool) -> Result<(), String> {
     Ok(())
 }
 
-fn choose(
+fn get_sentences(
     rules: &Rules,
     text: &str,
     existing_sentences: &HashSet<String>,
     training_data: &TrainingData,
     config: &Config,
-    predicate: impl FnMut(&Rules, &str) -> bool,
-    mut replacer: impl FnMut(&Rules, &str) -> String,
     no_check: bool,
 ) -> Vec<String> {
-    let sentences_replaced_abbreviations: Vec<String> = SentenceTokenizer::<Standard>::new(text, training_data)
-        .map(|item| { replacer(rules, item) })
-        .collect();
+    let sentences_pool: Vec<String>;
+
+    // We want to apply the replacements before we split into sentences, as otherwise
+    // the segmentation would not take the replacement into account. This for example
+    // would lead to rust-punkt splitting sentences wrongly, while with the replacement
+    // it would have worked correctly.
+    //
+    // Example: Hi Mr. Smith, how are you?
+    // might get split wrongly by the segmenter to "Hi Mr." and "Smith, how are you?"
+    // If we apply a replacement for "Mr." before, this would for example end up as
+    // "Hi Mister Smith, how are you?"
+    let replaced_text = replacer::replace_strings(rules, text);
+
+    if rules.segmenter != *"" {
+        if rules.segmenter == "python" {
+            sentences_pool = split_sentences_with_python(&config.language, &replaced_text);
+        } else {
+            panic!("Segmenter {} is not yet supported!", rules.segmenter);
+        }
+    } else {
+        // we use rust-punkt as segmenter by default
+        sentences_pool = SentenceTokenizer::<Standard>::new(&replaced_text, training_data)
+            .map(|item| { String::from(item) })
+            .collect();
+    }
 
     if no_check {
-        sentences_replaced_abbreviations
+        sentences_pool
     } else {
         pick_sentences(
             rules,
-            sentences_replaced_abbreviations,
+            sentences_pool,
             existing_sentences,
             config.max_sentences_per_text,
-            predicate,
+            checker::check,
         )
     }
 }
@@ -87,13 +109,13 @@ fn pick_sentences(
     // We do not extract if the total is below the max amount.
     // This makes sure that we handle legal requirements correctly
     // such as not using the full corpus of a source.
-    if total_in_pool <= amount && amount != std::usize::MAX {
+    if total_in_pool <= amount && amount != usize::MAX {
         return vec![];
     }
 
     // If we're allowed to pick all sentences, we do not need to
     // select randomly
-    if amount == std::usize::MAX {
+    if amount == usize::MAX {
         return sentences_pool.iter().filter(|&sentence| {
             let not_already_chosen = !existing_sentences.contains(sentence);
             predicate(rules, sentence) && not_already_chosen
@@ -113,7 +135,7 @@ fn pick_sentences(
 
         let sentence = &sentences_pool[random_index];
         let not_already_chosen = !existing_sentences.contains(sentence);
-        if predicate(rules, &sentence) && not_already_chosen {
+        if predicate(rules, sentence) && not_already_chosen {
             chosen_sentences.push(sentence.trim().to_string());
             chosen_sentences.sort();
             chosen_sentences.dedup();
@@ -167,6 +189,28 @@ fn load_file_names(dir_name: &str, prefix: &str) -> Result<Vec<PathBuf>, String>
         .map_err(|e| format!("{}", e))?
         .map(|p| p.map_err(|e| format!("{}", e)))
         .collect::<Result<Vec<PathBuf>, String>>()
+}
+
+fn read_filtered_titles(filtered_titles_path: String) -> HashSet<String> {
+    if filtered_titles_path.is_empty() {
+        return HashSet::new();
+    }
+
+    eprintln!("Reading titles from {:?}", filtered_titles_path);
+    let mut titles = HashSet::new();
+    let titles_path = Path::new(&filtered_titles_path);
+    let mut content = String::new();
+    let mut file = File::open(titles_path).map_err(|e| format!("{}", e)).unwrap();
+    file.read_to_string(&mut content)
+        .map_err(|e| format!("{}", e)).unwrap();
+
+    let all_titles = content.lines();
+    for title in all_titles {
+        titles.insert(title.to_string());
+    }
+
+    eprintln!("Read {:?} titles to filter for..", titles.len());
+    titles
 }
 
 #[cfg(test)]
@@ -249,7 +293,7 @@ mod test {
             String::from("Test4"),
             String::from("Test5"),
         ];
-        let amount = std::usize::MAX;
+        let amount = usize::MAX;
 
         assert_eq!(pick_sentences(&rules, sentences, &existing_sentences, amount, check_true).len(), 5);
     }

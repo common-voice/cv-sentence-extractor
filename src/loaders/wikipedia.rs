@@ -1,7 +1,8 @@
 use serde_json::Value;
+use std::collections::HashSet;
 use std::fs::File;
 use std::io::Read;
-use std::path::PathBuf;
+use std::path::Path;
 
 use super::definition::Loader;
 use crate::config::Config;
@@ -28,7 +29,7 @@ impl Loader for Wikipedia {
       &self.config
   }
 
-  fn load(&self, file_name: &PathBuf) -> Result<Vec<String>, String> {
+  fn load(&self, file_name: &Path, filtered_titles: &HashSet<String>) -> Result<Vec<String>, String> {
     let mut file = File::open(file_name).map_err(|e| format!("{}", e))?;
     let mut json_str = String::new();
     file.read_to_string(&mut json_str)
@@ -39,11 +40,25 @@ impl Loader for Wikipedia {
             serde_json::from_str(line)
                 .map_err(|e| format!("invalid json: {}", e))
                 .map(|mut article: Value| {
-                    article["text"]
-                        .take()
-                        .as_str()
-                        .map(String::from)
-                        .unwrap_or_default()
+                  let text = article["text"]
+                    .take()
+                    .as_str()
+                    .map(String::from)
+                    .unwrap_or_default();
+
+                  if filtered_titles.is_empty() {
+                    return text
+                  }
+
+                  let title_value = article["title"].to_string();
+                  let trimmed_title = title_value.trim_matches('"');
+                  match filtered_titles.get(&trimmed_title.to_string()) {
+                    Some(_) => {
+                      eprintln!("Article found in filter list: {:?}", trimmed_title);
+                      text
+                    },
+                    None => String::new(),
+                  }
                 })
                 .unwrap_or_default()
         })

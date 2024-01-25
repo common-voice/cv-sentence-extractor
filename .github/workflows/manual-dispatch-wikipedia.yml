@@ -9,9 +9,9 @@ on:
   workflow_dispatch:
     inputs:
       language:
-        description: 'Language Code'
+        description: "Language Code"
         required: true
-        default: ''
+        default: ""
 
 jobs:
   extract:
@@ -19,36 +19,33 @@ jobs:
     strategy:
       matrix:
         os: [ubuntu-latest]
-        rust: [nightly]
+        rust: [nightly-2023-06-28]
 
     steps:
-    
-    # SETUP
-    - name: Maximize build space
-      uses: easimon/maximize-build-space@master
-      with:
-        root-reserve-mb: 512
-        swap-size-mb: 1024
-        remove-dotnet: 'true'
-        remove-android: 'true'
-        remove-haskell: 'true'
-    - uses: hecrj/setup-rust-action@e0938bab41405f7485391869b453779c5290099d
-      with:
-        rust-version: ${{ matrix.rust }}
-    - uses: actions/checkout@master
+      # SETUP
+      - name: Maximize build space
+        uses: easimon/maximize-build-space@b4d02c14493a9653fe7af06cc89ca5298071c66e
+        with:
+          root-reserve-mb: 512
+          swap-size-mb: 1024
+          remove-dotnet: "true"
+          remove-android: "true"
+          remove-haskell: "true"
+      - uses: hecrj/setup-rust-action@50a120e4d34903c2c1383dec0e9b1d349a9cc2b1
+        with:
+          rust-version: ${{ matrix.rust }}
+      - uses: actions/checkout@v3
 
-    # EXTRACTION
-    - name: Full Wikipedia Extraction - ${{ github.event.inputs.language }}
-      run: ./scripts/extraction.sh extract ${{ github.event.inputs.language }}
-    - name: Deduplicate Wikipedia Extraction
-      run: ./scripts/dedupe.sh extract.txt
+      # EXTRACTION
+      - name: Full Wikipedia Extraction - ${{ github.event.inputs.language }}
+        env:
+          LANGUAGE: ${{ github.event.inputs.language }}
+        run: ./scripts/extraction.sh extract "$LANGUAGE"
+      - name: Deduplicate Wikipedia Extraction
+        run: ./scripts/dedupe.sh extract.txt
 
-    # UPLOAD
-    - uses: actions/upload-artifact@v2
-      with:
-        name: extraction
-        path: output/*
-    - uses: actions/upload-artifact@v2
-      with:
-        name: wikiextractor-output
-        path: text/*
+      # UPLOAD
+      - uses: actions/upload-artifact@v2
+        with:
+          name: extraction
+          path: output/*

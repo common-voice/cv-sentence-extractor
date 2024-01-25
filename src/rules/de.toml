@@ -1,3 +1,33 @@
+# Replacements are done before splitting the text into sentences
+replacements = [
+  ["z.B.", "zum Beispiel"],
+  ["z. B.", "zum Beispiel"],
+  ["ca.", "circa"],
+  ["bzw.", "beziehungsweise"],
+  ["gem.", "gemäß"],
+  ["sog.", "sogenannt"],
+  ["Art.", "Artikel"],
+  ["Abs.", "Absatz"],
+  ["geb.", "geboren"],
+  ["allg.", "allgemein"],
+  ["bes.", "besonders"],
+  ["bez.", "bezüglich"],
+  ["eigtl.", "eigentlich"],
+  ["gegr.", "gegründet"],
+  ["ugs.", "umgangssprachlich"],
+  ["urspr.", "ursprünglich"],
+  ["usw.", "und so weiter"],
+  ["zz.", "zurzeit"],
+  ["ggf.", "gegebenenfalls"],
+  ["bspw.", "beispielsweise"],
+  ["mind.", "mindestens"],
+  ["evtl.", "eventuell"],
+  ["bzgl.", "bezüglich"],
+  ["Nr.", "Nummer"],
+]
+
+segmenter = "python"
+
 min_trimmed_length = 3
 min_word_count = 2
 max_word_count = 14
@@ -7,30 +37,37 @@ quote_start_with_letter = true
 needs_punctuation_end = false
 needs_letter_start = true
 needs_uppercase_start = true
-allowed_symbols_regex = "[\u0020-\u007BäöüßÄÖÜ„“‚‘’–\\.]"
+allowed_symbols_regex = "[\u0020A-Za-zäöüßÄÖÜ\"„“‚‘’–\\.?!()]"
 disallowed_symbols = []
 broken_whitespace = ["  ", " ,", " .", " ?", " !", " ;"]
+even_symbols = ['"']
 
 matching_symbols = [
-  ["„", "“"]
+  ["„", "“"],
+  ["(", ")"]
 ]
 
-# Abbreviation examples for each regex, also cheating a bit and adding more regex which has nothing to do with abbreviations:
-#   - A.B or z.B.
-#   - bzw. / ca. / gem. / v. Chr. / n. Chr. / sog. / Co. (Remy & Co.) / Art. (Art. drei des Bundesgesetzes) / and other abbreviations that could end up at the end of a sentence
+# Abbreviations
+#   - A.B, Z.B., BÄM, or SMS (abbreviations with lowercase letters are taken care of further down)
+#   - AktG (usually abbreviations of law text names)
 abbreviation_patterns = [
-  "[A-Z]+\\.*[A-Z]",
-  "bzw\\.|ca\\.|gem\\.|[v|n]\\.\\sChr\\.|sog\\.|Co\\.|Art\\.|geb\\.|hl\\.|int\\.|allg\\.|bes\\.|bez\\.|eigtl\\.|gegr\\.|ugs\\.|urspr\\.|usw\\.|zz\\.",
+  "[A-ZÄÖÜ]+\\.*[A-ZÄÖÜ]",
+  "[a-zäöü]+[A-ZÄÖÜ]",
 ]
 
 # Other patterns
-#   - Jahrhundert and others at the beginning of the sentence (circumvents wrongly splitted sentences from WikiExtractor such as "Im 3. Jahrhundert begann ..." leading to two incomplete sentences)
-#   - Sentence delimiter can only be at the end of a sentence
-#   - No words with only one letter (" a.", " a", " a ", "a ")
+#   - Jahrhundert and others at the beginning of the sentence (circumvents wrongly splitted such as "Im 3. Jahrhundert begann ...")
+#   - Months (usually wrongly splitted due to date number before - i.e. "3. März")
+#   - Sentence delimiter can only be at the end of a sentence. This also takes care of abbreviations.
+#   - No words with only one letter (" a.", " a", " a ", "a ", " ä")
 #   - Mixed upper/lowercase in words (LaSi - mostly chemical elements?)
+#   - Geburtstag and Titel which are usually followed by the number
+#   - Abbreviations which are not easily replaced or detected
 other_patterns = [
-  "^(Jahrhundert|Liga|Bundesliga|Klasse)",
+  "^(Jahrhundert|Liga|Bundesliga|Klasse|Platz|Grades|Runde|Division|Rang)",
+  "^(Januar|Februar|März|April|Mai|Juni|Juli|September|Oktober|November|Dezember)",
   "[\\.|\\?|!].+$",
-  "(\\s[A-Za-z]{1}[\\.|\\?|!]*$)|(^[A-Za-z]{1}\\s)|\\s[A-Za-z]{1}\\s",
-  "[a-z][A-Z][a-z]",
+  "(\\s[A-ZÄÖÜa-zäöü]{1}[\\.|\\?|!]*$)|(^[A-ZÄÖÜa-zäöü]{1}\\s)|\\s[A-ZÄÖÜa-zäöü]{1}\\s",
+  "[a-zäöü][A-ZÄÖÜ][a-zäöü]",
+  "\\shl.$",
 ]
