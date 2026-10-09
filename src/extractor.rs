@@ -15,7 +15,7 @@ use std::io::Read;
 use std::path::Path;
 use std::path::PathBuf;
 
-pub fn extract(loader: impl Loader, no_check: bool, filter_list_path: &str) -> Result<(), String> {
+pub fn extract(loader: impl Loader, no_check: bool, filter_list_path: String) -> Result<(), String> {
     let config = loader.get_config();
     let rules = load_rules(&config.language);
     let training_data = get_training_data(&config.language);
@@ -109,13 +109,13 @@ fn pick_sentences(
     // We do not extract if the total is below the max amount.
     // This makes sure that we handle legal requirements correctly
     // such as not using the full corpus of a source.
-    if total_in_pool <= amount && amount != std::usize::MAX {
+    if total_in_pool <= amount && amount != usize::MAX {
         return vec![];
     }
 
     // If we're allowed to pick all sentences, we do not need to
     // select randomly
-    if amount == std::usize::MAX {
+    if amount == usize::MAX {
         return sentences_pool.iter().filter(|&sentence| {
             let not_already_chosen = !existing_sentences.contains(sentence);
             predicate(rules, sentence) && not_already_chosen
@@ -191,14 +191,14 @@ fn load_file_names(dir_name: &str, prefix: &str) -> Result<Vec<PathBuf>, String>
         .collect::<Result<Vec<PathBuf>, String>>()
 }
 
-fn read_filtered_titles(filtered_titles_path: &str) -> HashSet<String> {
+fn read_filtered_titles(filtered_titles_path: String) -> HashSet<String> {
     if filtered_titles_path.is_empty() {
         return HashSet::new();
     }
 
     eprintln!("Reading titles from {:?}", filtered_titles_path);
     let mut titles = HashSet::new();
-    let titles_path = Path::new(filtered_titles_path);
+    let titles_path = Path::new(&filtered_titles_path);
     let mut content = String::new();
     let mut file = File::open(titles_path).map_err(|e| format!("{}", e)).unwrap();
     file.read_to_string(&mut content)
@@ -293,7 +293,7 @@ mod test {
             String::from("Test4"),
             String::from("Test5"),
         ];
-        let amount = std::usize::MAX;
+        let amount = usize::MAX;
 
         assert_eq!(pick_sentences(&rules, sentences, &existing_sentences, amount, check_true).len(), 5);
     }

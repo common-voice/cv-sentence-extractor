@@ -1,9 +1,25 @@
 use crate::rules::Rules;
 use toml::Value;
+use regex::Regex;
 
 pub fn replace_strings(rules: &Rules, raw: &str) -> String {
     let mut result = raw.trim().to_string();
 
+    // bracket removal
+    for bracket_pair in rules.remove_brackets_list.iter() {
+        if Value::as_array(bracket_pair).unwrap().len() == 2 {
+            let br0 = bracket_pair[0].as_str().unwrap();
+            let br1 = bracket_pair[1].as_str().unwrap();
+            let regex = Regex::new(format!(r#"\{}[^\{}\{}]*\{}"#, br0, br0, br1, br1).as_str()).unwrap();
+            let mut prev = String::from("");
+            while prev != result {
+                prev = result.clone();
+                result = regex.replace_all(prev.as_str(), " ").to_string().replace("  ", " ");
+            }
+        }
+    }
+
+    // replacements
     for replacement_rules in rules.replacements.iter() {
         if Value::as_array(replacement_rules).unwrap().len() == 2 {
             let abbreviation = replacement_rules[0].as_str().unwrap();
@@ -126,5 +142,30 @@ mod test {
         };
 
         assert_eq!(replace_strings(&rules, &String::from("Me&You")), "MeYou");
+    }
+
+    #[test]
+    fn test_remove_brackets_list_empty() {
+        let rules : Rules = Rules {
+            ..Default::default()
+        };
+
+        assert_eq!(replace_strings(&rules, &String::from("One: (content) should stay.")), "One: (content) should stay.");
+    }
+
+    #[test]
+    fn test_remove_brackets_list() {
+        let rules = Rules {
+            remove_brackets_list: vec![
+                Value::try_from([Value::try_from("(").unwrap(), Value::try_from(")").unwrap()]).unwrap(),
+                Value::try_from([Value::try_from("[").unwrap(), Value::try_from("]").unwrap()]).unwrap(),
+            ],
+            ..Default::default()
+        };
+
+        assert_eq!(replace_strings(&rules, &String::from("Two: (content) should be removed.")), "Two: should be removed.");
+        assert_eq!(replace_strings(&rules, &String::from("Three: [content (and nested one)] should be removed.")), "Three: should be removed.");
+        assert_eq!(replace_strings(&rules, &String::from("Four: (content (and nested one)) should be removed.")), "Four: should be removed.");
+        assert_eq!(replace_strings(&rules, &String::from("Five: (one) (two) and [three] 'and' should stay.")), "Five: and 'and' should stay.");
     }
 }

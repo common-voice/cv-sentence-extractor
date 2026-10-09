@@ -1,8 +1,8 @@
 [package]
 name = "common_voice_sentence_collector"
-version = "1.1.0"
+version = "2.0.0"
 authors = ["Florian Merz <flomerz@gmail.com>", "Michael Kohler <me@michaelkohler.info>"]
-edition = "2018"
+edition = "2021"
 
 [lib]
 name = "common_voice_sentence_collector"
@@ -13,14 +13,14 @@ name = "common_voice_sentence_collector"
 path = "src/main.rs"
 
 [dependencies]
-serde_json = "1.0.64"
-glob = "0.3.0"
-clap = "2.33.3"
+serde_json = "1.0.99"
+glob = "0.3.1"
+clap = { version = "4.3.10", features = ["derive"] }
 lazy_static = "1.4.0"
-itertools = "0.10.0"
-regex = "1.5.5"
+itertools = "0.11.0"
+regex = "1.8.4"
 punkt = { git = "https://github.com/dodomorandi/rust-punkt", rev = "fb16d30a9e4dbcad1e0ab109edf7772714ff3121" }
-rand = "0.8.3"
-toml = "0.5.8"
-serde = { version = "1.0.126", features = ["derive"] }
-inline-python = "0.7.0"
+rand = "0.8.5"
+toml = "0.7.5"
+serde = { version = "1.0.164", features = ["derive"] }
+inline-python = "0.11.0"

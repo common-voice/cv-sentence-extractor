@@ -30,7 +30,7 @@ function extract {
   python $WIKI_EXTRACTOR_PATH --processes 4 --json $DUMP_FILE
 
   echo "Running extraction"
-  cargo run --release -- extract -l $LANGUAGE_CODE -d $EXTRACTED_TEXT_PATH >> $EXTRACTED_SENTENCES_PATH
+  cargo run --release -- -l $LANGUAGE_CODE -d $EXTRACTED_TEXT_PATH extract >> $EXTRACTED_SENTENCES_PATH
 }
 
 function cleanup {
